@@ -73,6 +73,8 @@ public class HomeActivity extends AppCompatActivity
     RelativeLayout cartItems;
     TextView itemCount;
 
+    public static int backPress =0;
+
     private static final String TAG = HomeActivity.class.getSimpleName();
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
@@ -249,7 +251,22 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            if(backPress==0){
+                backPress++;
+                StoresFragment frg = new StoresFragment();
+                android.support.v4.app.FragmentTransaction fragmentTransaction =
+                        getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frag_container, frg);
+                fragmentTransaction.commit();
+            }
+
+            else if(backPress==1){
+                super.onBackPressed();
+            }
+
+
+
         }
     }
 
@@ -416,6 +433,8 @@ public class HomeActivity extends AppCompatActivity
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+
 }
 
 /*

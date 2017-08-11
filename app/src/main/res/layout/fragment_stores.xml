@@ -71,9 +71,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-
-
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,12 +89,27 @@
                     android:layout_marginStart="10sp"
                     android:background="#000000" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_grocery"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
 
-                </android.support.v7.widget.RecyclerView>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_grocery"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/pb_grocery"/>
+
+                </RelativeLayout>
+
+
 
             </LinearLayout>
 
@@ -134,12 +146,25 @@
                     android:layout_marginStart="10sp"
                     android:background="#000000" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_food"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
 
-                </android.support.v7.widget.RecyclerView>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_food"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/pb_food"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
 

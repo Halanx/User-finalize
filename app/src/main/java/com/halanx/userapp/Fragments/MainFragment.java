@@ -58,6 +58,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
     List<StoreInfo> storesList = null;
     List<StoreInfo> grocery, food;
+    String mob;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +66,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        mob = getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null);
 
         pbProducts = (ProgressBar) view.findViewById(R.id.pb_products);
         storeSpinner = (Spinner) view.findViewById(R.id.store_spinner);
@@ -75,7 +77,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
         stores = (RelativeLayout) view.findViewById(R.id.stores);
         main = (LinearLayout) view.findViewById(R.id.main);
-
+        HomeActivity.backPress =0;
 
 //        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Store", Context.MODE_PRIVATE);
 //        Picasso.with(getActivity()).load(sharedPreferences.getString("storeLogo", null)).into(brandLogo);
@@ -184,8 +186,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 pbProducts.setVisibility(View.GONE);
                 if (response.body() != null) {
                     List<ProductInfo> products = response.body();
-                    adapter = new ProductAdapter(products, getActivity(), HomeActivity.storeCat,
-                            getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null));
+                    adapter = new ProductAdapter(products, getActivity(), HomeActivity.storeCat,mob);
 
                     if (storeCategory.equals("Food")) {
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -235,6 +236,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
 
 
 }

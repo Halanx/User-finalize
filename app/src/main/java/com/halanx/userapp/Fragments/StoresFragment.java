@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.halanx.userapp.Activities.HomeActivity;
@@ -33,13 +34,13 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  */
 public class StoresFragment extends Fragment {
 
+    ProgressBar pbFood,pbGrocery;
+
     public StoresFragment() {
         // Required empty public constructor
     }
 
     RecyclerView[] rvList = new RecyclerView[2];
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,6 +49,12 @@ public class StoresFragment extends Fragment {
 
         rvList[0] = (RecyclerView) v.findViewById(R.id.rv_food);
         rvList[1] = (RecyclerView) v.findViewById(R.id.rv_grocery);
+        pbFood = (ProgressBar) v.findViewById(R.id.pb_food);
+        pbGrocery = (ProgressBar) v.findViewById(R.id.pb_grocery);
+        HomeActivity.backPress = 1;
+
+        pbFood.setVisibility(View.VISIBLE);
+        pbGrocery.setVisibility(View.VISIBLE);
 
         Retrofit.Builder builder = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl);
         DataInterface client = builder.build().create(DataInterface.class);
@@ -57,27 +64,6 @@ public class StoresFragment extends Fragment {
             public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
 
                 List<StoreInfo> stores = response.body();
-
-
-//                List<StoreInfo> cat = new ArrayList<StoreInfo>();
-//                int u =0;
-//                cat.add(stores.get(0));
-//                for(int i = 1;i<stores.size();i++){
-//                    if(stores.get(i).getStoreCategory().equals(stores.get(i-1).getStoreCategory())){
-//                        cat.add(stores.get(i));
-//                    }
-//
-//                    else {
-//                        Log.i("List",cat.toString());
-//                        adapterList[u] = new StoresAdapter(cat);
-//                        rvList[u].setAdapter(adapterList[u]);
-//                        rvList[u].setLayoutManager(new GridLayoutManager(getActivity(),2));
-//                        u++;
-//                        cat.clear();
-//                        cat.add(stores.get(i));
-//
-//                    }
-//                }
 
                 List<StoreInfo> grocery = new ArrayList<>();
                 List<StoreInfo> food = new ArrayList<>();
@@ -89,6 +75,8 @@ public class StoresFragment extends Fragment {
                     }
                 }
 
+                pbFood.setVisibility(View.GONE);
+                pbGrocery.setVisibility(View.GONE);
                 rvList[0].setAdapter(new StoresAdapter(food));
                 rvList[1].setAdapter(new StoresAdapter(grocery));
                 rvList[0].setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="horizontalcalendar-1.1.7">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/4aa3795feb5e8a554aabb0384b6c70ae39df0f9d/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/4aa3795feb5e8a554aabb0384b6c70ae39df0f9d/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/caches/modules-2/files-2.1/devs.mulham.horizontalcalendar/horizontalcalendar/1.1.7/e7204c8309dce59c9d27bf326a45e7b8f68f714c/horizontalcalendar-1.1.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

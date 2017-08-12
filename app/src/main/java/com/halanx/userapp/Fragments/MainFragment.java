@@ -59,6 +59,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     List<StoreInfo> storesList = null;
     List<StoreInfo> grocery, food;
 
+    TextView itemCount;
+    public MainFragment(TextView itemCount) {
+        this.itemCount = itemCount;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -185,7 +190,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 if (response.body() != null) {
                     List<ProductInfo> products = response.body();
                     adapter = new ProductAdapter(products, getActivity(), HomeActivity.storeCat,
-                            getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null));
+                            getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null),itemCount);
 
                     if (storeCategory.equals("Food")) {
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());

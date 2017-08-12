@@ -33,7 +33,10 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  */
 public class StoresFragment extends Fragment {
 
-    public StoresFragment() {
+
+    TextView itemCount;
+    public StoresFragment(TextView itemCount) {
+        this.itemCount = itemCount;
         // Required empty public constructor
     }
 
@@ -89,8 +92,8 @@ public class StoresFragment extends Fragment {
                     }
                 }
 
-                rvList[0].setAdapter(new StoresAdapter(food));
-                rvList[1].setAdapter(new StoresAdapter(grocery));
+                rvList[0].setAdapter(new StoresAdapter(food, itemCount));
+                rvList[1].setAdapter(new StoresAdapter(grocery,itemCount));
                 rvList[0].setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rvList[1].setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -110,8 +113,10 @@ public class StoresFragment extends Fragment {
 
         List<StoreInfo> storeList;
 
-        public StoresAdapter(List<StoreInfo> storeList) {
+        TextView itemCount;
+        public StoresAdapter(List<StoreInfo> storeList, TextView itemCount) {
             this.storeList = storeList;
+            this.itemCount = itemCount;
         }
 
         @Override
@@ -163,7 +168,7 @@ public class StoresFragment extends Fragment {
                 HomeActivity.storePosition = pos;
                 HomeActivity.storeCat = storeList.get(pos).getStoreCategory();
 
-                MainFragment fragment = new MainFragment();
+                MainFragment fragment = new MainFragment(itemCount);
                 android.support.v4.app.FragmentTransaction fragmentTransaction =
                         getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frag_container, fragment);

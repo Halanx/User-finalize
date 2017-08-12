@@ -1,9 +1,7 @@
 package com.halanx.userapp.Activities;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -505,14 +503,14 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                  * PayU sends the same response to merchant server and in app. In response check the value of key "status"
                  * for identifying status of transaction. There are two possible status like, success or failure
                  * */
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setMessage("Payu's Data : " + data.getStringExtra("payu_response") + "\n\n\n Merchant's Data: " + data.getStringExtra("result"))
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+//                new AlertDialog.Builder(this)
+//                        .setCancelable(false)
+//                        .setMessage("Payu's Data : " + data.getStringExtra("payu_response") + "\n\n\n Merchant's Data: " + data.getStringExtra("result"))
+//                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//                                dialog.dismiss();
+//                            }
+//                        }).show();
                 SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
                 long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
 
@@ -528,8 +526,9 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     Log.d("done", "done");
                 } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                    String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
-                    order = new OrderInfo(userMobile, addressDetails, date, null, null, true, null, latitude, longitude);
+                    order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude);
                 }
 
 

@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity
         cartItems = (RelativeLayout) findViewById(R.id.cartitems);
         itemCount = (TextView) findViewById(R.id.itemcount);
 
-        StoresFragment frg = new StoresFragment();
+        StoresFragment frg = new StoresFragment(itemCount);
         android.support.v4.app.FragmentTransaction fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frag_container, frg);
@@ -154,14 +154,12 @@ public class HomeActivity extends AppCompatActivity
             SharedPreferences sharedPreferences = getSharedPreferences("FB_DATA", Context.MODE_PRIVATE);
             String fName = sharedPreferences.getString("fbName", "halanx");
             Log.d("fname", fName);
-
             String fEmail = sharedPreferences.getString("fbEmail", "halanx");
             Log.d("femail", fEmail);
             String image = sharedPreferences.getString("fbPic", "halanx");
             Log.d("fimage", image);
             nametv.setText(fName);
             Picasso.with(this).load(image).into(userImage);
-
         }
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {

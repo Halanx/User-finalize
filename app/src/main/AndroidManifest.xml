@@ -29,7 +29,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD-0VJbSO56Eibi0QWycOptdG3mXH1L8YQ" />
+            android:value="AIzaSyDJmeEm-ZMoT-pkKiPkJ8DeHIoYGFAWh-Q" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -59,6 +59,11 @@
             android:name=".Activities.RatingActivity"
             android:screenOrientation="portrait"
             android:label="Rate your shopper" />
+        <activity
+            android:name=".Activities.Tracking"
+            android:screenOrientation="portrait"
+            android:label="Order Tracking"
+            android:parentActivityName=".Activities.OrdersActivity" />
         <activity
             android:name=".Activities.PaymentActivity"
             android:screenOrientation="portrait"

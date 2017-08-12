@@ -160,13 +160,14 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginBottom="5dp"
                 android:id="@+id/cv_rest_add_cart"
-                android:background="#d45e5c"
+                android:background="#e65957"
                 android:layout_marginEnd="5dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Add to cart"
+                    android:id="@+id/add_cart"
                     android:textSize="22sp"
                     android:background="#b6413f"
                     android:textColor="#fafafa"

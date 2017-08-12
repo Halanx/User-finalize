@@ -2,8 +2,10 @@ package com.halanx.userapp.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.halanx.userapp.Activities.ItemDisplayActivity;
 import com.halanx.userapp.Interfaces.DataInterface;
+import com.halanx.userapp.POJO.CartItem;
 import com.halanx.userapp.POJO.CartItemPost;
 import com.halanx.userapp.POJO.ProductInfo;
 import com.halanx.userapp.R;
@@ -41,12 +44,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private Context c;
     private String storeCategory;
     public String mobileNumber;
+    TextView itemCount;
+    List<CartItem> items;
+    DataInterface client;
+    TextView add_cart;
 
-    public ProductAdapter(List<ProductInfo> products, Context c, String storeCat, String mobileNumber) {
+    public ProductAdapter(List<ProductInfo> products, Context c, String storeCat, String mobileNumber, TextView itemCount) {
         this.products = products;
         this.c = c;
         storeCategory = storeCat;
         this.mobileNumber = mobileNumber;
+        this.itemCount = itemCount;
 
         restQuantity = new int[products.size()];
         for (int i = 0; i < products.size(); i++) {
@@ -125,6 +133,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             etRestQuan = (EditText) itemView.findViewById(R.id.restQuantity);
             rvDec = (RelativeLayout) itemView.findViewById(R.id.restDecrement);
             rvInc = (RelativeLayout) itemView.findViewById(R.id.restIncrement);
+            add_cart = (TextView) itemView.findViewById(R.id.add_cart);
             cvAddCart.setOnClickListener(this);
             rvInc.setOnClickListener(this);
             rvDec.setOnClickListener(this);
@@ -177,13 +186,46 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
             CartItemPost item = new CartItemPost(mobile, val, productID, null);
 
+
             Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item);
             call.enqueue(new Callback<CartItemPost>() {
                 @Override
                 public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
+                    Log.d("done","done");
+
+                    SharedPreferences sharedPreferences = c.getSharedPreferences("Login", Context.MODE_PRIVATE);
+                    final String mobileNumber = sharedPreferences.getString("MobileNumber", null);
+
+
+                    Call<List<CartItem>> calls = client.getUserCartItems(mobileNumber);
+
+                    calls.enqueue(new Callback<List<CartItem>>() {
+                                     @Override
+                                     public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+
+                                         items = response.body();
+                                         //Log.d("items", String.valueOf(items));
+
+                                         if (items != null && items.size() > 0) {
+                                             itemCount.setText(String.valueOf(items.size()));
+                                             notifyDataSetChanged();
+
+                                         } else {
+                                         }
+
+                                     }
+
+                                     @Override
+                                     public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+                                     }
+
+                                 }
+                    );
+
+
 
                 }
-
                 @Override
                 public void onFailure(Call<CartItemPost> call, Throwable t) {
 

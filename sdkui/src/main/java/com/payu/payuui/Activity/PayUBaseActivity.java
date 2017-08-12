@@ -2,6 +2,7 @@ package com.payu.payuui.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -168,6 +169,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             } else {
                 //Enable the pay button for all other options
                 payNowButton.setEnabled(true);
+                payNowButton.setBackgroundColor(Color.parseColor("#ff0000"));
+
             }
             setupViewPagerAdapter(mPayuResponse, valueAddedResponse);
         }
@@ -193,8 +196,9 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             valueAddedServiceTask = new ValueAddedServiceTask(this);
             valueAddedServiceTask.execute(payuConfig);
         } else {
-            if (postData != null)
-                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            if (postData != null) {
+                //             Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -207,7 +211,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     private void setupViewPagerAdapter(final PayuResponse payuResponse, PayuResponse valueAddedResponse) {
 
         if (payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR) { // ok we are good to go
-            Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+         //   Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
 
             if (payuResponse.isStoredCardsAvailable()) {
                 paymentOptionsList.add(SdkUIConstants.SAVED_CARDS);
@@ -260,16 +264,21 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                                 break;
                             }
                             if (savedCards.get(currentPosition).getEnableOneClickPayment() == 1 && savedCards.get(currentPosition).getOneTapCard() == 1) {
+                                payNowButton.setTextColor(Color.parseColor("#ff0000"));
                                 payNowButton.setEnabled(true);
+
                             } else if (savedCards.get(currentPosition).getCardType().equals("SMAE")) {
+                                payNowButton.setTextColor(Color.parseColor("#ff0000"));
                                 payNowButton.setEnabled(true);
                             } else {
                                 SavedCardItemFragmentAdapter mSaveAdapter = (SavedCardItemFragmentAdapter) myViewPager.getAdapter();
                                 SavedCardItemFragment mSaveFragment = mSaveAdapter.getFragment(currentPosition) instanceof SavedCardItemFragment ? mSaveAdapter.getFragment(currentPosition) : null;
 
                                 if (mSaveFragment != null && mSaveFragment.cvvValidation()) {
+                                    payNowButton.setTextColor(Color.parseColor("#ff0000"));
                                     payNowButton.setEnabled(true);
                                 } else {
+
                                     payNowButton.setEnabled(false);
                                 }
                             }
@@ -323,8 +332,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
-                if(mPostData != null)
-                Toast.makeText(this, mPostData.getResult(), Toast.LENGTH_LONG).show();
+                if(mPostData != null){}
+             //   Toast.makeText(this, mPostData.getResult(), Toast.LENGTH_LONG).show();
 
             }
         }

@@ -12,10 +12,10 @@ public class CartsInfo {
     private Integer id;
     @SerializedName("Total")
     @Expose
-    private Double total;
+    private Double subtotal;
     @SerializedName("TotalWithExtras")
     @Expose
-    private Double subtotal;
+    private Double total;
     @SerializedName("UserPhone")
     @Expose
     private Double userPhone;

@@ -361,12 +361,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
                         CartsInfo cart = response.body();
 
-                        total = cart.getTotal().toString();
                         subtotal = cart.getSubtotal().toString();
+                        total = cart.getTotal().toString();
 
                         String del = cart.getDeliveryCharges().toString();
-                        tvSubtotal.setText(total);
-                        tvTotal.setText(subtotal);
+                        tvSubtotal.setText(subtotal);
+                        tvTotal.setText(total);
                         tvDelivery.setText(del);
 
                     }

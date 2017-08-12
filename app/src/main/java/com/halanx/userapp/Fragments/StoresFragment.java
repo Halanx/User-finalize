@@ -1,6 +1,7 @@
 package com.halanx.userapp.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.halanx.userapp.Activities.HomeActivity;
@@ -33,16 +35,15 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  */
 public class StoresFragment extends Fragment {
 
-
+    ProgressBar pbFood,pbGrocery;
     TextView itemCount;
-    public StoresFragment(TextView itemCount) {
-        this.itemCount = itemCount;
+    Context c;
+
+    public StoresFragment() {
         // Required empty public constructor
     }
 
     RecyclerView[] rvList = new RecyclerView[2];
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,6 +52,12 @@ public class StoresFragment extends Fragment {
 
         rvList[0] = (RecyclerView) v.findViewById(R.id.rv_food);
         rvList[1] = (RecyclerView) v.findViewById(R.id.rv_grocery);
+        pbFood = (ProgressBar) v.findViewById(R.id.pb_food);
+        pbGrocery = (ProgressBar) v.findViewById(R.id.pb_grocery);
+        HomeActivity.backPress = 1;
+
+        pbFood.setVisibility(View.VISIBLE);
+        pbGrocery.setVisibility(View.VISIBLE);
 
         Retrofit.Builder builder = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl);
         DataInterface client = builder.build().create(DataInterface.class);
@@ -60,27 +67,6 @@ public class StoresFragment extends Fragment {
             public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
 
                 List<StoreInfo> stores = response.body();
-
-
-//                List<StoreInfo> cat = new ArrayList<StoreInfo>();
-//                int u =0;
-//                cat.add(stores.get(0));
-//                for(int i = 1;i<stores.size();i++){
-//                    if(stores.get(i).getStoreCategory().equals(stores.get(i-1).getStoreCategory())){
-//                        cat.add(stores.get(i));
-//                    }
-//
-//                    else {
-//                        Log.i("List",cat.toString());
-//                        adapterList[u] = new StoresAdapter(cat);
-//                        rvList[u].setAdapter(adapterList[u]);
-//                        rvList[u].setLayoutManager(new GridLayoutManager(getActivity(),2));
-//                        u++;
-//                        cat.clear();
-//                        cat.add(stores.get(i));
-//
-//                    }
-//                }
 
                 List<StoreInfo> grocery = new ArrayList<>();
                 List<StoreInfo> food = new ArrayList<>();
@@ -92,8 +78,10 @@ public class StoresFragment extends Fragment {
                     }
                 }
 
-                rvList[0].setAdapter(new StoresAdapter(food, itemCount));
-                rvList[1].setAdapter(new StoresAdapter(grocery,itemCount));
+                pbFood.setVisibility(View.GONE);
+                pbGrocery.setVisibility(View.GONE);
+                rvList[0].setAdapter(new StoresAdapter(food));
+                rvList[1].setAdapter(new StoresAdapter(grocery));
                 rvList[0].setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rvList[1].setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -109,14 +97,20 @@ public class StoresFragment extends Fragment {
         return v;
     }
 
+    public void passData(Context context,TextView itemCount) {
+        c = context;
+        this.itemCount = itemCount;
+
+
+    }
+
     public class StoresAdapter extends RecyclerView.Adapter<StoresFragment.StoresAdapter.StoresViewHolder> {
 
         List<StoreInfo> storeList;
 
         TextView itemCount;
-        public StoresAdapter(List<StoreInfo> storeList, TextView itemCount) {
+        public StoresAdapter(List<StoreInfo> storeList) {
             this.storeList = storeList;
-            this.itemCount = itemCount;
         }
 
         @Override
@@ -168,7 +162,8 @@ public class StoresFragment extends Fragment {
                 HomeActivity.storePosition = pos;
                 HomeActivity.storeCat = storeList.get(pos).getStoreCategory();
 
-                MainFragment fragment = new MainFragment(itemCount);
+                MainFragment fragment = new MainFragment();
+                fragment.passdata(itemCount);
                 android.support.v4.app.FragmentTransaction fragmentTransaction =
                         getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frag_container, fragment);

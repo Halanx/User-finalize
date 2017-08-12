@@ -186,7 +186,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         merchantKey =  "f1tDUh";
         int environment = PayuConstants.PRODUCTION_ENV;
         String email = "samarth-gupta@halanx.com";
-        String amount = "10";
+        String amount = total;
 
 //        merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
 //        String amount = ((EditText) findViewById(R.id.editTextAmount)).getText().toString();

@@ -43,7 +43,7 @@ dependencies {
     compile 'devs.mulham.horizontalcalendar:horizontalcalendar:1.1.7'
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'
-    compile 'com.google.firebase:firebase-database:10.0.1'
+//    compile 'com.google.firebaae:firebase-database:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.google.firebase:firebase-auth:10.0.1'
     compile 'com.android.support:appcompat-v7:24.2.1'

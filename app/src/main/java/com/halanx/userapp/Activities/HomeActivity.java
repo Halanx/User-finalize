@@ -72,7 +72,6 @@ public class HomeActivity extends AppCompatActivity
     ImageView cart, locationButton;
     RelativeLayout cartItems;
     public static TextView itemCount;
-
     public static int backPress =0;
 
     private static final String TAG = HomeActivity.class.getSimpleName();

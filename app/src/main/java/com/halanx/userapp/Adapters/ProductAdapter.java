@@ -81,18 +81,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(ProductViewHolder holder, int position) {
 
         if (storeCategory.equals("Grocery")) {
-
             holder.cvProducts.setVisibility(View.VISIBLE);
             holder.cvRest.setVisibility(View.GONE);
             Picasso.with(c).load(products.get(position).getProductImage()).into(holder.productImage);
             holder.productName.setText(products.get(position).getProductName());
-            holder.productPrice.setText("Rs." + String.valueOf(products.get(position).getPrice()));
+            if(products.get(position).getFeatures()!=null){
+                holder.description.setVisibility(View.VISIBLE);
+                holder.description.setText(products.get(position).getFeatures());
+            }
+            holder.productPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
         } else if (storeCategory.equals("Food")) {
             //Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
             holder.cvProducts.setVisibility(View.GONE);
             holder.cvRest.setVisibility(View.VISIBLE);
+            if(products.get(position).getFeatures()!=null){
+                holder.description.setVisibility(View.VISIBLE);
+                holder.description.setText(products.get(position).getFeatures());
+            }
             holder.tvRestName.setText(products.get(position).getProductName());
-            holder.tvRestPrice.setText("Rs." + String.valueOf(products.get(position).getPrice()));
+            holder.tvRestPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
             holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
         }
 
@@ -113,6 +120,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         List<ProductInfo> products;
         Context c;
 
+        TextView description;
         //For rest
         TextView tvRestName, tvRestPrice;
         CardView cvAddCart;
@@ -131,11 +139,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
             cvProducts = (CardView) itemView.findViewById(R.id.cvProducts);
             cvRest = (CardView) itemView.findViewById(R.id.cvRest);
-
             productImage = (ImageView) itemView.findViewById(R.id.itemImage);
             productName = (TextView) itemView.findViewById(R.id.itemName);
             productPrice = (TextView) itemView.findViewById(R.id.itemPrice);
-
+            description  = (TextView) itemView.findViewById(R.id.description);
             tvRestName = (TextView) itemView.findViewById(R.id.restName);
             tvRestPrice = (TextView) itemView.findViewById(R.id.restPrice);
             cvAddCart = (CardView) itemView.findViewById(R.id.cv_rest_add_cart);

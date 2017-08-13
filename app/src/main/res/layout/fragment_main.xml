@@ -48,19 +48,37 @@
         android:visibility="visible">
 
 
-        <android.support.v7.widget.CardView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp">
+            android:layout_height="wrap_content">
 
-            <android.support.v7.widget.SearchView
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cv_search"
+                app:cardCornerRadius="20dp">
 
-                android:layout_height="50dp"
-                android:background="#e2e2e2">
+                <android.support.v7.widget.SearchView
+                    android:id="@+id/sv_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#f2f2f2"
+                    android:focusableInTouchMode="true"
+                    app:floatingSearch_searchHint="Search..."
+                    app:floatingSearch_close_search_on_keyboard_dismiss="true">
 
-            </android.support.v7.widget.SearchView>
-        </android.support.v7.widget.CardView>
+                </android.support.v7.widget.SearchView>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_suggestions_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cv_search"
+                android:visibility="gone">
+
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
 
 
         <LinearLayout

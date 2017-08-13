@@ -72,7 +72,6 @@ public class HomeActivity extends AppCompatActivity
     ImageView cart, locationButton;
     RelativeLayout cartItems;
     public static TextView itemCount;
-
     public static int backPress =0;
 
     private static final String TAG = HomeActivity.class.getSimpleName();
@@ -284,9 +283,9 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(HomeActivity.this, OrdersActivity.class));
 
 
-        } else if (id == R.id.nav_payment) {
-
-            startActivity(new Intent(HomeActivity.this, SavedCardsActivity.class));
+//        } else if (id == R.id.nav_payment) {
+//
+//            startActivity(new Intent(HomeActivity.this, SavedCardsActivity.class));
 
         } else if (id == R.id.nav_favourites) {
             startActivity(new Intent(HomeActivity.this, FavouritesActivity.class));

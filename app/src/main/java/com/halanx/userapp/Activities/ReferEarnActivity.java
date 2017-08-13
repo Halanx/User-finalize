@@ -52,7 +52,7 @@ public class ReferEarnActivity extends AppCompatActivity {
        builds a string variable to hold the body of the text content to share:
    */
 
-        String shareBody = "Get grocery and food delivered from your favorite StoresFragment and " +
+        String shareBody = "Get grocery and food delivered from your favorite Stores and " +
                 "restaurants in as little as an hour. Download app now : " +
                 "https://play.google.com/store/apps/details?id=com.halanx.userapp";
 

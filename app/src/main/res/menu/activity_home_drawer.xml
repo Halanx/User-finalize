@@ -14,11 +14,11 @@
             android:id="@+id/nav_order"
             android:icon="@drawable/purchase_order_filled_501"
             android:title="Orders" />
-        <item
-            android:id="@+id/nav_payment"
-            android:icon="@drawable/bank_card_backside_50"
-            android:title="Payment"
-            />
+        <!--<item-->
+            <!--android:id="@+id/nav_payment"-->
+            <!--android:icon="@drawable/bank_card_backside_50"-->
+            <!--android:title="Payment"-->
+            <!--/>-->
         <item
             android:id="@+id/nav_favourites"
             android:icon="@drawable/fav_48"

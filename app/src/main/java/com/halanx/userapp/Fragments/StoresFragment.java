@@ -4,8 +4,10 @@ package com.halanx.userapp.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ public class StoresFragment extends Fragment {
     ProgressBar pbFood,pbGrocery;
     TextView itemCount;
     Context c;
+    CardView food_layout;
 
     public StoresFragment() {
         // Required empty public constructor
@@ -54,6 +57,8 @@ public class StoresFragment extends Fragment {
         rvList[1] = (RecyclerView) v.findViewById(R.id.rv_grocery);
         pbFood = (ProgressBar) v.findViewById(R.id.pb_food);
         pbGrocery = (ProgressBar) v.findViewById(R.id.pb_grocery);
+        food_layout = (CardView) v.findViewById(R.id.food_layout);
+
         HomeActivity.backPress = 1;
 
         pbFood.setVisibility(View.VISIBLE);
@@ -67,11 +72,12 @@ public class StoresFragment extends Fragment {
             public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
 
                 List<StoreInfo> stores = response.body();
-
+                Log.d("store_info", String.valueOf(stores.get(0).getStoreCategory()));
                 List<StoreInfo> grocery = new ArrayList<>();
                 List<StoreInfo> food = new ArrayList<>();
                 for (int i = 0; i < stores.size(); i++) {
                     if (stores.get(i).getStoreCategory().equals("Food")) {
+                        food_layout.setVisibility(View.VISIBLE);
                         food.add(stores.get(i));
                     } else if (stores.get(i).getStoreCategory().equals("Grocery")) {
                         grocery.add(stores.get(i));

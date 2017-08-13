@@ -77,8 +77,10 @@ public interface DataInterface {
     Call<List<OrderInfo>> getUserOrders(@Path("mobileNumber") String mobileNumber);
 
     //Getting store list
-    @GET("/stores/")
+    @GET("/stores/verified")
     Call<List<StoreInfo>> getStoreInfo();
+
+
 
     @GET("/users/{mobile}")
     Call<UserInfo> getUserInfo(@Path("mobile") String mobile);

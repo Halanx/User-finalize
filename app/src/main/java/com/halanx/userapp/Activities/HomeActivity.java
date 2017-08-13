@@ -284,9 +284,9 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(HomeActivity.this, OrdersActivity.class));
 
 
-        } else if (id == R.id.nav_payment) {
-
-            startActivity(new Intent(HomeActivity.this, SavedCardsActivity.class));
+//        } else if (id == R.id.nav_payment) {
+//
+//            startActivity(new Intent(HomeActivity.this, SavedCardsActivity.class));
 
         } else if (id == R.id.nav_favourites) {
             startActivity(new Intent(HomeActivity.this, FavouritesActivity.class));

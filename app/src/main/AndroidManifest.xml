@@ -52,8 +52,7 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".Activities.ItemDisplayActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.HomeActivity"/>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Activities.RatingActivity"

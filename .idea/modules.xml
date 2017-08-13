@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Halanx-User-Done.iml" filepath="$PROJECT_DIR$/Halanx-User-Done.iml" />
-      <module fileurl="file://$PROJECT_DIR$/User-finalize.iml" filepath="$PROJECT_DIR$/User-finalize.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/sdkui/sdkui.iml" filepath="$PROJECT_DIR$/sdkui/sdkui.iml" />
     </modules>

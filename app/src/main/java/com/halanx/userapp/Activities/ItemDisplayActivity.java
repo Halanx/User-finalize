@@ -2,7 +2,6 @@ package com.halanx.userapp.Activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -94,7 +93,7 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
         }
 
         tv_productName.setText(productName);
-        String price = "Rs. " + Double.toString(productPrice);
+        String price = "₹. " + Double.toString(productPrice);
         tv_productPrice.setText(price);
         isFav = false;
 

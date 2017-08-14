@@ -89,7 +89,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 holder.description.setVisibility(View.VISIBLE);
                 holder.description.setText(products.get(position).getFeatures());
             }
-            holder.productPrice.setText("₹." + String.valueOf(products.get(position).getPrice()));
+            holder.productPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
         } else if (storeCategory.equals("Food")) {
             //Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
             holder.cvProducts.setVisibility(View.GONE);
@@ -99,7 +99,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 holder.description.setText(products.get(position).getFeatures());
             }
             holder.tvRestName.setText(products.get(position).getProductName());
-            holder.tvRestPrice.setText("₹." + String.valueOf(products.get(position).getPrice()));
+            holder.tvRestPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
             holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
         }
 

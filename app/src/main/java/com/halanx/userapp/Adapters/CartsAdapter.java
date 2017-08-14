@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by samarthgupta on 14/06/17.
  */
@@ -59,7 +60,12 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         int quantityInt = ((int) quantity) - 1;
         holder.spinnerQuantity.setSelection(quantityInt);
 
-        Picasso.with(c).load(listItems.get(position).getItem().getProductImage()).into(holder.cartImage);
+        String im = listItems.get(position).getItem().getProductImage();
+        if(im!=null){
+        Picasso.with(c).load(im).into(holder.cartImage);}
+        else {
+            Picasso.with(c).load(listItems.get(position).getItem().getRelatedStore().getStoreLogo()).into(holder.cartImage);
+        }
         holder.cartName.setText(listItems.get(position).getItem().getProductName());
 
         String price = "₹ " + listItems.get(position).getItem().getPrice().toString();

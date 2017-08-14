@@ -23,4 +23,12 @@ public class RelatedStore {
     @SerializedName("StoreLogo")
     @Expose
     private String storeLogo;
+
+    public String getStoreLogo() {
+        return storeLogo;
+    }
+
+    public void setStoreLogo(String storeLogo) {
+        this.storeLogo = storeLogo;
+    }
 }

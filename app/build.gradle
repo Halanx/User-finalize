@@ -7,8 +7,8 @@ android {
         applicationId "com.halanx.userapp"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 21
-        versionName "3.0.1"
+        versionCode 22
+        versionName "3.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -43,7 +43,7 @@ dependencies {
     compile 'devs.mulham.horizontalcalendar:horizontalcalendar:1.1.7'
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'
-    compile 'com.google.firebase:firebase-database:10.0.1'
+//    compile 'com.google.firebaae:firebase-database:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.google.firebase:firebase-auth:10.0.1'
     compile 'com.android.support:appcompat-v7:24.2.1'

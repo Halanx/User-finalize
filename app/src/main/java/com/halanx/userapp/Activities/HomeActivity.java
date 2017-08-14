@@ -14,7 +14,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -73,7 +72,6 @@ public class HomeActivity extends AppCompatActivity
     ImageView cart, locationButton;
     RelativeLayout cartItems;
     public static TextView itemCount;
-
     public static int backPress =0;
 
     private static final String TAG = HomeActivity.class.getSimpleName();

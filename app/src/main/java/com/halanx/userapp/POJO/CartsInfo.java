@@ -31,6 +31,10 @@ public class CartsInfo {
     @SerializedName("Username")
     @Expose
     private Integer username;
+    @SerializedName("Taxes")
+    @Expose
+    private Double taxes;
+
 
     public CartsInfo(Double userPhone) {
         this.userPhone = userPhone;
@@ -102,6 +106,14 @@ public class CartsInfo {
 
     public void setUsername(Integer username) {
         this.username = username;
+    }
+
+    public Double getTaxes() {
+        return taxes;
+    }
+
+    public void setTaxes(Double taxes) {
+        this.taxes = taxes;
     }
 
 }

@@ -2,10 +2,13 @@ package com.halanx.userapp.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,10 +58,14 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     DataInterface client;
     Retrofit retrofit;
     Retrofit.Builder builder;
-
+    CollapsingToolbarLayout collapsingToolbarLayout;
     List<StoreInfo> storesList = null;
     List<StoreInfo> grocery, food;
     String mob;
+    Toolbar toolbar;
+
+
+
 
     TextView itemCount;
     public MainFragment() {
@@ -76,6 +83,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         pbProducts = (ProgressBar) view.findViewById(R.id.pb_products);
         storeSpinner = (Spinner) view.findViewById(R.id.store_spinner);
         categorySpinner = (Spinner) view.findViewById(R.id.for_spinner);
+        collapsingToolbarLayout = (CollapsingToolbarLayout)     view.findViewById(R.id.collapsing_toolbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
 
         brandName = (TextView) view.findViewById(R.id.brandName);
         brandLogo = (ImageView) view.findViewById(R.id.logo);

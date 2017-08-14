@@ -65,9 +65,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     List<CartItem> activeItems;
     AlertDialog.Builder AlertBuilder;
     boolean delivery = false;
-
+    String taxes;
     String date, timings;
     String total,subtotal;
+    TextView tax;
 
     String mobileNumber;
     String addressDetails;
@@ -95,6 +96,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         orderslayout = (LinearLayout) findViewById(R.id.orders);
         detailslayout = (LinearLayout) findViewById(R.id.detail);
         final_detail = (LinearLayout) findViewById(R.id.confirm_detail);
+
+        tax = (TextView) findViewById(R.id.tax);
 
         btDelAsap.setOnClickListener(this);
         btDelSchedule.setOnClickListener(this);
@@ -363,9 +366,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
                         subtotal = cart.getSubtotal().toString();
                         total = cart.getTotal().toString();
+                        taxes = cart.getTaxes().toString();
 
                         String del = cart.getDeliveryCharges().toString();
                         tvSubtotal.setText(subtotal);
+                        tax.setText(taxes);
                         tvTotal.setText(total);
                         tvDelivery.setText(del);
 

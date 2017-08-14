@@ -62,7 +62,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         Picasso.with(c).load(listItems.get(position).getItem().getProductImage()).into(holder.cartImage);
         holder.cartName.setText(listItems.get(position).getItem().getProductName());
 
-        String price = "Rs. " + listItems.get(position).getItem().getPrice().toString();
+        String price = "₹ " + listItems.get(position).getItem().getPrice().toString();
         holder.cartPrice.setText(price);
         holder.cartNotes.setText(listItems.get(position).getNotes());
 
@@ -161,7 +161,6 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                     Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.PATCH, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Toast.makeText(c, "Item removed", Toast.LENGTH_SHORT).show();
 
                         }
                     }, new com.android.volley.Response.ErrorListener() {

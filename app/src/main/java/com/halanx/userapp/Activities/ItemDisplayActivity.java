@@ -93,7 +93,7 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
         }
 
         tv_productName.setText(productName);
-        String price = "₹. " + Double.toString(productPrice);
+        String price = "₹ " + Double.toString(productPrice);
         tv_productPrice.setText(price);
         isFav = false;
 

@@ -4,24 +4,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.Activities.HomeActivity;
 import com.halanx.userapp.Adapters.ProductAdapter;
+import com.halanx.userapp.Adapters.ProductSearchAdapter;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.ProductInfo;
 import com.halanx.userapp.POJO.StoreInfo;
@@ -74,13 +73,15 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     List<StoreInfo> storesList = null;
     List<StoreInfo> grocery, food;
     String mob;
-    Toolbar toolbar;
-
+    JSONArray array;
+    JSONObject json;
+    ListView list;
+    ListViewAdapter searchadapter;
+    ProductSearchAdapter sadapter;
 
 
 
     SearchView svProducts;
-    RecyclerView suggestion_data;
     List<String> suggestions = new ArrayList<>();
 
     TextView itemCount;
@@ -101,9 +102,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         storeSpinner = (Spinner) view.findViewById(R.id.store_spinner);
         categorySpinner = (Spinner) view.findViewById(R.id.for_spinner);
 
+        list = (ListView) view.findViewById(R.id.listview);
 
         svProducts = (SearchView) view.findViewById(R.id.sv_products);
-        suggestion_data = (RecyclerView) view.findViewById(R.id.rv_suggestions_data);
 
         svProducts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,22 +112,22 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 svProducts.setIconified(false);
             }
         });
-        EditText searchPlate = (EditText) svProducts.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchPlate.setHint("Search Products");
-        View searchPlateView = svProducts.findViewById(android.support.v7.appcompat.R.id.search_plate);
+//        final EditText searchPlate = (EditText) svProducts.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+//        searchPlate.setHint("Search Products");
+//        View searchPlateView = svProducts.findViewById(android.support.v7.appcompat.R.id.search_plate);
 
-        searchPlateView.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+//        searchPlateView.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
         svProducts.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
 
                 if (b) {
-                    if (suggestion_data.getVisibility() == View.GONE) {
-                        suggestion_data.setVisibility(View.VISIBLE);
+                    if (list.getVisibility() == View.GONE) {
+                        list.setVisibility(View.VISIBLE);
                     }
 
                 } else {
-                    suggestion_data.setVisibility(View.GONE);
+                    list.setVisibility(View.GONE);
                 }
             }
         });
@@ -134,6 +135,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         svProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+
+
                 return true;
             }
 
@@ -147,7 +151,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                     @Override
                     public void onResponse(String s) {
                         Log.i("Search", s);
-                        JSONObject json = null;
+                        json = null;
                         try {
                             json = new JSONObject(s);
                         } catch (JSONException e) {
@@ -156,17 +160,70 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                         try {
 
-                            JSONArray array = json.getJSONObject("hits").getJSONArray("hits");
+                            array = json.getJSONObject("hits").getJSONArray("hits");
                             for (int i = 0; i < array.length(); i++) {
                                 String proName = array.getJSONObject(i).getJSONObject("_source").getString("ProductName");
                                 suggestions.add(proName);
                             }
 
+
+                            //  ListAdapter
+                            searchadapter = new ListViewAdapter(getActivity().getApplicationContext(), suggestions);
+                            // Binds the Adapter to the ListView
+                            list.setAdapter(searchadapter);
+
+                            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Log.d("selected_position", String.valueOf(i));
+                                    list.setVisibility(View.GONE);
+                                    try {
+                                        array = json.getJSONObject("hits").getJSONArray("hits");
+                                        JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
+                                        Log.d("category", String.valueOf(HomeActivity.storeCat));
+                                        sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
+
+
+                                            if (HomeActivity.storeCat.equals("Food")) {
+                                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                                recyclerView.setLayoutManager(layoutManager);
+                                            } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                                GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                                recyclerView.setLayoutManager(layoutManager);
+                                            }
+
+                                            recyclerView.setAdapter(sadapter);
+                                            recyclerView.setHasFixedSize(true);
+
+
+
+
+//
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+//
+
+
+                                }
+                            });
+
+
+
+
+                            // Recycler Adapter
+//                            adapterTemp = new SuggestionAdapter(suggestions, getActivity().getApplicationContext(), svProducts,json);
+//                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+//                            suggestion_data.setAdapter(adapterTemp);
+//                            suggestion_data.setLayoutManager(layoutManager);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                        Log.i("Search", suggestions.toString());
+
 
                     }
                 }, new com.android.volley.Response.ErrorListener() {
@@ -190,6 +247,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                     }
                 });
+                Log.i("Search", suggestions.toString());
 
 
                 return false;
@@ -323,6 +381,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                     recyclerView.setAdapter(adapter);
                     recyclerView.setHasFixedSize(true);
                 }
+
             }
 
             @Override
@@ -366,70 +425,142 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         this.itemCount = itemCount;
     }
 
-    class SuggestionAdapter extends RecyclerView.Adapter<MainFragment.SuggestionAdapter.TempViewHolder> {
+//    class SuggestionAdapter extends RecyclerView.Adapter<MainFragment.SuggestionAdapter.TempViewHolder> {
+//
+//        List<String> suggestion;
+//        Context context;
+//        SearchView searchView;
+//        JSONObject json;
+//        TextView data;
+//
+//        SuggestionAdapter(List<String> s, Context applicationContext, SearchView searchView, JSONObject json) {
+//            suggestion = s;
+//            context = applicationContext;
+//            this.searchView = searchView;
+//            this.json = json;
+//        }
+//
+//        @Override
+//        public MainFragment.SuggestionAdapter.TempViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item, parent, false);
+//            return new MainFragment.SuggestionAdapter.TempViewHolder(view, context, suggestion,json);
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(MainFragment.SuggestionAdapter.TempViewHolder holder, int position) {
+//            holder.number.setText(String.valueOf(position + 1));
+//            holder.data.setText(suggestion.get(position));
+//        }
+//
+//
+//        public class TempViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
+//            List<String> suggestion;
+//            TextView data, number;
+//            Context c;
+//            JSONObject json;
+//            TempViewHolder(View view, Context context, List<String> suggestion, JSONObject json) {
+//                super(view);
+//                this.suggestion = suggestion;
+//                c = context;
+//                this.json = json;
+//                Log.d("json", String.valueOf(json));
+//                data = (TextView) view.findViewById(R.id.search_item);
+//                number = (TextView) view.findViewById(R.id.number);
+//                data.setOnClickListener(this);
+//                number.setOnClickListener(this);
+//            }
+//
+//
+//            @Override
+//            public void onClick(View view) {
+//                int pos = getAdapterPosition();
+//                Log.d("position", String.valueOf(suggestion));
+//                String proName = null;
+//
+//
+//                JSONArray array = null;
+//                try {
+//                    array = json.getJSONObject("hits").getJSONArray("hits");
+//                    proName = array.getJSONObject(pos).getJSONObject("_source").toString();
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                Log.d("productname123",(proName));
+//
+//
+//
+////                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+////                recyclerView.setLayoutManager(layoutManager);
+////                recyclerView.setAdapter(adapter);
+////                recyclerView.setHasFixedSize(true);
+//
+//
+//            }
+//        }
+//
+//
+//        @Override
+//        public int getItemCount() {
+//            return suggestion.size();
+//        }
+//   }
 
-        List<String> suggestion;
-        Context context;
-        SearchView searchView;
 
-        TextView data;
+    public class ListViewAdapter extends BaseAdapter {
 
-        SuggestionAdapter(List<String> s, Context applicationContext, SearchView searchView) {
-            suggestion = s;
-            context = applicationContext;
-            this.searchView = searchView;
+        // Declare Variables
 
-        }
+        Context mContext;
+        LayoutInflater inflater;
+        List<String> suggestions;
 
+        public ListViewAdapter(Context context, List<String> suggestions) {
+            mContext = context;
 
-        @Override
-        public MainFragment.SuggestionAdapter.TempViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item, parent, false);
-            return new MainFragment.SuggestionAdapter.TempViewHolder(view, context, suggestion);
-        }
-
-        @Override
-        public void onBindViewHolder(MainFragment.SuggestionAdapter.TempViewHolder holder, int position) {
-
-            holder.number.setText(String.valueOf(position + 1));
-            holder.data.setText(suggestion.get(position));
-
-        }
-
-
-        public class TempViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
-
-
-            List<String> suggestion;
-            TextView data, number;
-            Context c;
-
-            TempViewHolder(View view, Context context, List<String> suggestion) {
-                super(view);
-
-                this.suggestion = suggestion;
-                c = context;
-                data = (TextView) view.findViewById(R.id.search_item);
-                number = (TextView) view.findViewById(R.id.number);
-                data.setOnClickListener(this);
-                number.setOnClickListener(this);
+            inflater = LayoutInflater.from(mContext);
+            this.suggestions = suggestions;
             }
 
+        public class ViewHolder {
+            TextView name;
+            TextView number;
+        }
 
-            @Override
-            public void onClick(View view) {
-                int pos = getAdapterPosition();
+        @Override
+        public int getCount() {
+            return suggestions.size();
+        }
 
-
-            }
+        @Override
+        public Object getItem(int i) {
+            return null;
         }
 
 
         @Override
-        public int getItemCount() {
-            return suggestion.size();
+        public long getItemId(int position) {
+            return position;
         }
 
+        public View getView(final int position, View view, ViewGroup parent) {
+            final ViewHolder holder;
+            if (view == null) {
+                holder = new ViewHolder();
+                view = inflater.inflate(R.layout.search_list_item, null);
+                // Locate the TextViews in listview_item.xml
+                holder.name = (TextView) view.findViewById(R.id.search_item);
+                holder.number = (TextView) view.findViewById(R.id.number);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolder) view.getTag();
+            }
+            // Set the results into TextViews
+            holder.name.setText(suggestions.get(position));
+            holder.number.setText(String.valueOf(position+1));
+            return view;
 
+        }
     }
+
 }

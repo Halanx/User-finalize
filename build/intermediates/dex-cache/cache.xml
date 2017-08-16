@@ -21,6 +21,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/Nishant/.android/build-cache/7cf6571c122ff5f6b0a6163ee1fdc457755ef285/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6c20d3b2e98872a3a59976261a85fcc0603a6bde">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_fbe397baf55dc5cde03c772aad40487744e46ed5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/Nishant/Desktop/Halanx-User-Done/sdkui/build/intermediates/bundles/default/classes.jar"
         jumboMode="false"
         optimize="true"

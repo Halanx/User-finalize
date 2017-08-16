@@ -70,7 +70,7 @@ public class HomeActivity extends AppCompatActivity
     DataInterface client;
 
     ImageView cart, locationButton;
-    RelativeLayout cartItems;
+    public static RelativeLayout cartItems;
     public static TextView itemCount;
     public static int backPress =0;
 

@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.halanx.userapp.Activities.HomeActivity;
 import com.halanx.userapp.Activities.ItemDisplayActivity;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.CartItem;
@@ -255,8 +256,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                             if (items != null && items.size() > 0) {
                                 //Accesss views?
                                 Log.d("itemcount", String.valueOf(items.size()));
-
-                                //                            cartItems.setVisibility(View.VISIBLE);
+                                HomeActivity.cartItems.setVisibility(View.VISIBLE);
                                 itemCount.setText(String.valueOf(items.size()));
                                 notifyDataSetChanged();
 

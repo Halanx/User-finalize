@@ -1,0 +1,349 @@
+package com.halanx.userapp.Adapters;
+
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.halanx.userapp.Activities.ItemDisplayActivity;
+import com.halanx.userapp.Interfaces.DataInterface;
+import com.halanx.userapp.POJO.CartItem;
+import com.halanx.userapp.POJO.CartItemPost;
+import com.halanx.userapp.R;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
+
+/**
+ * Created by Nishant on 15/08/17.
+ */
+
+public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder> {
+
+    JSONObject products;
+    private static int restQuantity[];
+    private Context c;
+    private String storeCategory;
+    public String mobileNumber;
+    List<CartItem> items;
+    DataInterface client;
+    TextView itemCount;
+
+    public ProductSearchAdapter(JSONObject products, Context c, String storeCat, String mobileNumber, TextView itemCount) {
+        this.products = products;
+        Log.d("jsonobject", String.valueOf(products));
+        this.c = c;
+        storeCategory = storeCat;
+        Log.d("jsonobject", storeCategory);
+
+        this.mobileNumber = mobileNumber;
+        this.itemCount = itemCount;
+        Log.d("textvie", (String) itemCount.getText());
+//        restQuantity = new int[products.size()];
+//        for (int i = 0; i < products.size(); i++) {
+//            restQuantity[i] = 1;
+//        }
+    }
+
+    @Override
+    public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_recycler, parent, false);
+        ProductViewHolder holder = new ProductViewHolder(view, products, c,itemCount);
+        return holder;
+
+    }
+
+    @Override
+    public void onBindViewHolder(ProductViewHolder holder, int position) {
+
+        if (storeCategory.equals("Grocery")) {
+            holder.cvProducts.setVisibility(View.VISIBLE);
+            holder.cvRest.setVisibility(View.GONE);
+            try {
+                Picasso.with(c).load(products.getString("Image")).into(holder.productImage);
+                holder.productName.setText(products.getString("ProductName"));
+//                if (products.getString("Features") != null) {
+//                    holder.description.setVisibility(View.VISIBLE);
+//                    holder.description.setText(products.getString("Features"));
+//                }
+                holder.productPrice.setText("₹ " + String.valueOf(products.get("Price")));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else if (storeCategory.equals("Food")) {
+            Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
+            holder.cvProducts.setVisibility(View.GONE);
+            holder.cvRest.setVisibility(View.VISIBLE);
+            try {
+//                if(products.get("Feature")!=null){
+//                    holder.description.setVisibility(View.VISIBLE);
+//                    holder.description.setText(products.getString("Features"));
+//
+//                }
+                holder.tvRestName.setText(products.getString("ProductName"));
+                holder.tvRestPrice.setText("₹ " + String.valueOf(products.getString("Price")));
+            //    holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+          }
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+
+        return 1;
+    }
+
+    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        CardView cvProducts, cvRest;
+        ImageView productImage;
+        TextView productName, productPrice;
+        JSONObject products;
+        Context c;
+
+        TextView description;
+        //For rest
+        TextView tvRestName, tvRestPrice;
+        CardView cvAddCart;
+        EditText etRestQuan;
+        RelativeLayout rvInc, rvDec;
+        TextView tvCart;
+        ImageView ivFav;
+        TextView itemCount;
+
+        public ProductViewHolder(View itemView, JSONObject products, Context c, TextView itemCount) {
+            super(itemView);
+            this.products = products;
+            this.c = c;
+            this.itemCount = itemCount;
+
+
+            cvProducts = (CardView) itemView.findViewById(R.id.cvProducts);
+            cvRest = (CardView) itemView.findViewById(R.id.cvRest);
+            productImage = (ImageView) itemView.findViewById(R.id.itemImage);
+            productName = (TextView) itemView.findViewById(R.id.itemName);
+            productPrice = (TextView) itemView.findViewById(R.id.itemPrice);
+            description  = (TextView) itemView.findViewById(R.id.description);
+            tvRestName = (TextView) itemView.findViewById(R.id.restName);
+            tvRestPrice = (TextView) itemView.findViewById(R.id.restPrice);
+            cvAddCart = (CardView) itemView.findViewById(R.id.cv_rest_add_cart);
+            etRestQuan = (EditText) itemView.findViewById(R.id.restQuantity);
+            rvDec = (RelativeLayout) itemView.findViewById(R.id.restDecrement);
+            rvInc = (RelativeLayout) itemView.findViewById(R.id.restIncrement);
+            tvCart = (TextView) itemView.findViewById(R.id.tv_add_to_cart);
+            ivFav = (ImageView) itemView.findViewById(R.id.restFav);
+            cvAddCart.setOnClickListener(this);
+            rvInc.setOnClickListener(this);
+            rvDec.setOnClickListener(this);
+            ivFav.setOnClickListener(this);
+            cvProducts.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            int position = getAdapterPosition();
+            //Click on product
+            if (view.getId() == R.id.cvProducts) {
+                Intent intent = new Intent(c, ItemDisplayActivity.class);
+                try {
+                    intent.putExtra("Name", products.getString("ProductName"));
+                    intent.putExtra("Price", products.getString("Price"));
+       //             intent.putExtra("Features", products.getString("Features"));
+                    intent.putExtra("Image", products.getString("Image"));
+                    intent.putExtra("ID", products.getString("Id"));
+                    c.startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            //Click on add to cart
+            else if (view.getId() == R.id.cv_rest_add_cart) {
+                //Add to cart
+                Double val = Double.parseDouble(etRestQuan.getText().toString());
+                int proId = 0;
+                try {
+                    proId = Integer.parseInt(products.getString("Id"));
+                    Long mob = Long.parseLong(mobileNumber);
+                    addCartItem(mob, val, proId);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            } else if (view.getId() == R.id.restIncrement) {
+
+                if (restQuantity[position] < 10) {
+                    restQuantity[position]++;
+                    etRestQuan.setText(String.valueOf(restQuantity[position]));
+                }
+
+            } else if (view.getId() == R.id.restDecrement) {
+
+                if (restQuantity[position] > 1) {
+                    restQuantity[position]--;
+                    etRestQuan.setText(String.valueOf(restQuantity[position]));
+                }
+            } else if (view.getId() == R.id.restFav) {
+                //Add to favorites
+                try {
+                    productFav(Integer.valueOf(products.getString("Id")), "1");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+
+        private void productFav(Integer productID, final String option) {
+            //option is 0 or 1 -
+            //1 for adding , 0 for removing
+
+            String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/favs/" + mobileNumber + "/" + option + "/";
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("LastItem", productID);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.PATCH, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if (option.equals("1")) {
+                        Picasso.with(c).load(R.drawable.fav_filled_48).into(ivFav);
+                        Toast.makeText(c, "Added to favorites", Toast.LENGTH_SHORT).show();
+                    } else {
+                    }
+
+                }
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(c, "Network error", Toast.LENGTH_SHORT).show();
+                }
+            }));
+        }
+
+
+        void addCartItem(Long mobile, Double val, int productID) {
+
+            CartItemPost item = new CartItemPost(mobile, val, productID, null);
+
+
+            Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item);
+            call.enqueue(new Callback<CartItemPost>() {
+                @Override
+                public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
+                    tvCart.setText("Added to cart");
+
+                    Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                            .getUserCartItems(mobileNumber);
+                    callItems.enqueue(new Callback<List<CartItem>>() {
+                        @Override
+                        public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                            List<CartItem> items = response.body();
+                            Log.d("items", String.valueOf(items));
+
+                            if (items != null && items.size() > 0) {
+                                //Accesss views?
+                                Log.d("itemcount", String.valueOf(items.size()));
+
+                                //                            cartItems.setVisibility(View.VISIBLE);
+                                itemCount.setText(String.valueOf(items.size()));
+                                notifyDataSetChanged();
+
+                            } else {
+
+                                //                         cartItems.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+                        }
+                    });
+
+
+//                    SharedPreferences sharedPreferences = c.getSharedPreferences("Login", Context.MODE_PRIVATE);
+//                    final String mobileNumber = sharedPreferences.getString("MobileNumber", null);
+//
+//
+//                    Call<List<CartItem>> calls = client.getUserCartItems(mobileNumber);
+//
+//                    calls.enqueue(new Callback<List<CartItem>>() {
+//                                     @Override
+//                                     public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+//
+//                                         items = response.body();
+//                                         //Log.d("items", String.valueOf(items));
+//
+//                                         if (items != null && items.size() > 0) {
+//                                             itemCount.setText(String.valueOf(items.size()));
+//                                             notifyDataSetChanged();
+//
+//                                         } else {
+//                                         }
+//
+//                                     }
+//
+//                                     @Override
+//                                     public void onFailure(Call<List<CartItem>> call, Throwable t) {
+//
+//                                     }
+//
+//                                 }
+//                    );
+//
+//
+
+                }
+                @Override
+                public void onFailure(Call<CartItemPost> call, Throwable t) {
+                    Toast.makeText(c, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                }
+
+
+            });
+        }
+    }
+
+
+}

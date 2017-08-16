@@ -23,7 +23,12 @@ android {
     }
 }
 repositories {
-    maven { url "https://raw.github.com/PayU/paytouch-android/mvn-repo/" }
+    maven { url "https://raw.github.com/PayU/paytouch-android/mvn-repo/"
+        }
+
+    maven { url "https://jitpack.io"
+    }
+
     mavenCentral()
 }
 
@@ -59,6 +64,7 @@ dependencies {
     compile 'com.github.alamkanak:android-week-view:1.2.6'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'com.github.kanytu:android-parallax-recyclerview:v1.7'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.akexorcist:googledirectionlibrary:1.0.5'

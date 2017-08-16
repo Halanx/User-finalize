@@ -4,36 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/stores"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffff"
-        android:visibility="visible"
-        tools:context="com.halanx.userapp.Activities.StoresActivity">
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/search"
-            android:layout_width="match_parent"
-
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:cardCornerRadius="20dp">
-
-            <android.support.v7.widget.SearchView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#f1f1f1"
-                android:focusableInTouchMode="true">
-
-            </android.support.v7.widget.SearchView>
-        </android.support.v7.widget.CardView>
-
-
-    </RelativeLayout>
-
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -58,26 +28,25 @@
                 android:id="@+id/cv_search"
                 app:cardCornerRadius="20dp">
 
-                <android.support.v7.widget.SearchView
+                <SearchView
                     android:id="@+id/sv_products"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="#f2f2f2"
                     android:focusableInTouchMode="true"
                     app:floatingSearch_searchHint="Search..."
-                    app:floatingSearch_close_search_on_keyboard_dismiss="true">
+                    app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
 
-                </android.support.v7.widget.SearchView>
+
             </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_suggestions_data"
+            <ListView
+                android:id="@+id/listview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cv_search"
-                android:visibility="gone">
+                android:visibility="gone"/>
 
-            </android.support.v7.widget.RecyclerView>
+
         </RelativeLayout>
 
 

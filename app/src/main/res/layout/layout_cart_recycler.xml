@@ -81,13 +81,79 @@
                             android:layout_marginEnd="30dp"
                             android:layout_marginStart="20dp"
                             android:entries="@array/Quantity"
-                            android:padding="5dp" />
+                            android:padding="5dp"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="10dp"
+                            android:visibility="gone"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/new_shape"
+                                    android:padding="10dp" />
+
+                                <TextView
+                                    android:id="@+id/decrement"
+                                    android:textColor="#fafafa"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:text="-"
+                                    android:textSize="25dp" />
+
+
+                            </RelativeLayout>
+
+
+                            <EditText
+                                android:id="@+id/quantity"
+                                android:layout_width="75dp"
+                                android:layout_height="wrap_content"
+                                android:editable="false"
+                                android:gravity="center_horizontal"
+                                android:hint="Quantity"
+
+                                android:text="1" />
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/new_shape"
+                                    android:padding="10dp" />
+
+
+                                <TextView
+                                    android:id="@+id/increment"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="#fafafa"
+                                    android:layout_centerInParent="true"
+                                    android:text="+"
+                                    android:textSize="25dp" />
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
 
                         <ImageButton
                             android:id="@+id/bt_product_delete"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:background="@drawable/trash"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="10dp"
 
                             />
 

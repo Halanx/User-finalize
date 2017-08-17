@@ -39,6 +39,11 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
     List<CartItem> listItems = new ArrayList<>();
     Context c;
     TextView totalitems, subtotal, delivery;
+    int i;
+    String val;
+
+    double quantity;
+    int quantityInt;
 
 
     public CartsAdapter(List<CartItem> listItems, Context cont) {
@@ -56,9 +61,11 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
     public void onBindViewHolder(final TempViewHolder holder, int position) {
 
 
-        double quantity = listItems.get(position).getQuantity();
-        int quantityInt = ((int) quantity) - 1;
-        holder.spinnerQuantity.setSelection(quantityInt);
+        quantity = listItems.get(position).getQuantity();
+        quantityInt = ((int) quantity) ;
+        i = quantityInt;
+
+        holder.etQuantity.setText(String.valueOf(quantityInt));
 
         String im = listItems.get(position).getItem().getProductImage();
         if(im!=null){
@@ -87,6 +94,8 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         TextView cartPrice, cartName;
         Spinner spinnerQuantity;
         EditText cartNotes;
+        EditText etQuantity;
+        TextView plus, minus;
 
         ImageButton btnDelete, btNotesProceed;
         Context c;
@@ -104,9 +113,18 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
             spinnerQuantity = (Spinner) itemView.findViewById(R.id.sp_product_quantity);
             cartNotes = (EditText) itemView.findViewById(R.id.et_product_notes);
             btNotesProceed = (ImageButton) itemView.findViewById(R.id.bt_product_notes_proceed);
+            etQuantity = (EditText) itemView.findViewById(R.id.quantity);
+            plus = (TextView) itemView.findViewById(R.id.increment);
+            minus = (TextView) itemView.findViewById(R.id.decrement);
+
+            plus.setOnClickListener(this);
+            minus.setOnClickListener(this);
+
+
 
             c = cont;
             holderCartItemList = cartItems;
+
 
 
             btnDelete.setOnClickListener(this);
@@ -154,7 +172,77 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         public void onClick(View view) {
             final int pos = getAdapterPosition();
             String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/items/" + holderCartItemList.get(pos).getId();
+
             switch (view.getId()) {
+
+                case R.id.increment:
+
+                     if (i < 10) {
+                        final int position = getAdapterPosition();
+                        String ur = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/items/" + holderCartItemList.get(position).getId();
+                        JSONObject obj = new JSONObject();
+
+                        try {
+                            obj.put("Quantity", i + 1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+//                    Toast.makeText(c,holderCartItemList.get(pos).getId()+ " Item "+i, Toast.LENGTH_SHORT).show();
+
+                        Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.PATCH, ur, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                                i++;
+                                val = Integer.toString(i);
+                                etQuantity.setText(val);
+                                int position = getAdapterPosition();
+                                Log.i("Cart", "Quantity changed of item " + holderCartItemList.get(position).getId());
+
+                            }
+                        }, new com.android.volley.Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }));
+                    }
+                    break;
+
+                case R.id.decrement:
+                    if (i != 0) {
+                        i--;
+                        val = Integer.toString(i);
+                        etQuantity.setText(val);
+                        notifyDataSetChanged();
+                        final int position = getAdapterPosition();
+                        String ur = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/items/" + holderCartItemList.get(position).getId();
+                        JSONObject obj = new JSONObject();
+
+                        try {
+                            obj.put("Quantity", i + 1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+//                    Toast.makeText(c,holderCartItemList.get(pos).getId()+ " Item "+i, Toast.LENGTH_SHORT).show();
+
+                        Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.PATCH, ur, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                int position = getAdapterPosition();
+                                Log.i("Cart", "Quantity changed of item " + holderCartItemList.get(position).getId());
+
+                            }
+                        }, new com.android.volley.Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }));
+                    }
+
+                    break;
+
                 case R.id.bt_product_delete:
                     JSONObject obj = new JSONObject();
                     try {

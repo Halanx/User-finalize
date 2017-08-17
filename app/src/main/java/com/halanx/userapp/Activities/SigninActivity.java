@@ -63,7 +63,7 @@ public class SigninActivity extends AppCompatActivity {
     String mobile;
     String password;
     AccessToken accessToken;
-    AlertDialog dial1 , dial2;
+    AlertDialog dial1 , dial2, dial3;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,6 +93,13 @@ public class SigninActivity extends AppCompatActivity {
             dial1.show();
         }
 
+//        int PERMISSION_ALL = 1;
+//        String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS,Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_NETWORK_STATE};
+//
+//        if(!hasPermissions(this, PERMISSIONS)){
+//            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+//        }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -109,6 +116,31 @@ public class SigninActivity extends AppCompatActivity {
                             }
                         }).create();
                 dial2.show();
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        }
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_NETWORK_STATE)) {
+                dial3 = new AlertDialog.Builder(this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(SigninActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        }).create();
+                dial3.show();
 
             } else {
                 ActivityCompat.requestPermissions(this,

@@ -92,6 +92,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
         btnDelivery = (Button) findViewById(R.id.details);
 
+
         btnCheckout = (Button) findViewById(R.id.checkout);
         orderslayout = (LinearLayout) findViewById(R.id.orders);
         detailslayout = (LinearLayout) findViewById(R.id.detail);

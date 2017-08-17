@@ -1,12 +1,16 @@
 package com.halanx.userapp.Activities;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -546,6 +551,51 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
 //                        Toast.makeText(PaymentActivity.this, "Order Placed", Toast.LENGTH_SHORT).show();
+
+
+                            Intent resultIntenta = new Intent(PaymentActivity.this, HomeActivity.class);
+
+                            resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            PendingIntent piResulta = PendingIntent.getActivity(getApplicationContext(),
+                                    (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+
+
+// Assign big picture notification
+
+                        NotificationCompat.Builder builder =
+                                (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
+                                        .setSmallIcon(R.drawable.logochange)
+                                        .setContentTitle("Halanx")
+                                        .setContentText("Thank You. You successfully paid Rs. " + total +" for your order to Halanx")
+                                        .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
+                                        .setContentIntent(piResulta)
+                                        .setOngoing(true)
+                                        .setAutoCancel(true);
+//set intents and pending intents to call activity on click of "show activity" action button of notification
+
+// Gets an instance of the NotificationManager service
+                        NotificationManager notificationManager =(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+//to post your notification to the notification bar
+                        notificationManager.notify(0, builder.build());
+
+
+
+//                Intent resultIntent = new Intent(getApplicationContext(), HomeActivity.class);
+//                resultIntent.putExtra("message", message);
+//
+//                // check for image attachment
+//                if (TextUtils.isEmpty("data")) {
+//                    showNotificationMessage(getApplicationContext(), title, message, resultIntent);
+//                } else {
+//                    // image is present, show notification with image
+//                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, resultIntent);
+//                }
+
+
+
+
 
                         pd.setTitle("Order placed!");
                         pd.setMessage("You can review your order in orders.");

@@ -156,14 +156,12 @@ RegisterActivity extends AppCompatActivity {
 
 
                 }
-
-
                 //  CHECKING ALL EDIT TEXT FIELDS
                 if (TextUtils.isEmpty(email)) {
                     btnVerify.setVisibility(View.VISIBLE);
                     progressRegister.setVisibility(View.GONE);
 
-                    Toast.makeText(getApplicationContext(), "Enter mobile address!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Enter Email address!", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (!emailValidator(email)) {
                     btnVerify.setVisibility(View.VISIBLE);

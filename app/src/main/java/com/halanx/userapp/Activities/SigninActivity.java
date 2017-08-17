@@ -150,21 +150,29 @@ public class SigninActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                btnLogin.setVisibility(View.GONE);
                 mobile = inputMobile.getText().toString().trim();
                 password = inputPassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(mobile)) {
                     Toast.makeText(getApplicationContext(), "Enter mobile address", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    btnLogin.setVisibility(View.VISIBLE);
+
+
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter password", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    btnLogin.setVisibility(View.VISIBLE);
+
                     return;
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
-                btnLogin.setVisibility(View.GONE);
+
 
                 Retrofit.Builder builder = new Retrofit.Builder().baseUrl(phpBaseUrl)
                         .addConverterFactory(GsonConverterFactory.create());

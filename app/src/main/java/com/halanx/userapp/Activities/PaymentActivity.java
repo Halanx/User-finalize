@@ -130,12 +130,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 Log.d("longitude", "" + longitude);
 
                 if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
-
                     order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude);
                     Log.d("done", "done");
                 } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                    String current_time =new SimpleDateFormat("HH:mm:ss").format(new Date());
+                    String current_time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+                    Log.d("time",current_time);
 
                     order = new OrderInfo(userMobile, addressDetails, date, current_time, null, true, null, latitude, longitude);
                 }

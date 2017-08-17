@@ -11,15 +11,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.Activities.HomeActivity;
+import com.halanx.userapp.Adapters.StoreSearchAdapter;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.StoreInfo;
 import com.halanx.userapp.R;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +51,18 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
 public class StoresFragment extends Fragment {
 
     ProgressBar pbFood,pbGrocery;
-    TextView itemCount;
+    TextView itemCount,grocery_text;
     Context c;
-    CardView food_layout;
+    CardView food_layout,grocery_layout;
+    SearchView svstore;
+
+    ListView list;
+    MainFragment.ListViewAdapter searchadapter;
+    StoreSearchAdapter sadapter;
+    List<String> suggestions = new ArrayList<>();
+    JSONObject json;
+    JSONArray array;
+    String mob;
 
     public StoresFragment() {
         // Required empty public constructor
@@ -58,6 +80,164 @@ public class StoresFragment extends Fragment {
         pbFood = (ProgressBar) v.findViewById(R.id.pb_food);
         pbGrocery = (ProgressBar) v.findViewById(R.id.pb_grocery);
         food_layout = (CardView) v.findViewById(R.id.food_layout);
+        
+        svstore = (SearchView) v.findViewById(R.id.storesearch);
+
+        grocery_text = (TextView) v.findViewById(R.id.grocery_text);
+        list = (ListView) v.findViewById(R.id.listview);
+
+
+
+        svstore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                svstore.setIconified(false);
+            }
+        });
+//        final EditText searchPlate = (EditText) svstore.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+//        searchPlate.setHint("Search Products");
+//        View searchPlateView = svstore.findViewById(android.support.v7.appcompat.R.id.search_plate);
+
+//        searchPlateView.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+        svstore.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+                if (b) {
+                    if (list.getVisibility() == View.GONE) {
+                        list.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    list.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mob = getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null);
+        svstore.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                suggestions.clear();
+
+                String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com:9200/store/_search?q=StoreName:" + newText + "*";
+                Log.i("Search", url);
+                Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        list.setVisibility(View.VISIBLE);
+                        Log.i("Search", s);
+                        json = null;
+                        try {
+                            json = new JSONObject(s);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+
+                            array = json.getJSONObject("hits").getJSONArray("hits");
+                            for (int i = 0; i < array.length(); i++) {
+                                String proName = array.getJSONObject(i).getJSONObject("_source").getString("StoreName");
+                                suggestions.add(proName);
+                            }
+
+                            Log.d("storenamedsta", String.valueOf(suggestions));
+
+                            grocery_text.setVisibility(View.GONE);
+                            food_layout.setVisibility(View.GONE);
+                            //  ListAdapter
+                            searchadapter = new MainFragment.ListViewAdapter(getActivity().getApplicationContext(), suggestions);
+                            // Binds the Adapter to the ListView
+                            list.setAdapter(searchadapter);
+
+                            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Log.d("selected_position", String.valueOf(i));
+                                    list.setVisibility(View.GONE);
+                                    try {
+                                        array = json.getJSONObject("hits").getJSONArray("hits");
+                                        JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
+                                        sadapter = new StoreSearchAdapter(jsonObject,getActivity());
+
+
+                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                            rvList[1].setLayoutManager(layoutManager);
+
+                                        rvList[1].setAdapter(sadapter);
+                                        rvList[1].setHasFixedSize(true);
+
+
+
+
+//
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+//
+
+
+                                }
+                            });
+
+
+
+
+                            // Recycler Adapter
+//                            adapterTemp = new SuggestionAdapter(suggestions, getActivity().getApplicationContext(), svstore,json);
+//                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+//                            suggestion_data.setAdapter(adapterTemp);
+//                            suggestion_data.setLayoutManager(layoutManager);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.i("Search", volleyError.toString());
+                    }
+                })).setRetryPolicy(new RetryPolicy() {
+                    @Override
+                    public int getCurrentTimeout() {
+                        return 0;
+                    }
+
+                    @Override
+                    public int getCurrentRetryCount() {
+                        return 0;
+                    }
+
+                    @Override
+                    public void retry(VolleyError volleyError) throws VolleyError {
+
+                    }
+                });
+                Log.i("Search", suggestions.toString());
+
+
+                return false;
+            }
+        });
+
+
+
+
 
         HomeActivity.backPress = 1;
 
@@ -140,8 +320,9 @@ public class StoresFragment extends Fragment {
 
         public class StoresViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-            ImageView ivLogo;
-            TextView tvName, tvAddress;
+            public ImageView ivLogo;
+            public TextView tvName;
+            public TextView tvAddress;
 
             public StoresViewHolder(View itemView) {
                 super(itemView);

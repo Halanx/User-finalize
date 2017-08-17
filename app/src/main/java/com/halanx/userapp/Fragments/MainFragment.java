@@ -94,6 +94,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         mob = getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null);
@@ -145,6 +146,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             public boolean onQueryTextChange(String newText) {
                 suggestions.clear();
 
+                list.setVisibility(View.VISIBLE);
                 String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com:9200/product/_search?q=ProductName:" + newText + "*";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
@@ -166,6 +168,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                 suggestions.add(proName);
                             }
 
+                            Log.d("suggestions", String.valueOf(suggestions));
 
                             //  ListAdapter
                             searchadapter = new ListViewAdapter(getActivity().getApplicationContext(), suggestions);
@@ -175,19 +178,19 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Log.d("selected_position", String.valueOf(i));
+                                    Log.d("selected_position", suggestions.get(i));
                                     list.setVisibility(View.GONE);
                                     try {
                                         array = json.getJSONObject("hits").getJSONArray("hits");
                                         JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
-                                        Log.d("category", String.valueOf(HomeActivity.storeCat));
+                                        Log.d("category", String.valueOf(jsonObject));
                                         sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
 
 
-                                            if (HomeActivity.storeCat.equals("Food")) {
+                                            if (jsonObject.getString("StoreId").equals("62")) {
                                                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                                                 recyclerView.setLayoutManager(layoutManager);
-                                            } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                            } else {
                                                 GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
                                                 recyclerView.setLayoutManager(layoutManager);
                                             }
@@ -257,7 +260,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         brandName = (TextView) view.findViewById(R.id.brandName);
         brandLogo = (ImageView) view.findViewById(R.id.logo);
         List<String> suggestions = new ArrayList<>();
-        stores = (RelativeLayout) view.findViewById(R.id.stores);
         main = (LinearLayout) view.findViewById(R.id.main);
         HomeActivity.backPress = 0;
 
@@ -507,7 +509,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 //   }
 
 
-    public class ListViewAdapter extends BaseAdapter {
+    public static class ListViewAdapter extends BaseAdapter {
 
         // Declare Variables
 

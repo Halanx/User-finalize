@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.halanx.userapp.Activities.HomeActivity;
 import com.halanx.userapp.Activities.ItemDisplayActivity;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.CartItem;
@@ -44,33 +45,33 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
 
 public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder> {
 
-    JSONObject products;
+    JSONObject products,specific_detail;
     private static int restQuantity[];
     private Context c;
-    private String storeCategory;
     public String mobileNumber;
-    List<CartItem> items;
-    DataInterface client;
-    TextView itemCount;
+    Boolean already= false;
 
-    public ProductSearchAdapter(JSONObject products, Context c, String storeCat, String mobileNumber, TextView itemCount) {
+    TextView itemCount;
+    String data;
+
+    public ProductSearchAdapter(JSONObject products, Context c, String storeCat, String mobileNumber, TextView itemCount) throws JSONException {
         this.products = products;
         Log.d("jsonobject", String.valueOf(products));
         this.c = c;
-        storeCategory = storeCat;
-        Log.d("jsonobject", storeCategory);
 
         this.mobileNumber = mobileNumber;
         this.itemCount = itemCount;
         Log.d("textvie", (String) itemCount.getText());
-//        restQuantity = new int[products.size()];
-//        for (int i = 0; i < products.size(); i++) {
-//            restQuantity[i] = 1;
-//        }
+        restQuantity = new int[products.getInt("ProductSize")];
+        for (int i = 0; i < products.getInt("ProductSize"); i++) {
+            restQuantity[i] = 1;
+        }
     }
 
     @Override
     public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_recycler, parent, false);
         ProductViewHolder holder = new ProductViewHolder(view, products, c,itemCount);
@@ -79,43 +80,73 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
     }
 
     @Override
-    public void onBindViewHolder(ProductViewHolder holder, int position) {
+    public void onBindViewHolder(final ProductViewHolder holder, int position) {
 
-        if (storeCategory.equals("Grocery")) {
-            holder.cvProducts.setVisibility(View.VISIBLE);
-            holder.cvRest.setVisibility(View.GONE);
-            try {
-                Picasso.with(c).load(products.getString("Image")).into(holder.productImage);
-                holder.productName.setText(products.getString("ProductName"));
-//                if (products.getString("Features") != null) {
-//                    holder.description.setVisibility(View.VISIBLE);
-//                    holder.description.setText(products.getString("Features"));
-//                }
-                holder.productPrice.setText("₹ " + String.valueOf(products.get("Price")));
+        try {
+            if (products.getString("StoreId").equals("1")) {
+                holder.cvProducts.setVisibility(View.VISIBLE);
+                holder.cvRest.setVisibility(View.GONE);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+                String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/products/" + products.getString("Id");
+                JSONObject obj = new JSONObject();
+
+                Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.GET, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        specific_detail = response;
+                        Log.d("specific detail", String.valueOf(specific_detail));
+                        try {
+                            data = specific_detail.getString("ProductImage");
+                            Picasso.with(c).load(data).into(holder.productImage);
+
+                            Log.d("data",data);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }));
+
+
+                try {
+                    holder.productName.setText(products.getString("ProductName"));
+                    if (products.getString("Features") != null) {
+                        holder.description.setVisibility(View.VISIBLE);
+                        holder.description.setText(products.getString("Features"));
+                    }
+                    holder.productPrice.setText("₹ " + String.valueOf(products.get("Price")));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+
+            else {
+                Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
+
+                holder.cvProducts.setVisibility(View.GONE);
+                holder.cvRest.setVisibility(View.VISIBLE);
+                try {
+                    if(products.get("Features")!=null){
+                        holder.description.setVisibility(View.VISIBLE);
+                        holder.description.setText(products.getString("Features"));
+
+                    }
+                    holder.tvRestName.setText(products.getString("ProductName"));
+                    holder.tvRestPrice.setText("₹ " + String.valueOf(products.getString("Price")));
+                   holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+              }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        else if (storeCategory.equals("Food")) {
-            Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
-            holder.cvProducts.setVisibility(View.GONE);
-            holder.cvRest.setVisibility(View.VISIBLE);
-            try {
-//                if(products.get("Feature")!=null){
-//                    holder.description.setVisibility(View.VISIBLE);
-//                    holder.description.setText(products.getString("Features"));
-//
-//                }
-                holder.tvRestName.setText(products.getString("ProductName"));
-                holder.tvRestPrice.setText("₹ " + String.valueOf(products.getString("Price")));
-            //    holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-          }
 
 
     }
@@ -181,11 +212,13 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
             if (view.getId() == R.id.cvProducts) {
                 Intent intent = new Intent(c, ItemDisplayActivity.class);
                 try {
+
+                    Log.d(("item_data"), String.valueOf(products));
                     intent.putExtra("Name", products.getString("ProductName"));
-                    intent.putExtra("Price", products.getString("Price"));
-       //             intent.putExtra("Features", products.getString("Features"));
-                    intent.putExtra("Image", products.getString("Image"));
-                    intent.putExtra("ID", products.getString("Id"));
+                    intent.putExtra("Price", products.getDouble("Price"));
+                   intent.putExtra("Features", products.getString("Features"));
+                    intent.putExtra("Image", data);
+                    intent.putExtra("ID", products.getInt("Id"));
                     c.startActivity(intent);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -272,6 +305,10 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                 @Override
                 public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
                     tvCart.setText("Added to cart");
+                    if (!already) {
+
+
+
 
                     Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
                             .getUserCartItems(mobileNumber);
@@ -281,17 +318,20 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                             List<CartItem> items = response.body();
                             Log.d("items", String.valueOf(items));
 
+                            already = true;
                             if (items != null && items.size() > 0) {
                                 //Accesss views?
                                 Log.d("itemcount", String.valueOf(items.size()));
 
-                                //                            cartItems.setVisibility(View.VISIBLE);
+
+                                HomeActivity.cartItems.setVisibility(View.VISIBLE);
                                 itemCount.setText(String.valueOf(items.size()));
                                 notifyDataSetChanged();
 
+
                             } else {
 
-                                //                         cartItems.setVisibility(View.GONE);
+                                HomeActivity.cartItems.setVisibility(View.GONE);
                             }
                         }
 
@@ -300,6 +340,10 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
 
                         }
                     });
+                    } else {
+                        Toast.makeText(c, "Already added to cart", Toast.LENGTH_SHORT).show();
+                    }
+
 
 
 //                    SharedPreferences sharedPreferences = c.getSharedPreferences("Login", Context.MODE_PRIVATE);

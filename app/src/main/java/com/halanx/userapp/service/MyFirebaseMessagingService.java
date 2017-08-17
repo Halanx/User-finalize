@@ -139,7 +139,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                                 .setSmallIcon(R.drawable.logochange)
                                 .setContentTitle("Halanx")
-                                .setContentText("Hey Buddy " + message)
+                                .setContentText(" " + message)
                                 .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
                                 .setContentIntent(piResulta)
                                 .setVibrate(pattern)

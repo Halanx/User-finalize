@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.OrderInfo;
 import com.halanx.userapp.R;
@@ -133,16 +135,17 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
                 Log.d("latitudea", "" + latitude);
                 Log.d("longitude", "" + longitude);
+                String trans_id = null;
 
                 if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
-                    order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude);
+                    order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id);
                     Log.d("done", "done");
                 } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                     String current_time = new SimpleDateFormat("HH:mm:ss").format(new Date());
                     Log.d("time",current_time);
 
-                    order = new OrderInfo(userMobile, addressDetails, date, current_time, null, true, null, latitude, longitude);
+                    order = new OrderInfo(userMobile, addressDetails, date, current_time, null, true, null, latitude, longitude, trans_id);
                 }
 
 
@@ -516,6 +519,20 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //                                dialog.dismiss();
 //                            }
 //                        }).show();
+
+                String id = data.getStringExtra("payu_response");
+
+                JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
+                Log.d("json_data", String.valueOf(obj));
+
+                String trans_id = String.valueOf(obj.get("txnid"));
+
+                //id -
+                //txnid -
+
+
+
+
                 SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
                 long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
 
@@ -527,13 +544,13 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                 if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
 
-                    order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude);
+                    order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude,trans_id);
                     Log.d("done", "done");
                 } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                     String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
-                    order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude);
+                    order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude, trans_id);
                 }
 
 
@@ -569,7 +586,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                                         .setContentText("Thank You. You successfully paid Rs. " + total +" for your order to Halanx")
                                         .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
                                         .setContentIntent(piResulta)
-                                        .setOngoing(true)
                                         .setAutoCancel(true);
 //set intents and pending intents to call activity on click of "show activity" action button of notification
 

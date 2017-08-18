@@ -28,8 +28,15 @@ import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.R;
 import com.halanx.userapp.app.Config;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,20 +44,27 @@ import java.util.List;
 public class SplashActivity extends AppCompatActivity {
 
 
-    String Imei = null;
-    String locale = null;
-    String regId = null;
-    String latitude = null;
-    String longitude = null;
-    String ip = null;
-    String macAddress = null;
-    String network_type = null;
-    String androidOS = null;
-    String phone_make = null;
-    String phone_model = null;
-    String sdkVersion = null;
-    String ram =null;
-    String   storage_space  = null;
+    String Imei = "null";
+    String locale = "null";
+    String regId = "null";
+    String latitude = "null";
+    String longitude = "null";
+    String ip = "null";
+    String macAddress = "null";
+    String network_type = "null";
+    String androidOS = "null";
+    String phone_make = "null";
+    String phone_model = "null";
+    String sdkVersion = "null";
+    String ram ="null";
+    String   storage_space  = "null";
+    List<String> accounts = new ArrayList<>();
+    String installed_apps = "null";
+    String mcc2 = "null";
+    String mcc = "null";
+    String mnc = "null";
+    String mnc2 = "null";
+    String processor_vendor = "null";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +102,7 @@ public class SplashActivity extends AppCompatActivity {
 
         try {
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            String Imei = telephonyManager.getDeviceId();
+            Imei = telephonyManager.getDeviceId();
             Log.d("phone_data", Imei);
         }
         catch (Exception e){
@@ -96,7 +110,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         try {
-            String locale = getApplicationContext().getResources().getConfiguration().locale.getCountry();
+            locale = getApplicationContext().getResources().getConfiguration().locale.getCountry();
             Log.d("phone_data", locale);
 
         }
@@ -105,7 +119,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 try{
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-         String regId = pref.getString("regId", null);
+         regId = pref.getString("regId", "null");
         Log.d("phone_data", regId);
     }
         catch (Exception e){
@@ -116,7 +130,7 @@ try{
     try
     {
     Location location = null;
-        String latitude = String.valueOf(location.getLatitude());
+       latitude = String.valueOf(location.getLatitude());
         Log.d("phone_data", latitude);
     }
         catch (Exception e){
@@ -124,7 +138,7 @@ try{
     }
 try{
     Location location = new Location(String.valueOf(this));
-        String longitude = String.valueOf(location.getLongitude());
+        longitude = String.valueOf(location.getLongitude());
         Log.d("phone_data", longitude);
 
     }
@@ -134,7 +148,7 @@ try{
 
 
       try{  @SuppressLint("WifiManagerLeak") WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
         Log.d("phone_data", ip);
       }
       catch (Exception e){
@@ -145,7 +159,7 @@ try{
     @SuppressLint("WifiManagerLeak") WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
 
     WifiInfo wInfo = wm.getConnectionInfo();
-        String macAddress = wInfo.getMacAddress();
+        macAddress = wInfo.getMacAddress();
         Log.d("phone_data", macAddress);
 }
 catch (Exception e){
@@ -154,7 +168,7 @@ catch (Exception e){
 
 
 try{
-        String network_type = getNetworkClass(getApplicationContext());
+        network_type = getNetworkClass(getApplicationContext());
         Log.d("phone_data", network_type);
 
 }
@@ -162,7 +176,7 @@ catch (Exception e){
 
 }
 try{
-        String androidOS = Build.VERSION.RELEASE;
+        androidOS = Build.VERSION.RELEASE;
         Log.d("phone_data", androidOS);
 
 }
@@ -170,14 +184,14 @@ catch (Exception e){
 
 }
 try{
-        String phone_make = Build.BRAND;
+        phone_make = Build.BRAND;
         Log.d("phone_data", phone_make);
 }
 catch (Exception e){
 
 }
 try{
-        String phone_model = Build.MODEL;
+        phone_model = Build.MODEL;
 
         Log.d("phone_data", phone_model);
 }
@@ -186,7 +200,7 @@ catch (Exception e){
 }
 try{
 
-        String sdkVersion = String.valueOf(Build.VERSION.SDK_INT);
+        sdkVersion = String.valueOf(Build.VERSION.SDK_INT);
         Log.d("phone_data", sdkVersion);
 
 }
@@ -199,7 +213,7 @@ try{
         ActivityManager actManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
         actManager.getMemoryInfo(memInfo);
-        String ram = String.valueOf(memInfo.totalMem);
+        ram = String.valueOf(memInfo.totalMem);
         Log.d("phone_data", ram);
 
 }
@@ -207,7 +221,7 @@ catch (Exception e){
 
 }
 try{
-    List<String> accounts = new ArrayList<>();
+
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] social_id = manager.getAccounts();
         for (int i=0;i<social_id.length;i++){
@@ -222,7 +236,7 @@ catch (Exception e){
 
 try{
         StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-        String   storage_space  = String.valueOf((statFs.getBlockCount() * statFs.getBlockSize()));
+        storage_space  = String.valueOf((statFs.getBlockCount() * statFs.getBlockSize()));
         Log.d("phone_data", storage_space);
 }
 catch (Exception e){
@@ -232,7 +246,7 @@ catch (Exception e){
 
 try{
 
-    String installed_apps = getInstalledAppList();
+    installed_apps = getInstalledAppList();
     Log.d("phone_data", installed_apps);
 
 }
@@ -241,7 +255,7 @@ catch (Exception e){
 }
 
 try{
-    String mcc =getMCC();
+    mcc =getMCC();
     Log.d("phone_data", mcc);
 
 }
@@ -251,7 +265,7 @@ catch(Exception e){
 
         try{
 
-            String mcc2 = getMCC2();
+            mcc2 = getMCC2();
             Log.d("phone_data", mcc2);
 
         }
@@ -260,7 +274,7 @@ catch(Exception e){
 
         try{
 
-            String mnc = getMNC();
+            mnc = getMNC();
             Log.d("phone_data", mnc);
 
         }
@@ -269,7 +283,7 @@ catch(Exception e){
 
         try{
 
-            String mnc2 = getMNC2();
+            mnc2 = getMNC2();
             Log.d("phone_data", mnc2);
 
         }
@@ -277,10 +291,53 @@ catch(Exception e){
         }
 
 
+        try {
 
+            JSONObject jsonObject = new JSONObject();
 
+            jsonObject.put("apps_installed","dasd");
+            jsonObject.put("country_code", "da");
+            jsonObject.put("gcm_id", "dasda");
+            jsonObject.put("gps_latitude", "das");
+            jsonObject.put("gps_longitude", "sdas");
+            jsonObject.put("imei_id", "Sdas");
+            jsonObject.put("ip_address", "uty");
+            jsonObject.put("mac_id", "yut");
+            jsonObject.put("mcc_code_1", "yut");
+            jsonObject.put("mcc_code_2", "Tyu");
+            jsonObject.put("mnc_code_1", "tyut");
+            jsonObject.put("mnc_code_2", "tyuty");
+            jsonObject.put("network_type", "tyut");
+            jsonObject.put("os_version", "ytutu");
+            jsonObject.put("phone_make", "tyuty");
+            jsonObject.put("phone_model", "yutyu");
+            jsonObject.put("phone_os", "tyuty");
+            jsonObject.put("processor_vendor", "tyut");
+            jsonObject.put("ram", "utu");
+            jsonObject.put("social_id", "tyutyu");
+            jsonObject.put("storage_space", "utyu");
 
+            Log.d("jsonobject", String.valueOf(jsonObject));
 
+             String url = "http://ec2-54-215-199-153.us-west-1.compute.amazonaws.com:8080/addPhoneData";
+            JSONArray  jsonArray = new JSONArray();
+
+            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url,jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Log.d("resp", String.valueOf(response));
+                }
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("volleyerror", String.valueOf(error));
+                }
+            }));
+        }
+        catch (Exception e){
+            Log.d("exception", String.valueOf(e));
+        }
 
     }
 
@@ -322,7 +379,6 @@ catch(Exception e){
     }
     public String getMNC(){
 
-        String mnc = "";
 
         TelephonyManager tel = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         String networkOperator = tel.getNetworkOperator();
@@ -335,7 +391,6 @@ catch(Exception e){
 
     public String getMCC(){
 
-        String mcc = "";
 
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
@@ -353,7 +408,6 @@ catch(Exception e){
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     public String getMNC2(){
 
-        String mnc = "";
 
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
@@ -373,8 +427,6 @@ catch(Exception e){
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     public String getMCC2(){
-
-        String mcc = "";
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {

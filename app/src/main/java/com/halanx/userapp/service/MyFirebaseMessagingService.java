@@ -90,6 +90,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void handleDataMessage(JSONObject json) {
         Log.e(TAG, "push json: " + json.toString());
+        String notification_mssg = null;
 
         try {
             String message = json.getString("type").trim();
@@ -116,6 +117,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 intent.addCategory(Intent.CATEGORY_HOME);
 
                 if(message.equals("BatchAccepted")) {
+
+                    notification_mssg = "Your order on the way";
                     Intent resultIntenta = new Intent(this, OrdersActivity.class);
 
                     resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -125,6 +128,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
                 else {
 
+                    notification_mssg  = "Your order is delivered. Please rate us for improvement of our service.";
                     Intent resultIntenta = new Intent(this, RatingActivity.class);
 
                     resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -139,7 +143,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                                 .setSmallIcon(R.drawable.logochange)
                                 .setContentTitle("Halanx")
-                                .setContentText(" " + message)
+                                .setContentText(notification_mssg)
                                 .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
                                 .setContentIntent(piResulta)
                                 .setVibrate(pattern)

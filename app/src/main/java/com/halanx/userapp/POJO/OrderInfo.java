@@ -54,6 +54,9 @@ public class OrderInfo {
     @SerializedName("DeliveryDate")
     @Expose
     private String deliveryDate;
+    @SerializedName("TransactionID")
+    @Expose
+    private String transactionId;
     @SerializedName("StartTime")
     @Expose
     private String startTime;
@@ -70,7 +73,7 @@ public class OrderInfo {
     @Expose
     private boolean isASAP;
 
-    public OrderInfo(long customerPhoneNo, String deliveryAddress, String deliveryDate, String startTime, String endTime, Boolean isASAP, String notes, float lat, float lon) {
+    public OrderInfo(long customerPhoneNo, String deliveryAddress, String deliveryDate, String startTime, String endTime, Boolean isASAP, String notes, float lat, float lon, String trans_id) {
         this.customerPhoneNo = customerPhoneNo;
         this.deliveryAddress = deliveryAddress;
         this.deliveryDate = deliveryDate;
@@ -80,6 +83,7 @@ public class OrderInfo {
         this.isASAP = isASAP;
         latitude = lat;
         longitude = lon;
+        transactionId = trans_id;
     }
 
     public Double getSubTotal() {
@@ -197,6 +201,14 @@ public class OrderInfo {
 
     public void setDeliveryDate(String deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public String getStartTime() {

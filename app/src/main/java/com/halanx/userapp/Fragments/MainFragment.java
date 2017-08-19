@@ -1,6 +1,5 @@
 package com.halanx.userapp.Fragments;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -12,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -381,10 +382,28 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                             new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                     recyclerView.setLayoutParams(lp);
 //                    brand_name.setVisibility(View.GONE);
-                    brand_name.setVisibility(View.GONE);
-                    ObjectAnimator anim = ObjectAnimator.ofFloat(brand_name, "alpha", 1f, 0f);
-                    anim.setDuration(1000);
-                    anim.start();
+                    TranslateAnimation collapseAnim = new TranslateAnimation(0.0f, 0.0f, 0.0f, -brand_name.getHeight());
+                    collapseAnim.setAnimationListener(new Animation.AnimationListener() {
+
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            brand_name.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+
+                    collapseAnim.setDuration(20);
+                    //Starts Animation
+                    brand_name.startAnimation(collapseAnim);
                     // Scrolling up
                 } else {
 

@@ -211,7 +211,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     private void setupViewPagerAdapter(final PayuResponse payuResponse, PayuResponse valueAddedResponse) {
 
         if (payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR) { // ok we are good to go
-         //   Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+            //   Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
 
             if (payuResponse.isStoredCardsAvailable()) {
                 paymentOptionsList.add(SdkUIConstants.SAVED_CARDS);
@@ -333,7 +333,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
                 if(mPostData != null){}
-             //   Toast.makeText(this, mPostData.getResult(), Toast.LENGTH_LONG).show();
+                //   Toast.makeText(this, mPostData.getResult(), Toast.LENGTH_LONG).show();
 
             }
         }
@@ -391,10 +391,10 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         spinnerNetbanking = (Spinner) findViewById(R.id.spinner);
         ArrayList<PaymentDetails> netBankingList = null;
         if(mPayuResponse!=null)
-        netBankingList = mPayuResponse.getNetBanks();
+            netBankingList = mPayuResponse.getNetBanks();
 
         if(netBankingList!=null && netBankingList.get(spinnerNetbanking.getSelectedItemPosition()) !=null)
-        bankCode = netBankingList.get(spinnerNetbanking.getSelectedItemPosition()).getBankCode();
+            bankCode = netBankingList.get(spinnerNetbanking.getSelectedItemPosition()).getBankCode();
 
         mPaymentParams.setBankCode(bankCode);
 

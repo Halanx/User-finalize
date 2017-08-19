@@ -42,6 +42,7 @@
             android:textColor="#302F2F"
             android:textSize="15sp"
             android:text="Txnid"
+            android:visibility="gone"
             android:layout_below="@id/textview_amount"
             android:gravity="center"/>
         </LinearLayout>
@@ -66,6 +67,7 @@
         <Button
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
+            android:layout_margin="10dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="#ffffff"
@@ -73,8 +75,8 @@
             android:textStyle="bold"
             android:text="PAY NOW"
             android:id="@+id/button_pay_now"
-            android:enabled="false"
-            android:background="#b9b9b9"/>
+            android:enabled="true"
+            android:background="#be2d2d"/>
 
     </RelativeLayout>
 

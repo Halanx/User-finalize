@@ -26,7 +26,7 @@
         android:icon="@drawable/icon"
         android:label="Halanx"
         android:supportsRtl="true"
-
+        android:name="android.support.multidex.MultiDexApplication"
         android:theme="@style/Theme.AppCompat.Light"
         tools:replace="android:icon,android:label,android:theme">
 

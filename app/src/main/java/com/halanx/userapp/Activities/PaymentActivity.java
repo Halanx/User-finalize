@@ -16,10 +16,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.OrderInfo;
+import com.halanx.userapp.POJO.UserInfo;
 import com.halanx.userapp.R;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
@@ -190,10 +192,13 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     }
     public void navigateToBaseActivity() {
 
+        String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
+        UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
+
 
         merchantKey =  "f1tDUh";
         int environment = PayuConstants.PRODUCTION_ENV;
-        String email = "samarth-gupta@halanx.com";
+        String email = user.getEmailId();
         String amount = total;
 
 //        merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
@@ -219,7 +224,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         mPaymentParams.setKey(merchantKey);
         mPaymentParams.setAmount(amount);
         mPaymentParams.setProductInfo("product_info");
-        mPaymentParams.setFirstName("firstname");
+        mPaymentParams.setFirstName(user.getFirstName());
         mPaymentParams.setEmail(email);
 
         /*

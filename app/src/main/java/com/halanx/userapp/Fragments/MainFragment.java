@@ -1,5 +1,6 @@
 package com.halanx.userapp.Fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -78,6 +79,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     ListView list;
     ListViewAdapter searchadapter;
     ProductSearchAdapter sadapter;
+    RelativeLayout brand_name;
 
 
 
@@ -102,8 +104,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         pbProducts = (ProgressBar) view.findViewById(R.id.pb_products);
         storeSpinner = (Spinner) view.findViewById(R.id.store_spinner);
         categorySpinner = (Spinner) view.findViewById(R.id.for_spinner);
-
+        brand_name = (RelativeLayout) view.findViewById(R.id.brand_name);
         list = (ListView) view.findViewById(R.id.listview);
+
 
         svProducts = (SearchView) view.findViewById(R.id.sv_products);
 
@@ -357,6 +360,43 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         });
 
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d("scroll_state", String.valueOf((newState)));
+            }
+        });
+
+
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    Log.d("scroll_value", String.valueOf(dy));
+                    RelativeLayout.LayoutParams lp =
+                            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                    recyclerView.setLayoutParams(lp);
+//                    brand_name.setVisibility(View.GONE);
+                    brand_name.setVisibility(View.GONE);
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(brand_name, "alpha", 1f, 0f);
+                    anim.setDuration(1000);
+                    anim.start();
+                    // Scrolling up
+                } else {
+
+                    Log.d("scroll_value", String.valueOf(dy));
+
+                    // Scrolling down
+                }
+            }
+
+        });
+
+
         return view;
 
     }
@@ -564,5 +604,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
         }
     }
+
 
 }

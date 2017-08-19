@@ -35,7 +35,6 @@ import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.R;
 import com.halanx.userapp.app.Config;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    data();
+              //      data();
                 }
                 startActivity(new Intent(SplashActivity.this,SigninActivity.class));
                 finish();
@@ -295,37 +294,35 @@ catch(Exception e){
 
             JSONObject jsonObject = new JSONObject();
 
-            jsonObject.put("apps_installed","dasd");
-            jsonObject.put("country_code", "da");
-            jsonObject.put("gcm_id", "dasda");
-            jsonObject.put("gps_latitude", "das");
-            jsonObject.put("gps_longitude", "sdas");
-            jsonObject.put("imei_id", "Sdas");
-            jsonObject.put("ip_address", "uty");
-            jsonObject.put("mac_id", "yut");
-            jsonObject.put("mcc_code_1", "yut");
-            jsonObject.put("mcc_code_2", "Tyu");
-            jsonObject.put("mnc_code_1", "tyut");
-            jsonObject.put("mnc_code_2", "tyuty");
-            jsonObject.put("network_type", "tyut");
-            jsonObject.put("os_version", "ytutu");
-            jsonObject.put("phone_make", "tyuty");
-            jsonObject.put("phone_model", "yutyu");
-            jsonObject.put("phone_os", "tyuty");
-            jsonObject.put("processor_vendor", "tyut");
-            jsonObject.put("ram", "utu");
-            jsonObject.put("social_id", "tyutyu");
-            jsonObject.put("storage_space", "utyu");
+            jsonObject.put("apps_installed","apps");
+            jsonObject.put("country_code", locale);
+            jsonObject.put("gcm_id", regId);
+            jsonObject.put("gps_latitude", latitude);
+            jsonObject.put("gps_longitude", longitude);
+            jsonObject.put("imei_id",Imei);
+            jsonObject.put("ip_address", ip);
+            jsonObject.put("mac_id", macAddress);
+            jsonObject.put("mcc_code_1", mcc);
+            jsonObject.put("mcc_code_2", mcc2);
+            jsonObject.put("mnc_code_1", mnc);
+            jsonObject.put("mnc_code_2", mnc2);
+            jsonObject.put("network_type", network_type);
+            jsonObject.put("os_version",androidOS );
+            jsonObject.put("phone_make", phone_make);
+            jsonObject.put("phone_model", phone_model);
+            jsonObject.put("phone_os", sdkVersion);
+            jsonObject.put("processor_vendor", processor_vendor);
+            jsonObject.put("ram", ram);
+            jsonObject.put("social_id", accounts);
+            jsonObject.put("storage_space", storage_space);
 
             Log.d("jsonobject", String.valueOf(jsonObject));
 
              String url = "http://ec2-54-215-199-153.us-west-1.compute.amazonaws.com:8080/addPhoneData";
-            JSONArray  jsonArray = new JSONArray();
 
-            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url,jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url,jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-
                     Log.d("resp", String.valueOf(response));
                 }
             }, new com.android.volley.Response.ErrorListener() {

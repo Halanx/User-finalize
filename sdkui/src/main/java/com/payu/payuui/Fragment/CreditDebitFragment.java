@@ -432,12 +432,12 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                 cvv = charSequence.toString();
                 if (payuUtils.validateCvv(cardNumberEditText.getText().toString().replace(" ",""), cvv)) {
                     if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                    cvvImage.setAlpha((float)1);
+                        cvvImage.setAlpha((float)1);
                     isCvvValid = true;
                     uiValidation();
                 } else{
                     if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                    cvvImage.setAlpha((float)0.5);
+                        cvvImage.setAlpha((float)0.5);
                     isCvvValid = false;
                     uiValidation();
                 }
@@ -530,7 +530,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         else if(payuUtils.validateCardNumber(cardNumberEditText.getText().toString().replace(" ", "")) && cardNumberEditText.length() > 0){
             isCardNumberValid = true;
             if(mPaymentParams.getOfferKey() != null && null != mPaymentParams.getUserCredentials())
-            getOfferStatus();
+                getOfferStatus();
 //            uiValidation();
         }else{
             isCardNumberValid = false;
@@ -583,7 +583,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         }
         else {
             if(viewpager.getCurrentItem() == fragmentPosition)
-            getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
+                getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
         }
 
     }

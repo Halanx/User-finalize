@@ -15,7 +15,8 @@
         android:background="#f9f9f9"
         android:orientation="vertical"
         android:padding="8dp"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:layout_alignParentLeft="true">
 
 
         <RelativeLayout
@@ -106,9 +107,17 @@
         </LinearLayout>
 
 
-        <RelativeLayout
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="78dp"
+            android:id="@+id/brand_name"
+                    android:animateLayoutChanges="true"
             android:layout_marginTop="5dp">
 
             <ImageView
@@ -130,8 +139,6 @@
                 android:textSize="16dp" />
 
         </RelativeLayout>
-
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -157,6 +164,9 @@
                 android:layout_centerVertical="true" />
 
         </RelativeLayout>
+            </LinearLayout>
+
+
 
     </LinearLayout>
 </RelativeLayout>

@@ -23,10 +23,12 @@ android {
     }
 }
 repositories {
-    maven { url "https://raw.github.com/PayU/paytouch-android/mvn-repo/"
-        }
+    maven {
+        url "https://raw.github.com/PayU/paytouch-android/mvn-repo/"
+    }
 
-    maven { url "https://jitpack.io"
+    maven {
+        url "https://jitpack.io"
     }
 
     mavenCentral()
@@ -45,10 +47,10 @@ dependencies {
 
     //    compile 'com.payu.custombrowser:payu-custom-browser:6.1.1'
     compile project(':sdkui')
+    //  compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'devs.mulham.horizontalcalendar:horizontalcalendar:1.1.7'
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'
-//  compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.facebook.android:facebook-android-sdk: 4.14.0'
     compile 'com.katepratik.msg91-android-sdk:library:0.1'
     compile 'com.android.support:multidex:1.0.1'

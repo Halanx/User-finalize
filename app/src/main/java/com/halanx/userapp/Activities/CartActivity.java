@@ -63,14 +63,13 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     DataInterface client;
 
     List<CartItem> activeItems;
-    AlertDialog.Builder AlertBuilder;
+    AlertDialog.Builder alertBuilder;
     boolean delivery = false;
     String taxes;
     String date, timings;
     String total,subtotal;
     TextView tax;
 
-    String mobileNumber;
     String addressDetails;
     EditText line1, line2, line3;
 
@@ -173,11 +172,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     progressBar.setVisibility(View.INVISIBLE);
 
 
-                    AlertBuilder = new AlertDialog.Builder(CartActivity.this);
-                    AlertBuilder.setMessage("You have no items in your carts!");
-                    AlertBuilder.setCancelable(false);
+                    alertBuilder = new AlertDialog.Builder(CartActivity.this);
+                    alertBuilder.setMessage("You have no items in your carts!");
+                    alertBuilder.setCancelable(false);
 
-                    AlertBuilder.setPositiveButton(
+                    alertBuilder.setPositiveButton(
                             "Go back",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -186,7 +185,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             });
 
 
-                    AlertDialog alert = AlertBuilder.create();
+                    AlertDialog alert = alertBuilder.create();
                     alert.show();
 
                 }
@@ -220,6 +219,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
 
     @Override
     public void onClick(View view) {

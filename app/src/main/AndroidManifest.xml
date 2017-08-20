@@ -44,16 +44,16 @@
         <activity
             android:name=".Activities.SigninActivity"
             android:label="Sign In"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.ItemDisplayActivity"
@@ -78,12 +78,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SplashActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:screenOrientation="portrait" >
-
-
-
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
         <activity
             android:name=".Activities.OrdersActivity"
             android:label="Orders"
@@ -149,9 +145,8 @@
         </service>
         <!-- ./Firebase Notifications -->
 
-        <activity android:name=".Activities.SubscriptionActivity">
-
-        </activity>
+        <activity android:name=".Activities.SubscriptionActivity"></activity>
+        <activity android:name=".Activities.Subcription_drawer_activity"></activity>
     </application>
 
 </manifest><!--

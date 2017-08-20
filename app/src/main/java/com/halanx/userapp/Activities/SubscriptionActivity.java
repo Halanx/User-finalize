@@ -203,36 +203,27 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
                 Button proceed = (Button) dialog.findViewById(R.id.btProceed_dialogue);
                 Button cancel = (Button) dialog.findViewById(R.id.btCancel_dialogue);
-
                 proceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-
+                        dialog.dismiss();
                     }
                 });
-
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
                     }
                 });
-
-
                 dialog.show();
-
 
                 break;
 
             case R.id.recharge:
                 final Dialog dialog1 = new Dialog(SubscriptionActivity.this);
                 dialog1.setContentView(R.layout.recharge_dialog_box);
-
-
                 Button contin = (Button) dialog1.findViewById(R.id.btProceed_dialogue);
                 Button dismiss = (Button) dialog1.findViewById(R.id.btCancel_dialogue);
-
                 contin.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -278,7 +269,9 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             Button pay = (Button) dialog2.findViewById(R.id.btProceed_dialogue);
             Button exit = (Button) dialog2.findViewById(R.id.btCancel_dialogue);
+            EditText amount = (EditText) dialog2.findViewById(R.id.et1_dialogue);
 
+            
             pay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -302,26 +295,15 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
             break;
         case R.id.details: {
             Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
-            Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+    //        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
 
                 detailslayout.startAnimation(slideUp);
                 detailslayout.setVisibility(View.VISIBLE);
                 orderslayout.setVisibility(View.GONE);
-
                 details.setVisibility(View.GONE);
                 confirm_detail.setVisibility(View.VISIBLE);
-
-
-
-
-
-
             break;
-
-
         }
-
-
 
         case R.id.confirm_details:
 

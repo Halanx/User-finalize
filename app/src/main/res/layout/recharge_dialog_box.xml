@@ -14,38 +14,47 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:gravity="center"
         />
-    <android.support.v7.widget.AppCompatRadioButton
+    
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RadioButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
+        android:id="@+id/time3"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:text="3 Times"/>
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <RadioButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
+        android:id="@+id/time7"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:text="7 Times"/>
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <RadioButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
+        android:id="@+id/time15"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:text="15 Times"/>
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <RadioButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
+        android:id="@+id/time30"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:text="30 Times"/>
 
+    </RadioGroup>
 
     <LinearLayout
         android:layout_width="match_parent"

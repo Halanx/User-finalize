@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -201,6 +202,20 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 dialog.setContentView(R.layout.repat_dialog_box);
 
 
+                RadioButton daily,monday,tuesday,wednesday,thursday,friday,saturday,sunday;
+
+                daily = (RadioButton) dialog.findViewById(R.id.daily);
+                monday = (RadioButton) dialog.findViewById(R.id.monday);
+                tuesday = (RadioButton) dialog.findViewById(R.id.tuesday);
+                wednesday = (RadioButton) dialog.findViewById(R.id.webview);
+                thursday = (RadioButton) dialog.findViewById(R.id.thursday);
+                friday = (RadioButton) dialog.findViewById(R.id.friday);
+                saturday = (RadioButton) dialog.findViewById(R.id.saturday);
+                sunday = (RadioButton) dialog.findViewById(R.id.sunday);
+
+
+
+
                 Button proceed = (Button) dialog.findViewById(R.id.btProceed_dialogue);
                 Button cancel = (Button) dialog.findViewById(R.id.btCancel_dialogue);
                 proceed.setOnClickListener(new View.OnClickListener() {
@@ -220,8 +235,22 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case R.id.recharge:
+
+
+                RadioButton three,seven,fifteen,thirty;
+
+
+
+
                 final Dialog dialog1 = new Dialog(SubscriptionActivity.this);
                 dialog1.setContentView(R.layout.recharge_dialog_box);
+
+
+
+                three = (RadioButton) dialog1.findViewById(R.id.time3);
+                three = (RadioButton) dialog1.findViewById(R.id.time7);
+                three = (RadioButton) dialog1.findViewById(R.id.time15);
+                three = (RadioButton) dialog1.findViewById(R.id.time30);
                 Button contin = (Button) dialog1.findViewById(R.id.btProceed_dialogue);
                 Button dismiss = (Button) dialog1.findViewById(R.id.btCancel_dialogue);
                 contin.setOnClickListener(new View.OnClickListener() {

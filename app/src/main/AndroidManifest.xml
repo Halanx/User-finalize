@@ -39,8 +39,8 @@
         <activity
             android:name=".Activities.RegisterActivity"
             android:label="Register"
-            android:parentActivityName=".Activities.SigninActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".Activities.SigninActivity"/>
         <activity
             android:name=".Activities.SigninActivity"
             android:label="Sign In"

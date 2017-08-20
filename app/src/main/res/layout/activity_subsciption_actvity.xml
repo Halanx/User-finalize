@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.halanx.userapp.Activities.SubscriptionActivity">
 
     <LinearLayout
+        android:id="@+id/orders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        android:id="@+id/orders"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
 
         <TextView
@@ -64,8 +64,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/card"
-        android:visibility="gone"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:visibility="visible">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="5dp"
-                android:background="#d1d1d1"
+                android:background="#ffffff"
                 android:orientation="vertical">
 
 
@@ -95,9 +95,9 @@
                         android:padding="10sp">
 
                         <LinearLayout
+                            android:id="@+id/start_date_selection"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/start_date_selection"
                             android:orientation="vertical">
 
                             <TextView
@@ -138,9 +138,9 @@
                         android:padding="10sp">
 
                         <LinearLayout
+                            android:id="@+id/recharge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/recharge"
                             android:orientation="vertical">
 
                             <TextView
@@ -181,9 +181,9 @@
                         android:padding="10sp">
 
                         <LinearLayout
+                            android:id="@+id/repeat"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/repeat"
                             android:orientation="vertical">
 
                             <TextView
@@ -208,9 +208,6 @@
 
 
                 </android.support.v7.widget.CardView>
-
-
-
 
 
                 <android.support.v7.widget.CardView
@@ -248,13 +245,13 @@
                             android:layout_margin="5dp" />
 
                         <TextView
+                            android:id="@+id/bt_address_locate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
                             android:layout_marginLeft="30dp"
                             android:layout_marginRight="30dp"
                             android:layout_marginTop="5dp"
-                            android:id="@+id/bt_address_locate"
                             android:gravity="center"
                             android:text="Change Delivery Location"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
@@ -276,8 +273,8 @@
         android:id="@+id/detail_confirm"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_above="@+id/card">
+        android:layout_above="@+id/card"
+        android:visibility="gone">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -314,8 +311,6 @@
                             android:gravity="center"
                             android:text="Order details"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
-
-
 
 
                         <View
@@ -441,6 +436,7 @@
         </ScrollView>
 
     </LinearLayout>
+
     <android.support.v7.widget.CardView
         android:id="@+id/card"
         android:layout_width="match_parent"
@@ -457,6 +453,7 @@
             android:layout_alignParentBottom="true"
             android:background="#b6413f"
             android:text="Continue"
+            android:layout_marginBottom="5sp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="#ffffff"
 
@@ -469,6 +466,7 @@
             android:layout_height="45dp"
             android:layout_alignParentBottom="true"
             android:background="#b6413f"
+            android:layout_marginBottom="5sp"
             android:text="Confirm Your details"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="#ffffff"
@@ -481,6 +479,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5sp"
             android:background="#b6413f"
             android:text="Checkout"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"

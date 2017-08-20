@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Ammount "
+        android:text="Add Amount "
         android:textStyle="italic|bold"
         android:layout_margin="10dp"
         android:id="@+id/tv_dialgue"
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/et1_dialogue"
-        android:hint="Ammount"/>
+        android:hint="Amount"/>
 
     <LinearLayout
         android:layout_width="match_parent"

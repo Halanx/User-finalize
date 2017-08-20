@@ -307,6 +307,11 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(HomeActivity.this, HelpActivity.class));
 
         }
+        else if (id == R.id.subscription) {
+
+            startActivity(new Intent(HomeActivity.this, SubscriptionActivity.class));
+
+        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

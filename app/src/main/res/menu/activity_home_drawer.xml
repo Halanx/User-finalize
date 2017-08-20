@@ -25,6 +25,11 @@
             android:title="Favourites" />
 
         <item
+            android:id="@+id/subscription"
+            android:icon="@drawable/fav_48"
+            android:title="Subscription" />
+
+        <item
             android:id="@+id/nav_pts"
             android:icon="@drawable/coins_filled_50"
             android:title="Points" />

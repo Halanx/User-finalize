@@ -48,7 +48,13 @@
         <activity
             android:name=".Activities.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity
             android:name=".Activities.ItemDisplayActivity"
             android:screenOrientation="portrait" />
@@ -144,11 +150,7 @@
         <!-- ./Firebase Notifications -->
 
         <activity android:name=".Activities.SubscriptionActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -202,9 +200,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                             recyclerView.setAdapter(sadapter);
                                             recyclerView.setHasFixedSize(true);
 
-
-
-
 //
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -371,49 +366,46 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
 
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) {
-                    Log.d("scroll_value", String.valueOf(dy));
-                    RelativeLayout.LayoutParams lp =
-                            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                    recyclerView.setLayoutParams(lp);
-//                    brand_name.setVisibility(View.GONE);
-                    TranslateAnimation collapseAnim = new TranslateAnimation(0.0f, 0.0f, 0.0f, -brand_name.getHeight());
-                    collapseAnim.setAnimationListener(new Animation.AnimationListener() {
-
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            brand_name.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-
-                    collapseAnim.setDuration(20);
-                    //Starts Animation
-                    brand_name.startAnimation(collapseAnim);
-                    // Scrolling up
-                } else {
-
-                    Log.d("scroll_value", String.valueOf(dy));
-
-                    // Scrolling down
-                }
-            }
-
-        });
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (dy > 0) {
+//                    Log.d("scroll_value", String.valueOf(dy));
+////               brand_name.setVisibility(View.GONE);
+//                    TranslateAnimation collapseAnim = new TranslateAnimation(0.0f, 0.0f, 0.0f, -brand_name.getHeight());
+//                    collapseAnim.setAnimationListener(new Animation.AnimationListener() {
+//
+//                        @Override
+//                        public void onAnimationStart(Animation animation) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onAnimationEnd(Animation animation) {
+//                            brand_name.setVisibility(View.GONE);
+//                        }
+//
+//                        @Override
+//                        public void onAnimationRepeat(Animation animation) {
+//
+//                        }
+//                    });
+//
+//                    collapseAnim.setDuration(20);
+//                    //Starts Animation
+//                    brand_name.startAnimation(collapseAnim);
+//                    // Scrolling up
+//                } else {
+//
+//                    Log.d("scroll_value", String.valueOf(dy));
+//
+//                    // Scrolling down
+//                }
+//            }
+//
+//        });
 
 
         return view;

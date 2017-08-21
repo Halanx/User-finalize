@@ -85,6 +85,9 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
     LinearLayout orderslayout, detailslayout, final_detail;
 
+    float latitude; // LATITUDE
+    float longitude; // LONGITUDE
+
     static Integer quantityList[];
     static List<Boolean> isItemChecked;
     RadioButton daily, monday, tuesday, wednesday, thursday, friday, saturday, sunday;
@@ -138,8 +141,10 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
 
         SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
-        float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
-        float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
+
+        latitude = sharedPref.getFloat("latitudeDelivery", 0);
+
+        longitude = sharedPref.getFloat("longitudeDelivery", 0);
         if (latitude != 0 && longitude != 0) {
 
 
@@ -631,7 +636,6 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 final Dialog dialog2 = new Dialog(SubscriptionActivity.this);
                 dialog2.setContentView(R.layout.add_ammount_dialog_box);
 
-
                 Button pay = (Button) dialog2.findViewById(R.id.btProceed_dialogue);
                 Button exit = (Button) dialog2.findViewById(R.id.btCancel_dialogue);
                 EditText amount = (EditText) dialog2.findViewById(R.id.et1_dialogue);
@@ -655,6 +659,22 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                         dialog2.dismiss();
                     }
                 });
+
+                subscriptionInfo.setSubscriber(Long.parseLong(mobile));
+                subscriptionInfo.setLatitude(latitude+0.0);
+                subscriptionInfo.setLongitude(longitude+0.0);
+
+                //Post each item selected
+                for(int i =0;i<activeItems.size();i++){
+
+                    if(isItemChecked.get(i)){
+
+                        //Send position of item checked
+                        postSubscription(i);
+                    }
+                }
+
+
 
                 break;
             case R.id.details: {
@@ -804,6 +824,28 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             }
         }
+
+    }
+
+    void postSubscription(Integer productIndex){
+
+        subscriptionInfo.setItem(activeItems.get(productIndex).getItem().getId());
+        subscriptionInfo.setQuantityPerDay(quantityList[productIndex]+0.0);
+
+        Call<SubscriptionInfo> subscriptionInfoCall = new Retrofit.Builder().baseUrl(djangoBaseUrl).
+                addConverterFactory(GsonConverterFactory.create()).build().create(DataInterface.class).
+                postSubscription(subscriptionInfo);
+        subscriptionInfoCall.enqueue(new Callback<SubscriptionInfo>() {
+            @Override
+            public void onResponse(Call<SubscriptionInfo> call, Response<SubscriptionInfo> response) {
+                Log.i("Subs","Subscription posted");
+            }
+
+            @Override
+            public void onFailure(Call<SubscriptionInfo> call, Throwable t) {
+
+            }
+        });
 
     }
 

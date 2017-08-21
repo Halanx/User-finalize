@@ -60,6 +60,8 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     TextView tvSubtotal, tvTotal, tvDelivery, tax;
     Button details, confirm_detail, checkout;
 
+    String date,timings,delivery_scheduled;
+
     Retrofit.Builder builder;
     Retrofit retrofit;
     DataInterface client;
@@ -211,6 +213,24 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
 
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+
+                date = data.getStringExtra("date");
+                timings = data.getStringExtra("time_selected");
+
+                Log.d("timingsdata", String.valueOf(date));
+                Log.d("datedata", String.valueOf(timings));
+
+            }
+        }
+
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -784,6 +804,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             }
         }
+
     }
 
 }

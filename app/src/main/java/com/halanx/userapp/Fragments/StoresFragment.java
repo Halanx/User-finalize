@@ -143,7 +143,7 @@ public class StoresFragment extends Fragment {
                         }
 
                         try {
-
+                            suggestions.clear();
                             array = json.getJSONObject("hits").getJSONArray("hits");
                             for (int i = 0; i < array.length(); i++) {
                                 String proName = array.getJSONObject(i).getJSONObject("_source").getString("StoreName");

@@ -150,6 +150,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                 list.setVisibility(View.VISIBLE);
                 list.setAdapter(null);
+                suggestions.clear();
 
                 String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com:9200/product/_search?q=ProductName:" + newText + "*";
                 Log.i("Search", url);
@@ -166,6 +167,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                         try {
 
+                            suggestions.clear();
                             array = json.getJSONObject("hits").getJSONArray("hits");
                             for (int i = 0; i < array.length(); i++) {
                                 String proName = array.getJSONObject(i).getJSONObject("_source").getString("ProductName");
@@ -174,7 +176,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                             Log.d("suggestions", String.valueOf(suggestions));
 
+                            list.setAdapter(null);
+                            list.clearChoices();
                             //  ListAdapter
+                            list.clearTextFilter();
                             searchadapter = new ListViewAdapter(getActivity().getApplicationContext(), suggestions);
                             // Binds the Adapter to the ListView
                             list.setAdapter(searchadapter);
@@ -183,6 +188,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     Log.d("selected_position", suggestions.get(i));
+
                                     list.setVisibility(View.GONE);
                                     try {
                                         array = json.getJSONObject("hits").getJSONArray("hits");

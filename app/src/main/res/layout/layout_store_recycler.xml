@@ -34,12 +34,14 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:text="Store name"
                 android:textColor="#000000"
+                android:typeface="sans"
                 android:id="@+id/tv_store_name"
                 android:layout_margin="5dp"
                 android:lines="1"
                 android:gravity="center"
                 android:layout_weight="0.5"/>
             <TextView
+                android:typeface="sans"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_store_address"

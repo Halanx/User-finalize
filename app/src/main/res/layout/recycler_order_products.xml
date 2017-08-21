@@ -9,6 +9,7 @@
         android:id="@+id/tv_product_orders"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
+        android:typeface="sans"
         android:textSize="20sp"
         android:text="Sam"/>
 

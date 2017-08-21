@@ -10,6 +10,7 @@
         android:text="Recharge Details"
         android:textStyle="italic|bold"
         android:layout_margin="10dp"
+        android:typeface="sans"
         android:id="@+id/tv_dialgue"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:gravity="center"
@@ -17,7 +18,9 @@
     
     <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/rg_recharge">
+
     <RadioButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

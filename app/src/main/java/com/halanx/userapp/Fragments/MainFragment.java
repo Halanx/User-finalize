@@ -149,6 +149,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 suggestions.clear();
 
                 list.setVisibility(View.VISIBLE);
+                list.setAdapter(null);
+
                 String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com:9200/product/_search?q=ProductName:" + newText + "*";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {

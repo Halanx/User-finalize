@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -47,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -93,6 +96,13 @@ public class HomeActivity extends AppCompatActivity
 
 
         barLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
+
+
+        AssetManager am = getApplicationContext().getAssets();
+
+        Typeface typeface = Typeface.createFromAsset(am, String.format(Locale.US, "fonts/%s", "Roboto-Regular.ttf"));
+
 
         cart = (ImageView) findViewById(R.id.imageButton_cart);
         locationButton = (ImageView) findViewById(R.id.imageButton_location);
@@ -299,17 +309,15 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(HomeActivity.this, ReferEarnActivity.class));
 
         } else if (id == R.id.nav_shopper) {
-
             startActivity(new Intent(HomeActivity.this, BecomeShopperActivity.class));
 
         } else if (id == R.id.nav_help) {
-
             startActivity(new Intent(HomeActivity.this, HelpActivity.class));
 
         }
         else if (id == R.id.subscription) {
 
-            startActivity(new Intent(HomeActivity.this, SubscriptionActivity.class));
+            startActivity(new Intent(HomeActivity.this, Subcription_drawer_activity.class));
 
         }
 

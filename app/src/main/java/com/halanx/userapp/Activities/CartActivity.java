@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -51,6 +52,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     Button btnCheckout, btnDelivery, btnconfirm;
     TextView tvSubtotal, tvTotal, tvDelivery;
 
+    ImageButton subscription_img;
     Button btDelAsap, btDelSchedule, btAddDetails;
     TextView btAddLocate;
     Boolean delivery_scheduled = false, delivery_address = false;
@@ -88,6 +90,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         btDelSchedule = (Button) findViewById(R.id.bt_delivery_schedule);
         btAddDetails = (Button) findViewById(R.id.bt_address_details);
         btAddLocate = (TextView) findViewById(R.id.bt_address_locate);
+        subscription_img = (ImageButton) findViewById(R.id.img_subscription);
 
         btnDelivery = (Button) findViewById(R.id.details);
 
@@ -105,6 +108,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         btAddDetails.setOnClickListener(this);
         btnCheckout.setOnClickListener(this);
         btnDelivery.setOnClickListener(this);
+        subscription_img.setOnClickListener(this);
 
 
         tvSubtotal = (TextView) findViewById(R.id.tv_cart_subtotal);
@@ -338,6 +342,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
 
             }
+
+            case R.id.img_subscription:
+                startActivity(new Intent(CartActivity.this,SubscriptionActivity.class));
+                break;
+
+
             case R.id.confirm_details:
 
                 if (!delivery) {

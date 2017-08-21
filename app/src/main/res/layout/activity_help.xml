@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:typeface="sans"
         android:gravity="center"
         android:text="Payment issues?"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
@@ -27,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:typeface="sans"
         android:gravity="center"
         android:text="Delivery Problems?"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
@@ -42,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
+        android:typeface="sans"
         android:text="Returns?"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
@@ -61,6 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:typeface="sans"
             android:autoLink="email"
             android:gravity="center"
             android:text="For any query, contact us at : support@halanx.com"
@@ -73,8 +77,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:autoLink="phone"
+            android:typeface="sans"
             android:gravity="center"
-            android:text="Call : 8506078226"
+            android:text="Call : +911127890252"
             android:textSize="18sp" />
 
 

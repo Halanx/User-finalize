@@ -117,6 +117,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 intent.addCategory(Intent.CATEGORY_HOME);
 
                 if(message.equals("BatchAccepted")) {
+                    getSharedPreferences("OrderStatus",MODE_PRIVATE).edit().putBoolean("BatchAccept",true).apply();
 
                     notification_mssg = "Your order on the way";
                     Intent resultIntenta = new Intent(this, OrdersActivity.class);
@@ -127,6 +128,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
                 }
                 else {
+
+                    getSharedPreferences("OrderStatus",MODE_PRIVATE).edit().putBoolean("BatchAccept",false).apply();
 
                     notification_mssg  = "Your order is delivered. Please rate us for improvement of our service.";
                     Intent resultIntenta = new Intent(this, RatingActivity.class);

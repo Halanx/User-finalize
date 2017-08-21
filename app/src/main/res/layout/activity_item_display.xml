@@ -39,6 +39,7 @@
                     android:layout_below="@+id/imageView"
                     android:layout_centerHorizontal="true"
                     android:layout_toLeftOf="@+id/divider"
+                    android:typeface="sans"
                     android:layout_toStartOf="@+id/divider"
                     android:paddingRight="5dp"
                     android:text="@string/item_name"
@@ -53,6 +54,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
                     android:layout_toEndOf="@+id/divider"
+                    android:typeface="sans"
                     android:layout_toRightOf="@+id/divider"
                     android:gravity="center"
                     android:paddingLeft="5dp"
@@ -83,6 +85,7 @@
                         android:textColor="#fafafa"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:typeface="sans"
                         android:layout_centerInParent="true"
                         android:text="-"
                         android:textSize="25dp" />
@@ -98,6 +101,7 @@
                     android:editable="false"
                     android:gravity="center_horizontal"
                     android:hint="Quantity"
+                    android:typeface="sans"
 
                     android:text="1" />
 
@@ -116,6 +120,7 @@
                         android:id="@+id/increment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:typeface="sans"
                         android:textColor="#fafafa"
                         android:layout_centerInParent="true"
                         android:text="+"

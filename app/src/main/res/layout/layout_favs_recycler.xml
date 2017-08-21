@@ -53,6 +53,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
+                        android:typeface="sans"
                         android:text="ITEM1"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textSize="20dp" />
@@ -62,6 +63,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
+                        android:typeface="sans"
                         android:text="Price"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textSize="20dp"

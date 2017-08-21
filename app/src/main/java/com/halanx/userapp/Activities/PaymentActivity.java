@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.OrderInfo;
+import com.halanx.userapp.POJO.SubscriptionInfo;
 import com.halanx.userapp.POJO.UserInfo;
 import com.halanx.userapp.R;
 import com.payu.india.Model.PaymentParams;
@@ -81,6 +82,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+
+        Log.i("Subs",getIntent().getStringExtra("Subscription"));
+        SubscriptionInfo info = new GsonBuilder().create().fromJson(getIntent().getStringExtra("Subscription"), SubscriptionInfo.class);
+        Log.i("Subs",info.getDeliveriesLeft()+"");
 
         Payu.setInstance(this);
 

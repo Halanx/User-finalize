@@ -19,8 +19,12 @@ public class Tracking extends AppCompatActivity {
         tick2 = (ImageView) findViewById(R.id.tick2);
         tick3 = (ImageView) findViewById(R.id.tick3);
 
-        tick2.setVisibility(View.GONE);
-        tick3.setVisibility(View.GONE);
-
+        if(getSharedPreferences("OrderStatus",MODE_PRIVATE).getBoolean("BatchAccept",true)){
+         tick2.setVisibility(View.VISIBLE);
+        }
+        else {
+            tick2.setVisibility(View.GONE);
+            tick3.setVisibility(View.GONE);
+        }
     }
 }

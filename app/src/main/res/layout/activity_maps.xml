@@ -84,6 +84,7 @@
             android:text="Confirm Location"
             android:textColor="#fafafa"
             android:id="@+id/confirmBtn"
+            android:typeface="sans"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:background="#b6413f"
 

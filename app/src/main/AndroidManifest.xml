@@ -39,8 +39,8 @@
         <activity
             android:name=".Activities.RegisterActivity"
             android:label="Register"
-            android:parentActivityName=".Activities.SigninActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".Activities.SigninActivity"/>
         <activity
             android:name=".Activities.SigninActivity"
             android:label="Sign In"
@@ -49,11 +49,7 @@
             android:name=".Activities.HomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.ItemDisplayActivity"
@@ -79,7 +75,11 @@
         <activity
             android:name=".Activities.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"><intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter></activity>
         <activity
             android:name=".Activities.OrdersActivity"
             android:label="Orders"
@@ -113,7 +113,7 @@
         <activity
             android:name=".Activities.CartActivity"
             android:label="Cart"
-            android:parentActivityName=".Activities.HomeActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SavedCardsActivity"

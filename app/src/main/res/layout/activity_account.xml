@@ -72,6 +72,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="20dp"
+                        android:typeface="sans"
                         android:layout_marginTop="10dp"
                         android:hint="First Name"
                         android:textSize="20dp" />
@@ -98,6 +99,7 @@
                     <TextView
                         android:id="@+id/tv_lastName_user_account"
                         android:layout_width="180dp"
+                        android:typeface="sans"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="105dp"
                         android:layout_marginTop="10dp"
@@ -129,6 +131,7 @@
                         android:layout_margin="10dp"
                         android:layout_marginEnd="105dp"
                         android:hint="Email ID"
+
                         android:textColorHint="#b6413f"
                         android:textSize="12dp" />
 
@@ -137,6 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
+                        android:typeface="sans"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:hint="Email"
@@ -157,6 +161,7 @@
                         android:layout_margin="10dp"
                         android:layout_marginEnd="105dp"
                         android:hint="Mobile"
+                        android:typeface="normal"
                         android:textColorHint="#b6413f"
                         android:textSize="12dp" />
 
@@ -164,6 +169,7 @@
                         android:id="@+id/tv_mobile_user_account"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:typeface="sans"
                         android:layout_marginBottom="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
@@ -198,6 +204,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_marginBottom="10dp"
+                    android:typeface="sans"
                     android:layout_marginLeft="6dp"
                     android:hint="Address"
                     android:textColor="#6e6e6e"
@@ -237,6 +244,7 @@
                         android:background="#e4e4e4"
                         android:gravity="center"
                         android:padding="8dp"
+                        android:typeface="sans"
                         android:text="Sign Out"
                         android:textSize="20dp"
                         android:textStyle="bold" />

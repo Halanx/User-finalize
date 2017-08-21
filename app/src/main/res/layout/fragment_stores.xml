@@ -14,13 +14,14 @@
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#fdfdfd"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         app:cardCornerRadius="20dp">
 
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="#fdfdfd"
             android:id="@+id/storesearch"/>
 
 
@@ -92,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5sp"
                     android:gravity="center"
+                    android:typeface="sans"
                     android:paddingStart="5sp"
                     android:text="Grocery"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
@@ -151,6 +153,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5sp"
+                    android:typeface="sans"
                     android:gravity="center"
                     android:paddingStart="5sp"
                     android:text="Food"

@@ -49,6 +49,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:typeface="sans"
                     android:gravity="center"
                     android:text="You have no completed orders!"
                     android:textSize="40sp" />

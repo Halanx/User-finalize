@@ -39,6 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
                     android:layout_weight="1"
+                    android:typeface="sans"
                     android:gravity="left"
                     android:paddingTop="5dp"
                     android:text="@string/item_name"
@@ -54,6 +55,7 @@
                 android:layout_width="374dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:typeface="sans"
                 android:text="Description"
                 android:textColor="#8c8c8c"
                 android:textSize="18sp"
@@ -85,6 +87,7 @@
                         android:layout_centerInParent="true"
                         android:text="-"
                         android:textColor="#fafafa"
+                        android:typeface="sans"
                         android:textSize="20dp" />
 
                 </RelativeLayout>
@@ -94,6 +97,7 @@
                     android:id="@+id/tv_cart_item_quantity"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:typeface="sans"
                     android:editable="false"
                     android:gravity="center_horizontal"
                     android:hint="Quantity"
@@ -107,6 +111,7 @@
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        android:typeface="sans"
                         android:background="@drawable/new_shape"
                         android:padding="10dp" />
 
@@ -115,6 +120,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
+                        android:typeface="sans"
                         android:text="+"
                         android:textColor="#fafafa"
                         android:textSize="20dp" />
@@ -123,6 +129,7 @@
                 <TextView
                     android:id="@+id/tv_cart_item_price"
                     android:layout_width="match_parent"
+                    android:typeface="sans"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
                     android:gravity="end"

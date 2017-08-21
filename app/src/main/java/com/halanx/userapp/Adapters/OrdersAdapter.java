@@ -125,6 +125,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
                     int pos = getAdapterPosition();
 //                    info.get(pos).getOrderItems()
 
+
                     c.startActivity(new Intent(c, Tracking.class));
                     Log.i("CLICK", "CLICK");
 

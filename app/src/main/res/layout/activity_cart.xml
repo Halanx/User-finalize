@@ -7,10 +7,45 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".Activities.CartActivity">
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:id="@+id/toolbar"
+            android:layout_gravity="end">
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="end"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/img_subscription"
+                        android:layout_width="30dp"
+
+                        android:layout_height="30dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/cart"
+                        android:clickable="true" />
+
+
+                </RelativeLayout>
+
+
+        </Toolbar>
+
+
+
 
 
     <LinearLayout
         android:id="@+id/orders"
+        android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible">
@@ -80,6 +115,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:gravity="center"
+                            android:typeface="sans"
                             android:text="Delivery Time"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                             android:textColor="#9f9e9e" />
@@ -138,6 +174,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:gravity="center"
+                            android:typeface="sans"
                             android:text="Address Details"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                             android:textColor="#9f9e9e" />
@@ -164,6 +201,7 @@
                             android:layout_marginTop="5dp"
                             android:id="@+id/bt_address_locate"
                             android:gravity="center"
+                            android:typeface="sans"
                             android:text="Change Delivery Location"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                             android:textStyle="bold" />
@@ -243,6 +281,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:gravity="center"
+                            android:typeface="sans"
                             android:text="Order details"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
@@ -266,6 +305,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:text="Sub-Total :"
+                                android:typeface="sans"
                                 android:textAppearance="?android:textAppearanceMedium" />
 
                             <TextView
@@ -275,6 +315,7 @@
                                 android:layout_weight="0.5"
                                 android:gravity="end"
                                 android:text="null"
+                                android:typeface="sans"
                                 android:textAppearance="?android:textAppearanceLarge" />
                         </LinearLayout>
 
@@ -293,6 +334,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Delivery  Charges : "
+                                android:typeface="sans"
 
                                 android:textAppearance="?android:textAppearanceMedium" />
 
@@ -302,6 +344,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:gravity="end"
+                                android:typeface="sans"
                                 android:text="Rs. 27.5"
                                 android:textAppearance="?android:textAppearanceLarge" />
                         </LinearLayout>
@@ -321,6 +364,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="GST : "
+                                android:typeface="sans"
 
                                 android:textAppearance="?android:textAppearanceMedium" />
 
@@ -330,6 +374,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:gravity="end"
+                                android:typeface="sans"
                                 android:text="Rs. 27.5"
                                 android:textAppearance="?android:textAppearanceLarge" />
                         </LinearLayout>
@@ -350,6 +395,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:text="Total : "
+                                android:typeface="sans"
                                 android:textAppearance="?android:textAppearanceMedium" />
 
                             <TextView
@@ -358,6 +404,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
                                 android:gravity="end"
+                                android:typeface="sans"
                                 android:text="Rs. 152.5"
                                 android:textAppearance="?android:textAppearanceLarge" />
                         </LinearLayout>

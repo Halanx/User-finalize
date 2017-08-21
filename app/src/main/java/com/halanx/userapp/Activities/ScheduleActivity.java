@@ -206,8 +206,6 @@ public class ScheduleActivity extends AppCompatActivity {
                     Intent intent = new Intent(ScheduleActivity.this, CartActivity.class);
                     intent.putExtra("date", date_selected);
                     intent.putExtra("time_selected", time_selected);
-                    Log.d("timingsdata", String.valueOf(date_selected));
-                    Log.d("datedata", String.valueOf(time_selected));
 
                     setResult(RESULT_OK, intent);
                     finish();

@@ -132,7 +132,7 @@ public class AccountActivity extends AppCompatActivity {
 
             }});
 
-        if ((getSharedPreferences("Login", Context.MODE_PRIVATE).getString("Address","null").equals("null"))){
+        if ((getSharedPreferences("Login", Context.MODE_PRIVATE).getString("Address",null).equals(null))){
 
         }
         else{
@@ -158,34 +158,7 @@ public class AccountActivity extends AppCompatActivity {
         });
 
 
-//
-//        sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-//        mobileNumber = sharedPreferences.getString("MobileNumber", null);
-//Log.i("TAG","User "+ userInfo + mobileNumber);
-//        Retrofit.Builder builder = new Retrofit.Builder().baseUrl("http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/").
-//                addConverterFactory(GsonConverterFactory.create());
-//        Retrofit retrofit = builder.build();
-//        DataInterface client = retrofit.create(DataInterface.class);
-//        Call<UserInfo> call = client.getUserData(mobileNumber);
-//        call.enqueue(new Callback<UserInfo>() {
-//            @Override
-//            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-//                user = response.body();
-//
-//                if (user.getEmailId() != null) {
-//                    tvFirstName.setText(user.getFirstName());
-//                    tvLastName.setText(user.getLastName());
-//                    tvEmail.setText(user.getEmailId());
-//                    tvMobile.setText(mobileNumber);
-//                    tvAddress.setText(user.getAddress());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<UserInfo> call, Throwable t) {
-//
-//            }
-//        });
+
 
     }
     public class RobotoTextView extends android.support.v7.widget.AppCompatTextView {

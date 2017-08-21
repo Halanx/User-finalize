@@ -113,7 +113,7 @@
         <activity
             android:name=".Activities.CartActivity"
             android:label="Cart"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SavedCardsActivity"

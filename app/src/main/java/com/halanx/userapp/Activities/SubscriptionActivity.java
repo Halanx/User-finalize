@@ -97,7 +97,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subsciption_actvity);
+        setContentView(R.layout.activity_subsciption);
 
 
         builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
@@ -664,15 +664,6 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 subscriptionInfo.setLatitude(latitude+0.0);
                 subscriptionInfo.setLongitude(longitude+0.0);
 
-                //Post each item selected
-                for(int i =0;i<activeItems.size();i++){
-
-                    if(isItemChecked.get(i)){
-
-                        //Send position of item checked
-                        postSubscription(i);
-                    }
-                }
 
 
 
@@ -685,6 +676,18 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 orderslayout.setVisibility(View.GONE);
                 details.setVisibility(View.GONE);
                 confirm_detail.setVisibility(View.VISIBLE);
+
+                //Post each item selected
+                for(int i =0;i<activeItems.size();i++){
+                    Log.i("Crap","IN");
+                    if(isItemChecked.get(i)){
+
+                        //Send position of item checked
+                        postSubscription(i);
+                    }
+                }
+
+
 
                 break;
             }
@@ -828,7 +831,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     }
 
     void postSubscription(Integer productIndex){
-
+        Log.i("Crap","IN func");
         subscriptionInfo.setItem(activeItems.get(productIndex).getItem().getId());
         subscriptionInfo.setQuantityPerDay(quantityList[productIndex]+0.0);
 
@@ -843,7 +846,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onFailure(Call<SubscriptionInfo> call, Throwable t) {
-
+                Log.i("Crap",t.toString());
             }
         });
 

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.halanx.userapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 24
         versionCode 25
         versionName "3.0.5"

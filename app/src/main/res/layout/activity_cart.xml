@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".Activities.CartActivity">
+
         <Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ffffff"
             android:id="@+id/toolbar"
+            android:visibility="gone"
             android:layout_gravity="end">
 
 
@@ -22,16 +23,27 @@
                     android:gravity="end"
                     >
 
-                    <ImageButton
-                        android:id="@+id/img_subscription"
-                        android:layout_width="30dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Subscribe"
+                        android:id="@+id/tv_subs"
+                        android:padding="5sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:gravity="center"
+                        />
 
-                        android:layout_height="30dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/cart"
-                        android:clickable="true" />
+                    <!--<ImageButton-->
+                        <!--android:id="@+id/img_subscription"-->
+                        <!--android:layout_width="30dp"-->
+                        <!--android:layout_height="30dp"-->
+                        <!--android:layout_alignParentBottom="true"-->
+                        <!--android:layout_centerHorizontal="true"-->
+                        <!--android:layout_marginBottom="5dp"-->
+                        <!--android:background="@drawable/cart"-->
+                        <!--android:clickable="true" />-->
 
 
                 </RelativeLayout>
@@ -47,6 +59,7 @@
         android:id="@+id/orders"
         android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
+        android:paddingTop="5sp"
         android:layout_height="match_parent"
         android:visibility="visible">
 

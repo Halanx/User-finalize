@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/samarthgupta/AndroidStudioProjects/User-finalize/sdkui/build/intermediates/bundles/default/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="db2fc4543eb983e516cf329e40bdc423be34af15">
+        <dex dex="/Users/samarthgupta/AndroidStudioProjects/User-finalize/app/build/intermediates/transforms/dex/debug/folders/1000/4/classes_3a7771b36662cee70ae73b42cfe77c8bb40127ff/classes.dex" />
+    </item>
+
+</items>

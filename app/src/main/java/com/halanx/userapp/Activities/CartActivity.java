@@ -11,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -52,7 +55,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     Button btnCheckout, btnDelivery, btnconfirm;
     TextView tvSubtotal, tvTotal, tvDelivery;
 
-    ImageButton subscription_img;
+    TextView tvSubscription;
     Button btDelAsap, btDelSchedule, btAddDetails;
     TextView btAddLocate;
     Boolean delivery_scheduled = false, delivery_address = false;
@@ -90,7 +93,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         btDelSchedule = (Button) findViewById(R.id.bt_delivery_schedule);
         btAddDetails = (Button) findViewById(R.id.bt_address_details);
         btAddLocate = (TextView) findViewById(R.id.bt_address_locate);
-        subscription_img = (ImageButton) findViewById(R.id.img_subscription);
+        tvSubscription = (TextView) findViewById(R.id.tv_subs);
 
         btnDelivery = (Button) findViewById(R.id.details);
 
@@ -108,7 +111,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         btAddDetails.setOnClickListener(this);
         btnCheckout.setOnClickListener(this);
         btnDelivery.setOnClickListener(this);
-        subscription_img.setOnClickListener(this);
+        tvSubscription.setOnClickListener(this);
 
 
         tvSubtotal = (TextView) findViewById(R.id.tv_cart_subtotal);
@@ -343,7 +346,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
             }
 
-            case R.id.img_subscription:
+            case R.id.tv_subs:
                 startActivity(new Intent(CartActivity.this,SubscriptionActivity.class));
                 break;
 
@@ -409,6 +412,21 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     btnCheckout.setVisibility(View.VISIBLE);
                 }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.cart_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        startActivity(new Intent(CartActivity.this,SubscriptionActivity.class));
+        return true;
     }
 }
 

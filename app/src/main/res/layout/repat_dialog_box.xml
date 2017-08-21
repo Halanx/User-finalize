@@ -14,9 +14,7 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:gravity="center"
         />
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+
     <RadioButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,7 +80,6 @@
         android:id="@+id/sunday"
         android:text="Sunday"/>
 
-    </RadioGroup>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_margin="10dp"

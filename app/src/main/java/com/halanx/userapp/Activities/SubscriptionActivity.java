@@ -59,6 +59,21 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     Retrofit.Builder builder;
     Retrofit retrofit;
     DataInterface client;
+    Boolean everyday =false;
+    Boolean mon =false;
+    Boolean tues =false;
+    Boolean wed =false;
+    Boolean thurs =false;
+    Boolean fri =false;
+    Boolean sat =false;
+    Boolean sun =false;
+
+    Boolean three = false;
+    Boolean seven = false;
+    Boolean thirteen = false;
+    Boolean fifteen  = false;
+
+
 
 
     String total,subtotal,taxes;
@@ -202,18 +217,129 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 dialog.setContentView(R.layout.repat_dialog_box);
 
 
-                RadioButton daily,monday,tuesday,wednesday,thursday,friday,saturday,sunday;
+                final RadioButton daily,monday,tuesday,wednesday,thursday,friday,saturday,sunday;
 
                 daily = (RadioButton) dialog.findViewById(R.id.daily);
                 monday = (RadioButton) dialog.findViewById(R.id.monday);
                 tuesday = (RadioButton) dialog.findViewById(R.id.tuesday);
-                wednesday = (RadioButton) dialog.findViewById(R.id.webview);
+                wednesday = (RadioButton) dialog.findViewById(R.id.wednesday);
                 thursday = (RadioButton) dialog.findViewById(R.id.thursday);
                 friday = (RadioButton) dialog.findViewById(R.id.friday);
                 saturday = (RadioButton) dialog.findViewById(R.id.saturday);
                 sunday = (RadioButton) dialog.findViewById(R.id.sunday);
 
 
+
+
+
+                daily.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            everyday = true;
+                            mon = true;
+                            tues = true;
+                            wed = true;
+                            thurs = true;
+                            fri = true;
+                            sat = true;
+
+                            sunday.setChecked(true);
+                            monday.setChecked(true);
+                            tuesday.setChecked(true);
+                            wednesday.setChecked(true);
+                            thursday.setChecked(true);
+                            friday.setChecked(true);
+                            saturday.setChecked(true);
+                            sunday.setChecked(true);
+
+                        }
+                        else{
+                            everyday = false;
+                            daily.setChecked(false);
+                        }
+                    }
+                });
+
+                sunday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            sun = true;
+                        }
+                        else{
+                            sun = false;
+                            sunday.setChecked(false);
+                        }
+                    }
+                });
+                monday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            mon = true;
+                        }
+                        else{
+                            mon = false;
+                        }
+                    }
+                });
+                tuesday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            tues = true;
+                        }
+                        else{
+
+                            tues = false;
+                        }
+                    }
+                });
+                wednesday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            wed = true;
+                        }
+                        else{
+                            wed = false;
+                        }
+                    }
+                });
+                thursday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            thurs = true;
+                        }
+                        else{
+                            thurs = false;
+                        }
+                    }
+                });
+                friday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            fri = true;
+                        }
+                        else{
+                            fri = false;
+                        }
+                    }
+                });
+                saturday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            fri = true;
+                        }
+                        else{
+                            fri = false;
+                        }
+                    }
+                });
 
 
                 Button proceed = (Button) dialog.findViewById(R.id.btProceed_dialogue);
@@ -248,14 +374,26 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
 
                 three = (RadioButton) dialog1.findViewById(R.id.time3);
-                three = (RadioButton) dialog1.findViewById(R.id.time7);
-                three = (RadioButton) dialog1.findViewById(R.id.time15);
-                three = (RadioButton) dialog1.findViewById(R.id.time30);
+                seven = (RadioButton) dialog1.findViewById(R.id.time7);
+                fifteen = (RadioButton) dialog1.findViewById(R.id.time15);
+                thirty = (RadioButton) dialog1.findViewById(R.id.time30);
+
+                three.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                    }
+                });
+
+
+
                 Button contin = (Button) dialog1.findViewById(R.id.btProceed_dialogue);
                 Button dismiss = (Button) dialog1.findViewById(R.id.btCancel_dialogue);
                 contin.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                        dialog1.dismiss();
 
 
                     }

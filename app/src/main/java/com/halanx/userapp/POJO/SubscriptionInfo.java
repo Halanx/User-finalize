@@ -13,7 +13,7 @@ public class SubscriptionInfo {
     private Integer id;
     @SerializedName("Subscriber")
     @Expose
-    private Integer subscriber;
+    private long subscriber;
     @SerializedName("QuantityPerDay")
     @Expose
     private Double quantityPerDay;
@@ -80,11 +80,11 @@ public class SubscriptionInfo {
         this.id = id;
     }
 
-    public Integer getSubscriber() {
+    public long getSubscriber() {
         return subscriber;
     }
 
-    public void setSubscriber(Integer subscriber) {
+    public void setSubscriber(long subscriber) {
         this.subscriber = subscriber;
     }
 

@@ -8,6 +8,7 @@ import com.halanx.userapp.POJO.OrderInfo;
 import com.halanx.userapp.POJO.ProductInfo;
 import com.halanx.userapp.POJO.Resp;
 import com.halanx.userapp.POJO.StoreInfo;
+import com.halanx.userapp.POJO.SubscriptionInfo;
 import com.halanx.userapp.POJO.UserInfo;
 
 import java.util.List;
@@ -80,10 +81,11 @@ public interface DataInterface {
     @GET("/stores/verified")
     Call<List<StoreInfo>> getStoreInfo();
 
-
-
     @GET("/users/{mobile}")
     Call<UserInfo> getUserInfo(@Path("mobile") String mobile);
+
+    @POST("/subscriptions/")
+    Call<SubscriptionInfo> postSubscription(@Body SubscriptionInfo info);
 
 
 

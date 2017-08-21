@@ -140,8 +140,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
                 float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
                 float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
-                Log.d("latitudea", "" + latitude);
-                Log.d("longitude", "" + longitude);
                 String trans_id = null;
 
                 if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {

@@ -230,6 +230,9 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
                 Log.d("timingsdata", String.valueOf(date));
                 Log.d("datedata", String.valueOf(timings));
+                subscriptionInfo.setStartDate(date);
+                subscriptionInfo.setStartTime(timings.substring(0,5));
+                subscriptionInfo.setEndTime(timings.substring(6,11));
 
             }
         }
@@ -289,6 +292,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                             thurs = true;
                             fri = true;
                             sat = true;
+                            sun = true;
 
                             sunday.setChecked(true);
                             monday.setChecked(true);
@@ -485,6 +489,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                         } else {
                             Toast.makeText(getApplicationContext(), "Address Details Saved", Toast.LENGTH_SHORT).show();
                             String addressDetails = line1.getText().toString() + ", " + line2.getText().toString() + ", " + line3.getText().toString();
+                            subscriptionInfo.setAddress(addressDetails);
                             Log.d("TAG", addressDetails);
                             dialog.dismiss();
                         }
@@ -663,6 +668,17 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 subscriptionInfo.setSubscriber(Long.parseLong(mobile));
                 subscriptionInfo.setLatitude(latitude+0.0);
                 subscriptionInfo.setLongitude(longitude+0.0);
+                //Post each item selected
+                for(int i =0;i<activeItems.size();i++){
+                    Log.i("Crap","IN");
+                    if(isItemChecked.get(i)){
+
+                        //Send position of item checked
+                        postSubscription(i);
+                    }
+                }
+
+
 
 
 
@@ -676,16 +692,6 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 orderslayout.setVisibility(View.GONE);
                 details.setVisibility(View.GONE);
                 confirm_detail.setVisibility(View.VISIBLE);
-
-                //Post each item selected
-                for(int i =0;i<activeItems.size();i++){
-                    Log.i("Crap","IN");
-                    if(isItemChecked.get(i)){
-
-                        //Send position of item checked
-                        postSubscription(i);
-                    }
-                }
 
 
 

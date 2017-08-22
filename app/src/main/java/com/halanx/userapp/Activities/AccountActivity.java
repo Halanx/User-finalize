@@ -60,9 +60,13 @@ public class AccountActivity extends AppCompatActivity {
         tvLastName.setText(user.getLastName());
         tvEmail.setText(user.getEmailId());
         tvMobile.setText(Long.toString(user.getPhoneNo()));
+        tvAddress.setText(user.getAddress());
         Log.d("dataa",String.valueOf(user.getAddress()));
         tvAddress.setText(user.getAddress());
 
+
+        getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                putString("Address", user.getAddress()).apply();
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +122,8 @@ public class AccountActivity extends AppCompatActivity {
 
                             getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
                                     putString("Address", addressDetails).apply();
+                            tvAddress.setText(getSharedPreferences("Login", Context.MODE_PRIVATE).getString("Address",null));
+
                         }
                     }
                 });
@@ -132,13 +138,9 @@ public class AccountActivity extends AppCompatActivity {
 
             }});
 
-        if ((getSharedPreferences("Login", Context.MODE_PRIVATE).getString("Address",null).equals(null))){
 
-        }
-        else{
 
-            tvAddress.setText(getSharedPreferences("Login", Context.MODE_PRIVATE).getString("Address",null));
-        }
+
 
 
 

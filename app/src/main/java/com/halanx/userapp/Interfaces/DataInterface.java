@@ -89,11 +89,6 @@ public interface DataInterface {
 
 
 
-
-
-
-
-
 //
 //    @DELETE("/carts/items/{cartItemId}")
 //    Call<CartsItems> deleteCartItemFromServer(@Path("cartItemId") String cartItemId);

@@ -311,7 +311,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.checkout:
 
 
-                Intent intentCheckout = new Intent(CartActivity.this, PaymentActivity.class);
+                Intent intentCheckout = new Intent(CartActivity.this, PaymentActivity.class).putExtra("isOrder",true);
                 intentCheckout.putExtra("AddressDetails", addressDetails);
                 if (delivery_scheduled) {
                     intentCheckout.putExtra("Date", date);

@@ -9,6 +9,7 @@ import com.halanx.userapp.POJO.ProductInfo;
 import com.halanx.userapp.POJO.Resp;
 import com.halanx.userapp.POJO.StoreInfo;
 import com.halanx.userapp.POJO.SubscriptionInfo;
+import com.halanx.userapp.POJO.SubscriptionInfoGet;
 import com.halanx.userapp.POJO.UserInfo;
 
 import java.util.List;
@@ -87,6 +88,8 @@ public interface DataInterface {
     @POST("/subscriptions/")
     Call<SubscriptionInfo> postSubscription(@Body SubscriptionInfo info);
 
+    @GET("/subscriptions/{MobileNumber}/items")
+    Call<List<SubscriptionInfoGet>> getUserSubscribedItems(@Path("MobileNumber") String mob);
 
 
 //

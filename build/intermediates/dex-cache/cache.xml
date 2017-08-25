@@ -3,21 +3,12 @@
 
     <item
         is-multidex="true"
-        jar="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
-        jumboMode="true"
+        jar="/Users/samarthgupta/AndroidStudioProjects/User-finalize/sdkui/build/intermediates/bundles/default/classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.2"
-        sha1="7936d5a51372b553132e2e1c6c15f063d87283e8">
-        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_4bd94487a4353fa89aed7f9d4f5717e63000fb3f/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
-        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_1e0059df1131f5046af2cf3421c2b4d17aabc439/classes.dex" />
+        sha1="db2fc4543eb983e516cf329e40bdc423be34af15">
+        <dex dex="/Users/samarthgupta/AndroidStudioProjects/User-finalize/app/build/intermediates/transforms/dex/debug/folders/1000/4/classes_3a7771b36662cee70ae73b42cfe77c8bb40127ff/classes.dex" />
     </item>
 
 </items>

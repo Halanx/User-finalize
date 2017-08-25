@@ -309,7 +309,7 @@ public class HomeActivity extends AppCompatActivity
         }
         else if (id == R.id.subscription) {
 
-            startActivity(new Intent(HomeActivity.this, Subcription_drawer_activity.class));
+            startActivity(new Intent(HomeActivity.this, SubscriptionDrawerActivity.class));
 
         }
 

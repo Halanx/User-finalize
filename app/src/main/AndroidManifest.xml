@@ -124,6 +124,7 @@
             android:label="Account"
             android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".Activities.ScheduleActivity"
             android:label="Schedule"
@@ -145,7 +146,10 @@
         <!-- ./Firebase Notifications -->
 
         <activity android:name=".Activities.SubscriptionActivity"></activity>
-        <activity android:name=".Activities.Subcription_drawer_activity"></activity>
+
+        <activity android:name=".Activities.SubscriptionDrawerActivity"
+            android:parentActivityName=".Activities.HomeActivity"
+            android:label="Subscriptions"></activity>
     </application>
 
 </manifest><!--

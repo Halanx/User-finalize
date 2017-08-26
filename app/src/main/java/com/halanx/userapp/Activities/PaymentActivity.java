@@ -74,7 +74,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
     // This sets the configuration
     private PayuConfig payuConfig;
-
+    Boolean isOrder;
 
 
     @Override
@@ -86,18 +86,24 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //        SubscriptionInfo info = new GsonBuilder().create().fromJson(getIntent().getStringExtra("Subscription"), SubscriptionInfo.class);
 //        Log.i("Subs",info.getDeliveriesLeft()+"");
 
+
+        isOrder = getIntent().getBooleanExtra("isOrder", false);
+        Log.i("IF",isOrder+" ");
+        //If its an order post order, otherwise its a subscription. DON'T POST ORDER.
+
+
         Payu.setInstance(this);
 
         total = getIntent().getStringExtra("total_cost");
+        Log.d("total",total);
 
-        Log.d("current_time",new SimpleDateFormat("HH:mm:ss").format(new Date().getTime()+(01 * 60 * 60 * 1000)));
+        Log.d("current_time", new SimpleDateFormat("HH:mm:ss").format(new Date().getTime() + (01 * 60 * 60 * 1000)));
         builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                 addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.build();
         client = retrofit.create(DataInterface.class);
 
         addressDetails = getIntent().getStringExtra("AddressDetails");
-//        Log.i("TAG",addressDetails);
         Boolean isDelScheduled = getIntent().getBooleanExtra("deliveryScheduled", false);
         Log.d("date_change", String.valueOf(isDelScheduled));
 
@@ -112,20 +118,21 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         ll1 = (LinearLayout) findViewById(R.id.ll_PayU);
-//        ll2 = (LinearLayout) findViewById(R.id.ll_PayTM);
         ll3 = (LinearLayout) findViewById(R.id.ll_Cash);
 
         ll1.setOnClickListener(this);
-//        ll2.setOnClickListener(this);
         ll3.setOnClickListener(this);
 
     }
+
     @Override
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.ll_PayU:{
-               navigateToBaseActivity();
+            case R.id.ll_PayU: {
+
+
+                navigateToBaseActivity();
                 break;
 
 
@@ -133,58 +140,63 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
 
             case R.id.ll_Cash: {
-                SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-                long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
 
-                SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
-                float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
-                float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
-                String trans_id = null;
+                //If it's an order for products
+                if (isOrder) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+                    long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
 
-                if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
-                    order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id);
-                    Log.d("done", "done");
-                } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
-                    String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                    String current_time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-                    Log.d("time",current_time);
+                    SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
+                    float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
+                    float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
+                    String trans_id = null;
 
-                    order = new OrderInfo(userMobile, addressDetails, date, current_time, null, true, null, latitude, longitude, trans_id);
-                }
+                    if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
+                        order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id);
+                        Log.d("done", "done");
+                    } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
+                        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                        String current_time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+                        Log.d("time", current_time);
+
+                        order = new OrderInfo(userMobile, addressDetails, date, current_time, null, true, null, latitude, longitude, trans_id);
+                    }
 
 
-                Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
+                    Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
 
 
-                pd = new ProgressDialog(PaymentActivity.this);
-                pd.setTitle("Please wait");
-                pd.setMessage("Posting your order");
-                pd.setCancelable(false);
-                pd.show();
+                    pd = new ProgressDialog(PaymentActivity.this);
+                    pd.setTitle("Please wait");
+                    pd.setMessage("Posting your order");
+                    pd.setCancelable(false);
+                    pd.show();
 
-                Call<OrderInfo> callOrder = client.postUserOrder(order);
-                callOrder.enqueue(new Callback<OrderInfo>() {
-                    @Override
-                    public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
+                    Call<OrderInfo> callOrder = client.postUserOrder(order);
+                    callOrder.enqueue(new Callback<OrderInfo>() {
+                        @Override
+                        public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
 //                        Toast.makeText(PaymentActivity.this, "Order Placed", Toast.LENGTH_SHORT).show();
 
-                        pd.setTitle("Order placed!");
-                        pd.setMessage("You can review your order in orders.");
-                        pd.dismiss();
+                            pd.setTitle("Order placed!");
+                            pd.setMessage("You can review your order in orders.");
+                            pd.dismiss();
 
-                        startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
-                        finish();
+                            startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                            finish();
 
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(Call<OrderInfo> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<OrderInfo> call, Throwable t) {
 
-                        Toast.makeText(PaymentActivity.this, "Network error", Toast.LENGTH_SHORT).show();
-                        pd.dismiss();
+                            Toast.makeText(PaymentActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
 
-                    }
-                });
+                        }
+                    });
+
+                }
 
                 break;
 
@@ -192,13 +204,14 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         }
     }
+
     public void navigateToBaseActivity() {
 
         String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
         UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
 
 
-        merchantKey =  "f1tDUh";
+        merchantKey = "f1tDUh";
         int environment = PayuConstants.PRODUCTION_ENV;
         String email = user.getEmailId();
         String amount = total;
@@ -503,21 +516,25 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         intent.putExtra(PayuConstants.PAYU_HASHES, payuHashes);
 
         //Lets fetch all the one click card tokens first
-        startActivityForResult(intent,PayuConstants.PAYU_REQUEST_CODE) ;
+        startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             if (data != null) {
 
-                /**
-                 * Here, data.getStringExtra("payu_response") ---> Implicit response sent by PayU
-                 * data.getStringExtra("result") ---> Response received from merchant's Surl/Furl
-                 *
-                 * PayU sends the same response to merchant server and in app. In response check the value of key "status"
-                 * for identifying status of transaction. There are two possible status like, success or failure
-                 * */
+                //If its an order for items
+                if (isOrder) {
+
+                    /**
+                     * Here, data.getStringExtra("payu_response") ---> Implicit response sent by PayU
+                     * data.getStringExtra("result") ---> Response received from merchant's Surl/Furl
+                     *
+                     * PayU sends the same response to merchant server and in app. In response check the value of key "status"
+                     * for identifying status of transaction. There are two possible status like, success or failure
+                     * */
 //                new AlertDialog.Builder(this)
 //                        .setCancelable(false)
 //                        .setMessage("Payu's Data : " + data.getStringExtra("payu_response") + "\n\n\n Merchant's Data: " + data.getStringExtra("result"))
@@ -527,53 +544,51 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //                            }
 //                        }).show();
 
-                String id = data.getStringExtra("payu_response");
+                    String id = data.getStringExtra("payu_response");
 
-                JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
-                Log.d("json_data", String.valueOf(obj));
+                    JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
+                    Log.d("json_data", String.valueOf(obj));
 
-                String trans_id = String.valueOf(obj.get("txnid"));
+                    String trans_id = String.valueOf(obj.get("txnid"));
 
-                //id -
-                //txnid -
-
-
+                    //id -
+                    //txnid -
 
 
-                SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-                long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
+                    SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+                    long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
 
-                SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
-                float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
-                float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
-                Log.d("latitudea", "" + latitude);
-                Log.d("longitude", "" + longitude);
+                    SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
+                    float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
+                    float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
+                    Log.d("latitudea", "" + latitude);
+                    Log.d("longitude", "" + longitude);
 
-                if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
+                    if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
 
-                    order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude,trans_id);
-                    Log.d("done", "done");
-                } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
-                    String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                    String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+                        order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id);
+                        Log.d("done", "done");
+                    } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
+                        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
-                    order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude, trans_id);
-                }
-
-
-                Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
+                        order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude, trans_id);
+                    }
 
 
-                pd = new ProgressDialog(PaymentActivity.this);
-                pd.setTitle("Please wait");
-                pd.setMessage("Posting your order");
-                pd.setCancelable(false);
-                pd.show();
+                    Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
 
-                Call<OrderInfo> callOrder = client.postUserOrder(order);
-                callOrder.enqueue(new Callback<OrderInfo>() {
-                    @Override
-                    public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
+
+                    pd = new ProgressDialog(PaymentActivity.this);
+                    pd.setTitle("Please wait");
+                    pd.setMessage("Posting your order");
+                    pd.setCancelable(false);
+                    pd.show();
+
+                    Call<OrderInfo> callOrder = client.postUserOrder(order);
+                    callOrder.enqueue(new Callback<OrderInfo>() {
+                        @Override
+                        public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
 //                        Toast.makeText(PaymentActivity.this, "Order Placed", Toast.LENGTH_SHORT).show();
 
 
@@ -586,23 +601,22 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
 // Assign big picture notification
 
-                        NotificationCompat.Builder builder =
-                                (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
-                                        .setSmallIcon(R.drawable.logochange)
-                                        .setContentTitle("Halanx")
-                                        .setContentText("Thank You. You successfully paid Rs. " + total +" for your order to Halanx")
-                                        .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
-                                        .setContentIntent(piResulta)
-                                        .setAutoCancel(true);
+                            NotificationCompat.Builder builder =
+                                    (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
+                                            .setSmallIcon(R.drawable.logochange)
+                                            .setContentTitle("Halanx")
+                                            .setContentText("Thank You. You successfully paid Rs. " + total + " for your order to Halanx")
+                                            .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
+                                            .setContentIntent(piResulta)
+                                            .setAutoCancel(true);
 //set intents and pending intents to call activity on click of "show activity" action button of notification
 
 // Gets an instance of the NotificationManager service
-                        NotificationManager notificationManager =(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 
 //to post your notification to the notification bar
-                        notificationManager.notify(0, builder.build());
-
+                            notificationManager.notify(0, builder.build());
 
 
 //                Intent resultIntent = new Intent(getApplicationContext(), HomeActivity.class);
@@ -617,27 +631,25 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //                }
 
 
+                            pd.setTitle("Order placed!");
+                            pd.setMessage("You can review your order in orders.");
+                            pd.dismiss();
 
+                            startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                            finish();
 
+                        }
 
-                        pd.setTitle("Order placed!");
-                        pd.setMessage("You can review your order in orders.");
-                        pd.dismiss();
+                        @Override
+                        public void onFailure(Call<OrderInfo> call, Throwable t) {
 
-                        startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
-                        finish();
+                            Toast.makeText(PaymentActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
 
-                    }
+                        }
+                    });
 
-                    @Override
-                    public void onFailure(Call<OrderInfo> call, Throwable t) {
-
-                        Toast.makeText(PaymentActivity.this, "Network error", Toast.LENGTH_SHORT).show();
-                        pd.dismiss();
-
-                    }
-                });
-
+                }
 
             } else {
                 Toast.makeText(this, "Payment cancelled", Toast.LENGTH_LONG).show();

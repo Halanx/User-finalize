@@ -349,7 +349,7 @@ public class StoresFragment extends Fragment {
 //                        putInt("storePosition", pos).apply();
 
 
-                Log.d("product_categories", storeList.get(pos).getAvailable_categories());
+//              Log.d("product_categories", storeList.get(pos).getAvailable_categories());
                 String product_category = storeList.get(pos).getAvailable_categories();
                 Log.d("product_categories", String.valueOf(product_category));
 

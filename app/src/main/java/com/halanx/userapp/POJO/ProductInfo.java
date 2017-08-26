@@ -38,9 +38,22 @@ public class ProductInfo {
     @Expose
     private Integer storeId;
 
+    @SerializedName("Tax")
+    @Expose
+    private Double tax;
+
     @SerializedName("RelatedStore")
     @Expose
     private RelatedStore relatedStore;
+
+
+    public Double getTax() {
+        return tax;
+    }
+
+    public void setTax(Double tax) {
+        this.tax = tax;
+    }
 
     public RelatedStore getRelatedStore() {
         return relatedStore;

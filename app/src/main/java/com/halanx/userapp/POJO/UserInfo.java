@@ -56,6 +56,18 @@ public class UserInfo {
     @Expose
     private List<ProductInfo> favItems;
 
+    @SerializedName("SubscriptionStatus")
+    @Expose
+    private Boolean subscriptionStatus;
+    @SerializedName("SubscriptionTotal")
+    @Expose
+    private Double subsTotal;
+    @SerializedName("AccountBalance")
+    @Expose
+    private Double accountBalance;
+
+
+
     public UserInfo(long phoneNo, String emailId, String firstName, String lastName, String password, String address) {
         this.phoneNo = phoneNo;
         this.emailId = emailId;
@@ -63,6 +75,34 @@ public class UserInfo {
         this.lastName = lastName;
         this.password = password;
         gcmid = address;
+    }
+
+    public void setGcmid(String gcmid) {
+        this.gcmid = gcmid;
+    }
+
+    public Boolean getSubscriptionStatus() {
+        return subscriptionStatus;
+    }
+
+    public void setSubscriptionStatus(Boolean subscriptionStatus) {
+        this.subscriptionStatus = subscriptionStatus;
+    }
+
+    public Double getSubsTotal() {
+        return subsTotal;
+    }
+
+    public void setSubsTotal(Double subsTotal) {
+        this.subsTotal = subsTotal;
+    }
+
+    public Double getAccountBalance() {
+        return accountBalance;
+    }
+
+    public void setAccountBalance(Double accountBalance) {
+        this.accountBalance = accountBalance;
     }
 
     public Integer getLastItem() {

@@ -29,10 +29,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.GsonBuilder;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.CartItem;
-import com.halanx.userapp.POJO.CartsInfo;
 import com.halanx.userapp.POJO.SubscriptionInfo;
 import com.halanx.userapp.R;
 import com.squareup.picasso.Picasso;
@@ -54,34 +52,34 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     List<CartItem> activeItems;
     ProgressBar progressBar;
     RecyclerView rvSubscription;
-    LinearLayout start_date, recharge, repeat,address;
+    LinearLayout start_date, recharge, repeat, address;
     ImageView map;
     TextView change_location;
-    TextView tvSubtotal, tvTotal, tvDelivery, tax;
+    TextView tvSubtotal, tvTotal, tvDelivery, tvTax;
     Button details, confirm_detail, checkout;
 
-    String date,timings,delivery_scheduled;
+    String date, timings, delivery_scheduled;
 
     Retrofit.Builder builder;
     Retrofit retrofit;
     DataInterface client;
-    Boolean everyday =false;
-    Boolean mon =false;
-    Boolean tues =false;
-    Boolean wed =false;
-    Boolean thurs =false;
-    Boolean fri =false;
-    Boolean sat =false;
-    Boolean sun =false;
+    Boolean everyday = false;
+    Boolean mon = false;
+    Boolean tues = false;
+    Boolean wed = false;
+    Boolean thurs = false;
+    Boolean fri = false;
+    Boolean sat = false;
+    Boolean sun = false;
 
     Boolean bool_three = false;
     Boolean bool_seven = false;
     Boolean bool_thirty = false;
-    Boolean bool_fifteen  = false;
+    Boolean bool_fifteen = false;
     String add;
 
-    EditText line1,line2,line3;
-    String total, subtotal, taxes;
+    EditText line1, line2, line3;
+    double total;
 
     LinearLayout orderslayout, detailslayout, final_detail;
 
@@ -91,7 +89,8 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     static Integer quantityList[];
     static List<Boolean> isItemChecked;
     RadioButton daily, monday, tuesday, wednesday, thursday, friday, saturday, sunday;
-    RadioButton three, seven, fifteen, thirty; RadioGroup rgRecharge;
+    RadioButton three, seven, fifteen, thirty;
+    RadioGroup rgRecharge;
     SubscriptionInfo subscriptionInfo;
 
     @Override
@@ -127,7 +126,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
         tvSubtotal = (TextView) findViewById(R.id.tv_cart_subtotal);
         tvTotal = (TextView) findViewById(R.id.tv_cart_total);
         tvDelivery = (TextView) findViewById(R.id.tv_cart_deliverycharge);
-        tax = (TextView) findViewById(R.id.tax);
+        tvTax = (TextView) findViewById(R.id.tax);
 
 
         start_date.setOnClickListener(this);
@@ -218,6 +217,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -231,8 +231,8 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 Log.d("timingsdata", String.valueOf(date));
                 Log.d("datedata", String.valueOf(timings));
                 subscriptionInfo.setStartDate(date);
-                subscriptionInfo.setStartTime(timings.substring(0,5));
-                subscriptionInfo.setEndTime(timings.substring(6,11));
+                subscriptionInfo.setStartTime(timings.substring(0, 5));
+                subscriptionInfo.setEndTime(timings.substring(6, 11));
 
             }
         }
@@ -250,8 +250,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 dialRepeat.setContentView(R.layout.repeat_dialog_box);
 
 
-
-                final RadioButton daily,monday,tuesday,wednesday,thursday,friday,saturday,sunday;
+                final RadioButton daily, monday, tuesday, wednesday, thursday, friday, saturday, sunday;
 
                 daily = (RadioButton) dialRepeat.findViewById(R.id.daily);
                 monday = (RadioButton) dialRepeat.findViewById(R.id.monday);
@@ -266,7 +265,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 daily.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(everyday){
+                        if (everyday) {
                             everyday = false;
                             daily.setChecked(false);
                             mon = false;
@@ -283,8 +282,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                             thursday.setChecked(false);
                             friday.setChecked(false);
                             saturday.setChecked(false);
-                        }
-                        else{
+                        } else {
                             everyday = true;
                             mon = true;
                             tues = true;
@@ -307,30 +305,28 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                         }
                     }
                 });
-                 monday.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View view) {
-                         if(mon){
-                             monday.setChecked(false);
-                             mon = false;
-                         }
-                         else{
-                             monday.setChecked(true);
-                             mon =true;
-                         }
+                monday.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (mon) {
+                            monday.setChecked(false);
+                            mon = false;
+                        } else {
+                            monday.setChecked(true);
+                            mon = true;
+                        }
 
-                     }
-                 });
+                    }
+                });
                 tuesday.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(tues){
+                        if (tues) {
                             tuesday.setChecked(false);
                             tues = false;
-                        }
-                        else{
+                        } else {
                             tuesday.setChecked(true);
-                            tues =true;
+                            tues = true;
                         }
 
                     }
@@ -339,13 +335,12 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 wednesday.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(wed){
+                        if (wed) {
                             wednesday.setChecked(false);
                             wed = false;
-                        }
-                        else{
+                        } else {
                             wednesday.setChecked(true);
-                            wed =true;
+                            wed = true;
                         }
 
                     }
@@ -354,13 +349,12 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 thursday.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(thurs){
+                        if (thurs) {
                             thursday.setChecked(false);
                             thurs = false;
-                        }
-                        else{
+                        } else {
                             thursday.setChecked(true);
-                            thurs =false;
+                            thurs = false;
                         }
 
                     }
@@ -369,13 +363,12 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 friday.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(fri){
+                        if (fri) {
                             friday.setChecked(false);
                             fri = false;
-                        }
-                        else{
+                        } else {
                             friday.setChecked(true);
-                            fri =true;
+                            fri = true;
                         }
 
                     }
@@ -384,13 +377,12 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 saturday.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(sat){
+                        if (sat) {
                             saturday.setChecked(false);
                             sat = false;
-                        }
-                        else{
+                        } else {
                             saturday.setChecked(true);
-                            sat =true;
+                            sat = true;
                         }
 
                     }
@@ -398,19 +390,17 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 sunday.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(sun){
+                        if (sun) {
                             sunday.setChecked(false);
                             sun = false;
 
 
-                        }
-                        else{
+                        } else {
                             sunday.setChecked(true);
-                            sun =true;
+                            sun = true;
                         }
                     }
                 });
-
 
 
                 Button proceed = (Button) dialRepeat.findViewById(R.id.btProceed_dialogue);
@@ -418,31 +408,31 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 proceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(mon){
+                        if (mon) {
                             subscriptionInfo.setOnMonday(true);
                         }
 
-                        if(tues){
+                        if (tues) {
                             subscriptionInfo.setOnTuesday(true);
                         }
 
-                        if(wed){
+                        if (wed) {
                             subscriptionInfo.setOnWednesday(true);
                         }
 
-                        if(thurs){
+                        if (thurs) {
                             subscriptionInfo.setOnThursday(true);
                         }
 
-                        if(fri){
+                        if (fri) {
                             subscriptionInfo.setOnFriday(true);
                         }
 
-                        if(sat){
+                        if (sat) {
                             subscriptionInfo.setOnSaturday(true);
                         }
 
-                        if(sun){
+                        if (sun) {
                             subscriptionInfo.setOnSunday(true);
                         }
 
@@ -461,15 +451,15 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case R.id.bt_address_details:
-                 final Dialog dialog = new Dialog(SubscriptionActivity.this);
+                final Dialog dialog = new Dialog(SubscriptionActivity.this);
                 dialog.setContentView(R.layout.layout_custom_alert_dialogue);
 
 
                 line1 = (EditText) dialog.findViewById(R.id.et1_dialogue);
                 line2 = (EditText) dialog.findViewById(R.id.et2_dialogue);
                 line3 = (EditText) dialog.findViewById(R.id.et3_dialogue);
-                add = getSharedPreferences("location",Context.MODE_PRIVATE).getString("addressDelivery",null);
-                if(add!=null) {
+                add = getSharedPreferences("location", Context.MODE_PRIVATE).getString("addressDelivery", null);
+                if (add != null) {
                     String[] Detail_add = add.split(",");
                     line2.setText(Detail_add[1]);
                     line3.setText(Detail_add[2]);
@@ -524,58 +514,54 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 three.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(bool_three){
+                        if (bool_three) {
                             three.setChecked(false);
-                            bool_three=false;
-                        }
-                        else {
+                            bool_three = false;
+                        } else {
                             three.setChecked(true);
-                            bool_three=true;
+                            bool_three = true;
                         }
                     }
                 });
                 seven.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(bool_seven){
+                        if (bool_seven) {
                             seven.setChecked(false);
-                            bool_seven=false;
-                        }
-                        else {
+                            bool_seven = false;
+                        } else {
                             seven.setChecked(true);
-                            bool_seven=true;
+                            bool_seven = true;
 
                         }
                     }
                 });
                 fifteen.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(bool_fifteen){
-                        fifteen.setChecked(false);
-                        bool_fifteen=false;
-                    }
-                    else {
-                        fifteen.setChecked(true);
-                        bool_fifteen=true;
+                    @Override
+                    public void onClick(View view) {
+                        if (bool_fifteen) {
+                            fifteen.setChecked(false);
+                            bool_fifteen = false;
+                        } else {
+                            fifteen.setChecked(true);
+                            bool_fifteen = true;
 
+                        }
                     }
-                }
-            });
+                });
                 thirty.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(bool_thirty){
-                        thirty.setChecked(false);
-                        bool_thirty=false;
-                    }
-                    else {
-                        thirty.setChecked(true);
-                        bool_thirty=true;
+                    @Override
+                    public void onClick(View view) {
+                        if (bool_thirty) {
+                            thirty.setChecked(false);
+                            bool_thirty = false;
+                        } else {
+                            thirty.setChecked(true);
+                            bool_thirty = true;
 
+                        }
                     }
-                }
-            });
+                });
 
 
                 Button contin = (Button) dialRecharge.findViewById(R.id.btProceed_dialogue);
@@ -585,8 +571,8 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onClick(View view) {
 
-                        switch (rgRecharge.getCheckedRadioButtonId()){
-                            case R.id.time3 :
+                        switch (rgRecharge.getCheckedRadioButtonId()) {
+                            case R.id.time3:
                                 subscriptionInfo.setDeliveriesLeft(3);
                                 break;
 
@@ -594,11 +580,11 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                                 subscriptionInfo.setDeliveriesLeft(7);
                                 break;
 
-                            case R.id.time15 :
+                            case R.id.time15:
                                 subscriptionInfo.setDeliveriesLeft(15);
                                 break;
 
-                            case R.id.time30 :
+                            case R.id.time30:
                                 subscriptionInfo.setDeliveriesLeft(30);
                                 break;
 
@@ -637,22 +623,35 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             case R.id.checkout:
 
+                final Dialog dialAddMoney = new Dialog(SubscriptionActivity.this);
+                dialAddMoney.setContentView(R.layout.add_ammount_dialog_box);
 
-                final Dialog dialog2 = new Dialog(SubscriptionActivity.this);
-                dialog2.setContentView(R.layout.add_ammount_dialog_box);
+                Button pay = (Button) dialAddMoney.findViewById(R.id.btProceed_dialogue);
+                Button exit = (Button) dialAddMoney.findViewById(R.id.btCancel_dialogue);
+                final EditText amount = (EditText) dialAddMoney.findViewById(R.id.et1_dialogue);
+                amount.setText(Double.toString(total));
 
-                Button pay = (Button) dialog2.findViewById(R.id.btProceed_dialogue);
-                Button exit = (Button) dialog2.findViewById(R.id.btCancel_dialogue);
-                EditText amount = (EditText) dialog2.findViewById(R.id.et1_dialogue);
-
-                dialog2.show();
+                dialAddMoney.show();
                 pay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-                        String objJson = new GsonBuilder().create().toJson(subscriptionInfo);
-                        dialog2.dismiss();
-                        startActivity(new Intent(SubscriptionActivity.this, PaymentActivity.class).putExtra("Subscription",objJson));
+                        if (amount.getText().toString().isEmpty()) {
+                            Toast.makeText(SubscriptionActivity.this, "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (Double.parseDouble(amount.getText().toString()) <= 0) {
+                            Toast.makeText(SubscriptionActivity.this, "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        dialAddMoney.dismiss();
+                        Intent intent = new Intent(SubscriptionActivity.this, PaymentActivity.class);
+                        intent.putExtra("isOrder", false);
+                        intent.putExtra("total_cost",String.valueOf(total));
+                        Log.d("total", String.valueOf(total));
+                        startActivity(intent);
                         finish();
 
                     }
@@ -661,17 +660,15 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 exit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        dialog2.dismiss();
+                        dialAddMoney.dismiss();
                     }
                 });
 
-                subscriptionInfo.setSubscriber(Long.parseLong(mobile));
-                subscriptionInfo.setLatitude(latitude+0.0);
-                subscriptionInfo.setLongitude(longitude+0.0);
+
                 //Post each item selected
-                for(int i =0;i<activeItems.size();i++){
-                    Log.i("Crap","IN");
-                    if(isItemChecked.get(i)){
+                for (int i = 0; i < activeItems.size(); i++) {
+                    Log.i("Crap", "IN");
+                    if (isItemChecked.get(i)) {
 
                         //Send position of item checked
                         postSubscription(i);
@@ -679,20 +676,37 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 }
 
 
-
-
-
-
                 break;
             case R.id.details: {
-                Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
 
-                detailslayout.startAnimation(slideUp);
-                detailslayout.setVisibility(View.VISIBLE);
-                orderslayout.setVisibility(View.GONE);
-                details.setVisibility(View.GONE);
-                confirm_detail.setVisibility(View.VISIBLE);
+                Boolean isAnyChecked = false;
 
+                //Post each item selected
+                for (int i = 0; i < activeItems.size(); i++) {
+                    if (isItemChecked.get(i)) {
+                        isAnyChecked = true;
+                        break;
+                    }
+                }
+
+
+
+                if (isAnyChecked) {
+                    Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
+
+                    detailslayout.startAnimation(slideUp);
+                    detailslayout.setVisibility(View.VISIBLE);
+                    orderslayout.setVisibility(View.GONE);
+                    details.setVisibility(View.GONE);
+                    confirm_detail.setVisibility(View.VISIBLE);
+
+                } else {
+
+                    AlertDialog dial = new AlertDialog.Builder(SubscriptionActivity.this).setTitle("Invalid").
+                            setMessage("Please select items to subscribe").create();
+                    dial.show();
+                    return;
+                }
 
 
                 break;
@@ -700,33 +714,68 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             case R.id.confirm_details:
 
+                subscriptionInfo.setSubscriber(Long.parseLong(mobile));
+                subscriptionInfo.setLatitude(latitude + 0.0);
+                subscriptionInfo.setLongitude(longitude + 0.0);
 
-                SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-                String mobileNumber = sharedPreferences.getString("MobileNumber", null);
-                Call<CartsInfo> callCart = client.getCartDetails(mobileNumber);
-                callCart.enqueue(new Callback<CartsInfo>() {
-                    @Override
-                    public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
-                        CartsInfo cart = response.body();
+                AlertDialog.Builder builder = new AlertDialog.Builder(SubscriptionActivity.this).setTitle("Confirm Details");
+                AlertDialog dial;
 
-                        subtotal = cart.getSubtotal().toString();
-                        total = cart.getTotal().toString();
-                        taxes = cart.getTaxes().toString();
+                if (subscriptionInfo.getStartDate() == null || subscriptionInfo.getStartTime() == null) {
+                    Log.i("IF", "IN1");
+                    builder.setMessage("Please select a start date");
+                    dial = builder.create();
+                    dial.show();
+                    return;
+                }
 
-                        String del = cart.getDeliveryCharges().toString();
-                        tvSubtotal.setText(subtotal);
-                        tax.setText(taxes);
-                        tvTotal.setText(total);
-                        tvDelivery.setText(del);
+                if (subscriptionInfo.getDeliveriesLeft() == null) {
+                    Log.i("IF", "IN2");
+                    builder.setMessage("Please select recharge details");
+                    dial = builder.create();
+                    dial.show();
+                    return;
+                }
 
+                if (subscriptionInfo.getOnMonday() == null && subscriptionInfo.getOnTuesday() == null && subscriptionInfo.getOnWednesday() == null &&
+                        subscriptionInfo.getOnThursday() == null && subscriptionInfo.getOnFriday() == null && subscriptionInfo.getOnSaturday()
+                        == null && subscriptionInfo.getOnSunday() == null) {
+                    //If all are false
+                    Log.i("IF", "IN3");
+                    builder.setMessage("Please select repeat details");
+                    dial = builder.create();
+                    dial.show();
+                    return;
+                }
+
+
+                if (subscriptionInfo.getAddress() == null || subscriptionInfo.getLatitude() == null || subscriptionInfo.getLongitude() == null) {
+                    builder.setMessage("Please select address details");
+                    Log.i("IF", "IN4");
+                    dial = builder.create();
+                    dial.show();
+                    return;
+                }
+
+
+                double subtotal = 0.0, delCharge = 0.0, tax=0.0;
+                for(int i =0;i<activeItems.size();i++){
+                    if(isItemChecked.get(i)){
+                        subtotal+=activeItems.get(i).getItem().getPrice();
+                        tax =+ activeItems.get(i).getItem().getTax();
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<CartsInfo> call, Throwable t) {
-                        Log.d("errror", String.valueOf(t));
+                subtotal = subtotal * subscriptionInfo.getDeliveriesLeft();
+                tax = tax + subscriptionInfo.getDeliveriesLeft();
 
-                    }
-                });
+                total = subtotal + tax;
+                tvSubtotal.setText(Double.toString(subtotal));
+                tvTax.setText(Double.toString(tax));
+                tvTotal.setText(Double.toString(total));
+                tvDelivery.setText(Double.toString(delCharge));
+
+
 
 
                 Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
@@ -749,16 +798,15 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
         List<CartItem> cartItems;
 
 
-
         public SubscriptionAdapter(List<CartItem> cartItems) {
             this.cartItems = cartItems;
 
             quantityList = new Integer[cartItems.size()];
             isItemChecked = new ArrayList<>();
 
-            for(int i = 0; i<cartItems.size();i++){
+            for (int i = 0; i < cartItems.size(); i++) {
                 quantityList[i] = 1;
-                isItemChecked.add(i,false);
+                isItemChecked.add(i, false);
             }
         }
 
@@ -836,10 +884,10 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-    void postSubscription(Integer productIndex){
-        Log.i("Crap","IN func");
+    void postSubscription(Integer productIndex) {
+        Log.i("Crap", "IN func");
         subscriptionInfo.setItem(activeItems.get(productIndex).getItem().getId());
-        subscriptionInfo.setQuantityPerDay(quantityList[productIndex]+0.0);
+        subscriptionInfo.setQuantityPerDay(quantityList[productIndex] + 0.0);
 
         Call<SubscriptionInfo> subscriptionInfoCall = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                 addConverterFactory(GsonConverterFactory.create()).build().create(DataInterface.class).
@@ -847,15 +895,16 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
         subscriptionInfoCall.enqueue(new Callback<SubscriptionInfo>() {
             @Override
             public void onResponse(Call<SubscriptionInfo> call, Response<SubscriptionInfo> response) {
-                Log.i("Subs","Subscription posted");
+                Log.i("Subs", "Subscription posted");
             }
 
             @Override
             public void onFailure(Call<SubscriptionInfo> call, Throwable t) {
-                Log.i("Crap",t.toString());
+                Log.i("Crap", t.toString());
             }
         });
 
     }
+
 
 }

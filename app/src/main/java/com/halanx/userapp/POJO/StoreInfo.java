@@ -422,6 +422,13 @@ public class StoreInfo {
         this.storeCategory = storeCategory;
     }
 
+    public String getAvailable_categories() {
+        return available_categories;
+    }
+
+    public void setAvailable_categories(String available_categories) {
+        this.available_categories = available_categories;
+    }
 
     public static Comparator<StoreInfo> storeComp = new Comparator<StoreInfo>() {
         @Override
@@ -432,12 +439,5 @@ public class StoreInfo {
         }
     };
 
-    public String getAvailable_categories() {
-        return available_categories;
-    }
-
-    public void setAvailable_categories(String available_categories) {
-        this.available_categories = available_categories;
-    }
 
 }

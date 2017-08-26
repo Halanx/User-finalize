@@ -199,6 +199,13 @@
                 android:background="#d45e5c"
                 app:cardCornerRadius="10dp">
 
+
+                <ProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:id="@+id/pb_addtocart"
+                    android:gravity="center"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

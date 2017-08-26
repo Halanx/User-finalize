@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,11 +56,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     List<CartItem> items;
     DataInterface client;
     TextView itemCount;
+    ProductViewHolder holder;
+    String catetgory_text;
 
-    public ProductAdapter(List<ProductInfo> products, Context c, String storeCat, String mobileNumber, TextView itemCount) {
+    public ProductAdapter(List<ProductInfo> products, Context c, String storeCat, String mobileNumber, TextView itemCount, String text) {
         this.products = products;
         this.c = c;
         storeCategory = storeCat;
+        catetgory_text = text;
         this.mobileNumber = mobileNumber;
         this.itemCount = itemCount;
         Log.d("textvie", (String) itemCount.getText());
@@ -73,7 +77,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_recycler, parent, false);
-        ProductViewHolder holder = new ProductViewHolder(view, products, c,itemCount);
+        holder = new ProductViewHolder(view, products, c,itemCount);
         return holder;
 
     }
@@ -81,29 +85,60 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @Override
     public void onBindViewHolder(ProductViewHolder holder, int position) {
 
-        if (storeCategory.equals("Grocery")) {
-            holder.cvProducts.setVisibility(View.VISIBLE);
-            holder.cvRest.setVisibility(View.GONE);
-            Picasso.with(c).load(products.get(position).getProductImage()).into(holder.productImage);
-            holder.productName.setText(products.get(position).getProductName());
-            if(products.get(position).getFeatures()!=null){
-                holder.description.setVisibility(View.VISIBLE);
-                holder.description.setText(products.get(position).getFeatures());
+        if(catetgory_text!=null){
+            if(products.get(position).getCategory().equals(catetgory_text)) {
+                if (storeCategory.equals("Grocery")) {
+                    holder.cvProducts.setVisibility(View.VISIBLE);
+                    holder.cvRest.setVisibility(View.GONE);
+                    Picasso.with(c).load(products.get(position).getProductImage()).into(holder.productImage);
+                    holder.productName.setText(products.get(position).getProductName());
+                    if (products.get(position).getFeatures() != null) {
+                        holder.description.setVisibility(View.VISIBLE);
+                        holder.description.setText(products.get(position).getFeatures());
+                    }
+                    holder.productPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
+                } else if (storeCategory.equals("Food")) {
+                    //Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
+                    holder.cvProducts.setVisibility(View.GONE);
+                    holder.cvRest.setVisibility(View.VISIBLE);
+                    if (products.get(position).getFeatures() != null) {
+                        holder.description.setVisibility(View.VISIBLE);
+                        holder.description.setText(products.get(position).getFeatures());
+                    }
+                    holder.tvRestName.setText(products.get(position).getProductName());
+                    holder.tvRestPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
+                    holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+                }
             }
-            holder.productPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
-        } else if (storeCategory.equals("Food")) {
-            //Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
-            holder.cvProducts.setVisibility(View.GONE);
-            holder.cvRest.setVisibility(View.VISIBLE);
-            if(products.get(position).getFeatures()!=null){
-                holder.description.setVisibility(View.VISIBLE);
-                holder.description.setText(products.get(position).getFeatures());
-            }
-            holder.tvRestName.setText(products.get(position).getProductName());
-            holder.tvRestPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
-            holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
-        }
 
+
+
+        }
+        else {
+            if (storeCategory.equals("Grocery")) {
+                holder.cvProducts.setVisibility(View.VISIBLE);
+                holder.cvRest.setVisibility(View.GONE);
+                Picasso.with(c).load(products.get(position).getProductImage()).into(holder.productImage);
+                holder.productName.setText(products.get(position).getProductName());
+                if (products.get(position).getFeatures() != null) {
+                    holder.description.setVisibility(View.VISIBLE);
+                    holder.description.setText(products.get(position).getFeatures());
+                }
+                holder.productPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
+            } else if (storeCategory.equals("Food")) {
+                //Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
+                holder.cvProducts.setVisibility(View.GONE);
+                holder.cvRest.setVisibility(View.VISIBLE);
+                if (products.get(position).getFeatures() != null) {
+                    holder.description.setVisibility(View.VISIBLE);
+                    holder.description.setText(products.get(position).getFeatures());
+                }
+                holder.tvRestName.setText(products.get(position).getProductName());
+                holder.tvRestPrice.setText("₹ " + String.valueOf(products.get(position).getPrice()));
+                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+            }
+
+        }
 
     }
 
@@ -130,6 +165,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         TextView tvCart;
         ImageView ivFav;
         TextView itemCount;
+        ProgressBar pb_addtocart;
 
         public ProductViewHolder(View itemView, List<ProductInfo> products, Context c, TextView itemCount) {
             super(itemView);
@@ -148,6 +184,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvRestPrice = (TextView) itemView.findViewById(R.id.restPrice);
             cvAddCart = (CardView) itemView.findViewById(R.id.cv_rest_add_cart);
             etRestQuan = (EditText) itemView.findViewById(R.id.restQuantity);
+            pb_addtocart = (ProgressBar) itemView.findViewById(R.id.pb_addtocart);
+
             rvDec = (RelativeLayout) itemView.findViewById(R.id.restDecrement);
             rvInc = (RelativeLayout) itemView.findViewById(R.id.restIncrement);
             tvCart = (TextView) itemView.findViewById(R.id.tv_add_to_cart);
@@ -177,6 +215,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
             //Click on add to cart
             else if (view.getId() == R.id.cv_rest_add_cart) {
+                pb_addtocart.setVisibility(View.VISIBLE);
+                tvCart.setVisibility(View.GONE);
                 //Add to cart
                 Double val = Double.parseDouble(etRestQuan.getText().toString());
                 int proId = products.get(position).getId();
@@ -243,7 +283,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             call.enqueue(new Callback<CartItemPost>() {
                 @Override
                 public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
-                    tvCart.setText("Added to cart");
 
                     Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
                             .getUserCartItems(mobileNumber);
@@ -251,6 +290,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                         @Override
                         public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
                             List<CartItem> items = response.body();
+
+                            tvCart.setText("Added to cart");
+                            pb_addtocart.setVisibility(View.GONE);
+                            tvCart.setVisibility(View.VISIBLE);
+
                             Log.d("items", String.valueOf(items));
 
                             if (items != null && items.size() > 0) {

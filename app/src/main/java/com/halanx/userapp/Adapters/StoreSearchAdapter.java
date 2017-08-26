@@ -33,7 +33,7 @@ public class StoreSearchAdapter extends RecyclerView.Adapter<StoreSearchAdapter.
     JSONObject data;
     TextView itemCount;
     String Image;
-
+    String product_category;
 
     public StoreSearchAdapter(JSONObject json, Context c) {
         storeList = json;
@@ -120,6 +120,8 @@ public class StoreSearchAdapter extends RecyclerView.Adapter<StoreSearchAdapter.
 
             int pos = getAdapterPosition();
             try {
+                product_category = data.getString("CategoriesAvailable");
+                Log.d("product_categories", String.valueOf(product_category));
                 HomeActivity.storeID = Integer.parseInt(storeList.getString("Id"));
                 HomeActivity.storeLogo = Image;
                 HomeActivity.storeName = storeList.getString("StoreName");
@@ -131,7 +133,7 @@ public class StoreSearchAdapter extends RecyclerView.Adapter<StoreSearchAdapter.
             }
 
             MainFragment fragment = new MainFragment();
-            fragment.passdata(itemCount);
+            fragment.passdata(itemCount, product_category);
             FragmentTransaction fragmentTransaction =
                     ((HomeActivity)context).getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.frag_container, fragment);

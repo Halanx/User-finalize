@@ -254,8 +254,8 @@
         android:id="@+id/confirm_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/card"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_above="@+id/card">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -277,11 +277,19 @@
                     android:elevation="200dp"
                     android:padding="5dp"
                     app:cardCornerRadius="5dp">
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/progressbarorderdetails"/>
+
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
+                        android:id="@+id/orderdetaillayout"
                         android:orientation="vertical">
 
 
@@ -425,6 +433,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
+        android:layout_marginBottom="5dp"
         app:cardCornerRadius="20dp">
 
         <Button

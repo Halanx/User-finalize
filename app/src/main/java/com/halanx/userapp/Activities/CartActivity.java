@@ -19,7 +19,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -74,14 +73,17 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     String date, timings;
     String total,subtotal;
     TextView tax;
+    LinearLayout order_detail_layout;
 
     String addressDetails;
     EditText line1, line2, line3;
+    ProgressBar pb_orderdetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
 
         builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                 addConverterFactory(GsonConverterFactory.create());
@@ -94,8 +96,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         btAddDetails = (Button) findViewById(R.id.bt_address_details);
         btAddLocate = (TextView) findViewById(R.id.bt_address_locate);
         tvSubscription = (TextView) findViewById(R.id.tv_subs);
+        pb_orderdetails = (ProgressBar) findViewById(R.id.progressbarorderdetails);
 
         btnDelivery = (Button) findViewById(R.id.details);
+        order_detail_layout = (LinearLayout) findViewById(R.id.orderdetaillayout);
 
 
         btnCheckout = (Button) findViewById(R.id.checkout);
@@ -353,6 +357,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.confirm_details:
 
+                pb_orderdetails.setVisibility(View.VISIBLE);
+                order_detail_layout.setVisibility(View.INVISIBLE);
                 if (!delivery) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
                     builder.setMessage("Please select a delivery time");
@@ -387,6 +393,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         tax.setText(taxes);
                         tvTotal.setText(total);
                         tvDelivery.setText(del);
+
+                        pb_orderdetails.setVisibility(View.GONE);
+                        order_detail_layout.setVisibility(View.VISIBLE);
 
                     }
 

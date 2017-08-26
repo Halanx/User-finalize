@@ -85,7 +85,7 @@ public class OngoingOrderFrag extends Fragment {
                 if (!allOrdersList.isEmpty()) {
                     onGoingOrderList = new ArrayList<>();
 
-                    for (int i = 0; i <allOrdersList.size() ; i++) {
+                    for (int i = allOrdersList.size()-1; i >0 ; i--) {
                         if (!allOrdersList.get(i).getIsDelivered()) {
                             //Completed order = isDelivered is true
                             onGoingOrderList.add(allOrdersList.get(i));

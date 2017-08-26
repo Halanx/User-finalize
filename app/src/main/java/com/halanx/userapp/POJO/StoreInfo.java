@@ -119,6 +119,9 @@ public class StoreInfo {
     @SerializedName("SundayClosingTime")
     @Expose
     private String sundayClosingTime;
+    @SerializedName("CategoriesAvailable")
+    @Expose
+    private String available_categories;
     @SerializedName("Active")
     @Expose
     private Boolean active;
@@ -428,5 +431,13 @@ public class StoreInfo {
             return c1.compareTo(c2);
         }
     };
+
+    public String getAvailable_categories() {
+        return available_categories;
+    }
+
+    public void setAvailable_categories(String available_categories) {
+        this.available_categories = available_categories;
+    }
 
 }

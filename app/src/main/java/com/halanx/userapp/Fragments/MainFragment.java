@@ -1,6 +1,7 @@
 package com.halanx.userapp.Fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -79,13 +81,17 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     ListViewAdapter searchadapter;
     ProductSearchAdapter sadapter;
     RelativeLayout brand_name;
+    RecyclerView categories_Recycler;
+    CategoryAdapter categoryAdapter;
 
 
 
     SearchView svProducts;
     List<String> suggestions = new ArrayList<>();
 
+    List<String> categories = new ArrayList<>();
     TextView itemCount;
+    String product_category;
 
     public MainFragment() {
 
@@ -106,6 +112,13 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         brand_name = (RelativeLayout) view.findViewById(R.id.brand_name);
         list = (ListView) view.findViewById(R.id.listview);
 
+        categories_Recycler = (RecyclerView) view.findViewById(R.id.categories_recycler);
+        categoryAdapter = new CategoryAdapter(getActivity(),categories);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, true);
+        categories_Recycler.setLayoutManager(layoutManager);
+        categories_Recycler.setAdapter(categoryAdapter);
+        categories_Recycler.setHasFixedSize(true);
+        
 
         svProducts = (SearchView) view.findViewById(R.id.sv_products);
 
@@ -429,7 +442,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 pbProducts.setVisibility(View.GONE);
                 if (response.body() != null) {
                     List<ProductInfo> products = response.body();
-                    adapter = new ProductAdapter(products, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
+                    adapter = new ProductAdapter(products, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, null);
 
                     if (storeCategory.equals("Food")) {
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -482,8 +495,21 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
 
-    public void passdata(TextView itemCount) {
+    public void passdata(TextView itemCount, String product_category) {
         this.itemCount = itemCount;
+        this.product_category = product_category;
+
+        try{
+            JSONArray obj = new JSONArray(this.product_category);
+            Log.d("product_data", String.valueOf(obj.get(2)));
+            for(int i =1;i<obj.length();i++){
+                categories.add(String.valueOf(obj.get(i)));
+            }
+
+        }catch (Throwable t){
+
+        }
+
     }
 
 //    class SuggestionAdapter extends RecyclerView.Adapter<MainFragment.SuggestionAdapter.TempViewHolder> {
@@ -625,4 +651,95 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
 
+    private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>{
+        Context context;
+        List<String> categories;
+        Button category_name;
+
+
+        public CategoryAdapter(Context c, List<String> categories) {
+            context = c;
+            this.categories = categories;
+
+        }
+
+
+        @Override
+        public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_layout, parent, false);
+            CategoryViewHolder holder = new CategoryAdapter.CategoryViewHolder(view,context);
+            return holder;
+
+        }
+
+        @Override
+        public void onBindViewHolder(CategoryViewHolder holder, int position) {
+
+            holder.category_name.setText(categories.get(position));
+        }
+
+
+        @Override
+        public int getItemCount() {
+           return categories.size();
+        }
+
+        class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            Context context;
+            Button category_name;
+
+            public CategoryViewHolder(View itemView, Context context) {
+                super(itemView);
+                this.context = context;
+                category_name = (Button) itemView.findViewById(R.id.categories_name);
+                category_name.setOnClickListener(this);
+
+            }
+
+            @Override
+            public void onClick(View view) {
+                category_name.getText();
+                category_name.setBackgroundColor((Color.parseColor("#c22828")));
+                category_name.setTextColor(Color.parseColor("#ffffff"));
+
+                Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));
+                callProductsStore.enqueue(new Callback<List<ProductInfo>>() {
+                    @Override
+                    public void onResponse(Call<List<ProductInfo>> call, Response<List<ProductInfo>> response) {
+                        pbProducts.setVisibility(View.GONE);
+                        if (response.body() != null) {
+                            List<ProductInfo> products = response.body();
+                            List<ProductInfo> product_with_specific_category = new ArrayList<ProductInfo>();
+                            for (int i =0;i<products.size();i++){
+                                if(products.get(i).getCategory().equals(String.valueOf(category_name.getText())))
+                                product_with_specific_category.add(products.get(i));
+                            }
+
+                            adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount,String.valueOf(category_name.getText()));
+
+                            if (HomeActivity.storeCat.equals("Food")) {
+                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                recyclerView.setLayoutManager(layoutManager);
+                            } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                recyclerView.setLayoutManager(layoutManager);
+                            }
+
+                            recyclerView.setAdapter(adapter);
+                            recyclerView.setHasFixedSize(true);
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<ProductInfo>> call, Throwable t) {
+                        Log.i("TAG", "R" + t.toString());
+                        pbProducts.setVisibility(View.GONE);
+                    }
+                });
+
+            }
+        }
+    }
 }

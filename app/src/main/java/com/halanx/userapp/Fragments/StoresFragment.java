@@ -56,6 +56,8 @@ public class StoresFragment extends Fragment {
     CardView food_layout,grocery_layout;
     SearchView svstore;
 
+    List<String> product_category;
+
     ListView list;
     MainFragment.ListViewAdapter searchadapter;
     StoreSearchAdapter sadapter;
@@ -251,6 +253,7 @@ public class StoresFragment extends Fragment {
             @Override
             public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
 
+
                 List<StoreInfo> stores = response.body();
                 Log.d("store_info", String.valueOf(stores.get(0).getStoreCategory()));
                 List<StoreInfo> grocery = new ArrayList<>();
@@ -277,6 +280,7 @@ public class StoresFragment extends Fragment {
             @Override
             public void onFailure(Call<List<StoreInfo>> call, Throwable t) {
 
+                Log.d("done ", "done");
             }
         });
 
@@ -297,6 +301,7 @@ public class StoresFragment extends Fragment {
         TextView itemCount;
         public StoresAdapter(List<StoreInfo> storeList) {
             this.storeList = storeList;
+            Log.d("Storedata", String.valueOf(storeList));
         }
 
         @Override
@@ -343,6 +348,14 @@ public class StoresFragment extends Fragment {
 //                        putString("storeName", storeList.get(pos).getStoreName()).
 //                        putInt("storePosition", pos).apply();
 
+
+                Log.d("product_categories", storeList.get(pos).getAvailable_categories());
+                String product_category = storeList.get(pos).getAvailable_categories();
+                Log.d("product_categories", String.valueOf(product_category));
+
+
+
+
                 HomeActivity.storeID = storeList.get(pos).getId();
                 HomeActivity.storeLogo = storeList.get(pos).getStoreLogo();
                 HomeActivity.storeName = storeList.get(pos).getStoreName();
@@ -350,7 +363,7 @@ public class StoresFragment extends Fragment {
                 HomeActivity.storeCat = storeList.get(pos).getStoreCategory();
 
                 MainFragment fragment = new MainFragment();
-                fragment.passdata(itemCount);
+                fragment.passdata(itemCount,product_category);
                 android.support.v4.app.FragmentTransaction fragmentTransaction =
                         getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frag_container, fragment);

@@ -323,6 +323,7 @@ RegisterActivity extends AppCompatActivity {
                                 public void onResponse(String response) {
 
                                     Log.i("TAG", response);
+
                                     getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
                                             putString("UserInfo", response).putString("MobileNumber", mobileNumber).
                                             putBoolean("first_login", true).
@@ -426,7 +427,7 @@ RegisterActivity extends AppCompatActivity {
     }
 
 
-    public boolean isNetworkAvailable(final Context context) {
+    public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE));
 

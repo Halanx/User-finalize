@@ -1,21 +1,38 @@
 package com.halanx.userapp.Activities;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
+import android.content.pm.ResolveInfo;
+import android.location.Location;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -24,6 +41,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
@@ -33,6 +51,14 @@ import com.facebook.login.widget.LoginButton;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.Resp;
 import com.halanx.userapp.R;
+import com.halanx.userapp.app.Config;
+import com.katepratik.msg91api.MSG91;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,6 +81,11 @@ public class SigninActivity extends AppCompatActivity {
     private TextView btnRegister;
     private Button btnLogin;
     SharedPreferences sharedPreferences;
+    TextView forgot_password;
+    String random;
+    MSG91 msg91 = new MSG91("156475AdUYanwCiKI35970f67d");
+
+
 
     LoginButton fblogin;
     CallbackManager callbackManager;
@@ -64,34 +95,59 @@ public class SigninActivity extends AppCompatActivity {
     String password;
     AccessToken accessToken;
     AlertDialog dial1 , dial2, dial3;
+    String Imei = "null";
+    String locale = "null";
+    String regId = "null";
+    String latitude = "null";
+    String longitude = "null";
+    String ip = "null";
+    String macAddress = "null";
+    String network_type = "null";
+    String androidOS = "null";
+    String phone_make = "null";
+    String phone_model = "null";
+    String sdkVersion = "null";
+    String ram ="null";
+    String   storage_space  = "null";
+    List<String> accounts = new ArrayList<>();
+    String installed_apps = "null";
+    String mcc2 = "null";
+    String mcc = "null";
+    String mnc = "null";
+    String mnc2 = "null";
+    String processor_vendor = "null";
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_signin);
+        msg91.validate();
+
         accessToken = AccessToken.getCurrentAccessToken();
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Location services not enabled");  // GPS not found
-            builder.setMessage("Kindly enable the location services to proceed"); // Want to enable?
-            builder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                }
-            });
-
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    finish();
-                }
-            });
-            dial1 = builder.create();
-            dial1.show();
-        }
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Location services not enabled");  // GPS not found
+//            builder.setMessage("Kindly enable the location services to proceed"); // Want to enable?
+//            builder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+//                }
+//            });
+//
+//            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    finish();
+//                }
+//            });
+//            dial1 = builder.create();
+//            dial1.show();
+//        }
 
 //        int PERMISSION_ALL = 1;
 //        String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS,Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_NETWORK_STATE};
@@ -99,6 +155,16 @@ public class SigninActivity extends AppCompatActivity {
 //        if(!hasPermissions(this, PERMISSIONS)){
 //            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
 //        }
+
+        forgot_password = (TextView) findViewById(R.id.forgot_password);
+
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!checkIfAlreadyhavePermission()) {
+                requestForSpecificPermission();
+            }
+        }
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -124,30 +190,6 @@ public class SigninActivity extends AppCompatActivity {
             }
         }
 
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_NETWORK_STATE)) {
-                dial3 = new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(SigninActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        }).create();
-                dial3.show();
-
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-        }
 
 
         sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
@@ -222,9 +264,10 @@ public class SigninActivity extends AppCompatActivity {
                         if (!response.body().getError()) {
                               Toast.makeText(SigninActivity.this, "Login " + !response.body().getError(), Toast.LENGTH_SHORT).show();
                             Volley.newRequestQueue(SigninActivity.this).add(new StringRequest(Request.Method.GET, "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/" + mobile, new com.android.volley.Response.Listener<String>() {
+                                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                                 @Override
                                 public void onResponse(String response) {
-
+                                    data();
                                     Log.i("TAG", response);
                                     getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
                                             putString("UserInfo", response).putString("MobileNumber", mobile).
@@ -270,6 +313,68 @@ public class SigninActivity extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if ((inputMobile.getText().length() > 10) || (inputMobile.getText().length() < 10)) {
+
+                    Toast.makeText(getApplicationContext(), "Please Enter the correct number", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (RegisterActivity.isNetworkAvailable(getApplicationContext())) {
+
+
+                        random = sendOtp();
+
+                        final Dialog dialog = new Dialog(SigninActivity.this);
+                        dialog.setContentView(R.layout.activity_verify);
+                        dialog.setTitle("OTP has been sent to" + inputMobile.getText());
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.show();
+                        Window window = dialog.getWindow();
+                        window.setLayout(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+
+                        final TextView tvResendOtp = (TextView) dialog.findViewById(R.id.resend);
+
+                        final EditText otp = (EditText) dialog.findViewById(R.id.enterOTP);
+                        Button btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
+                        TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
+
+                        tvNumber.setText(inputMobile.getText());
+                        btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Log.e("OTP", otp.getText().toString() + " " + random);
+                                if (otp.getText().toString().equals(random)) {
+                                    Toast.makeText(SigninActivity.this, "User Verified", Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                    Dialog dialog1 = new Dialog(getApplicationContext());
+                                    dialog1.setContentView(R.layout.forgot_password_layout);
+                                    EditText new_password = (EditText) dialog1.findViewById(R.id.password);
+                                    Button done = (Button) dialog1.findViewById(R.id.button_done);
+
+                                    done.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+
+                                        }
+                                    });
+
+
+                                } else {
+                                    Toast.makeText(SigninActivity.this, "Incorrect OTP entered", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                        });
+
+
+                    }
+                }
             }
         });
 
@@ -401,11 +506,443 @@ public class SigninActivity extends AppCompatActivity {
 
 //--------------
     }
+
+
+    private boolean checkIfAlreadyhavePermission() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestForSpecificPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE,Manifest.permission.GET_ACCOUNTS}, 101);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //granted
+                  } else {
+                    //not granted
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+    String sendOtp() {
+
+
+        Random r = new Random();
+        int randomOTP = r.nextInt(9999 - 1000) + 1000;
+        String random = Integer.toString(randomOTP);
+
+//        Toast.makeText(getApplicationContext(), random, Toast.LENGTH_SHORT).show();
+
+        msg91.getBalance("4");
+        msg91.composeMessage("HALANX", "Hi " + "! " + random + " is your One Time Password(OTP) for " +
+                "Halanx User App.");
+        msg91.to(String.valueOf(inputMobile.getText()));
+        msg91.setCountryCode("91");
+        msg91.setRoute("4");
+
+        msg91.send();
+        Log.d("doneabc", random);
+
+        return random;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    @SuppressLint("HardwareIds")
+    public void data(){
+
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            Imei = telephonyManager.getDeviceId();
+            Log.d("phone_data", Imei);
+        }
+        catch (Exception e){
+
+        }
+
+        try {
+            locale = getApplicationContext().getResources().getConfiguration().locale.getCountry();
+            Log.d("phone_data", locale);
+
+        }
+        catch (Exception e){
+
+        }
+        try{
+            SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+            regId = pref.getString("regId", "null");
+            Log.d("phone_data", regId);
+        }
+        catch (Exception e){
+
+        }
+
+
+        try
+        {
+            Location location = null;
+            latitude = String.valueOf(location.getLatitude());
+            Log.d("phone_data", latitude);
+        }
+        catch (Exception e){
+
+        }
+        try{
+            Location location = new Location(String.valueOf(this));
+            longitude = String.valueOf(location.getLongitude());
+            Log.d("phone_data", longitude);
+
+        }
+        catch (Exception e){
+
+        }
+
+
+        try{  @SuppressLint("WifiManagerLeak") WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+            ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+            Log.d("phone_data", ip);
+        }
+        catch (Exception e){
+
+        }
+
+        try{
+            @SuppressLint("WifiManagerLeak") WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+
+            WifiInfo wInfo = wm.getConnectionInfo();
+            macAddress = wInfo.getMacAddress();
+            Log.d("phone_data", macAddress);
+        }
+        catch (Exception e){
+
+        }
+
+
+        try{
+            network_type = getNetworkClass(getApplicationContext());
+            Log.d("phone_data", network_type);
+
+        }
+        catch (Exception e){
+
+        }
+        try{
+            androidOS = Build.VERSION.RELEASE;
+            Log.d("phone_data", androidOS);
+
+        }
+        catch (Exception e){
+
+        }
+        try{
+            phone_make = Build.BRAND;
+            Log.d("phone_data", phone_make);
+        }
+        catch (Exception e){
+
+        }
+        try{
+            phone_model = Build.MODEL;
+
+            Log.d("phone_data", phone_model);
+        }
+        catch (Exception e){
+
+        }
+        try{
+
+            sdkVersion = String.valueOf(Build.VERSION.SDK_INT);
+            Log.d("phone_data", sdkVersion);
+
+        }
+        catch (Exception e){
+
+        }
+        try{
+
+
+            ActivityManager actManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+            actManager.getMemoryInfo(memInfo);
+            ram = String.valueOf(memInfo.totalMem);
+            Log.d("phone_data", ram);
+
+        }
+        catch (Exception e){
+
+        }
+        try{
+
+            AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+            Account[] social_id = manager.getAccounts();
+            for (int i=0;i<social_id.length;i++){
+                accounts.add(String.valueOf(social_id[i]));
+            }
+            Log.d("phone_data", String.valueOf(accounts));
+        }
+        catch (Exception e){
+
+        }
+
+
+        try{
+            StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
+            storage_space  = String.valueOf((statFs.getBlockCount() * statFs.getBlockSize()));
+            Log.d("phone_data", storage_space);
+        }
+        catch (Exception e){
+
+        }
+
+
+        try{
+
+            installed_apps = getInstalledAppList();
+            Log.d("phone_data", installed_apps);
+
+        }
+        catch (Exception e){
+
+        }
+
+        try{
+            mcc =getMCC();
+            Log.d("phone_data", mcc);
+
+        }
+        catch(Exception e){
+        }
+
+
+        try{
+
+            mcc2 = getMCC2();
+            Log.d("phone_data", mcc2);
+
+        }
+        catch(Exception e){
+        }
+
+        try{
+
+            mnc = getMNC();
+            Log.d("phone_data", mnc);
+
+        }
+        catch(Exception e){
+        }
+
+        try{
+
+            mnc2 = getMNC2();
+            Log.d("phone_data", mnc2);
+
+        }
+        catch(Exception e){
+        }
+
+
+        try {
+
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.put("apps_installed","apps");
+            jsonObject.put("country_code", locale);
+            jsonObject.put("gcm_id", regId);
+            jsonObject.put("gps_latitude", latitude);
+            jsonObject.put("gps_longitude", longitude);
+            jsonObject.put("imei_id",Imei);
+            jsonObject.put("ip_address", ip);
+            jsonObject.put("mac_id", macAddress);
+            jsonObject.put("mcc_code_1", mcc);
+            jsonObject.put("mcc_code_2", mcc2);
+            jsonObject.put("mnc_code_1", mnc);
+            jsonObject.put("mnc_code_2", mnc2);
+            jsonObject.put("network_type", network_type);
+            jsonObject.put("os_version",androidOS );
+            jsonObject.put("phone_make", phone_make);
+            jsonObject.put("phone_model", phone_model);
+            jsonObject.put("phone_os", sdkVersion);
+            jsonObject.put("processor_vendor", processor_vendor);
+            jsonObject.put("ram", ram);
+            jsonObject.put("social_id", accounts);
+            jsonObject.put("storage_space", storage_space);
+            jsonObject.put("phone_number",mobile);
+
+            Log.d("jsonobject", String.valueOf(jsonObject));
+
+            String url = "http://ec2-54-215-199-153.us-west-1.compute.amazonaws.com:8080/addPhoneData";
+
+            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url,jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("resp", String.valueOf(response));
+                }
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("volleyerror", String.valueOf(error));
+                }
+            }));
+        }
+        catch (Exception e){
+            Log.d("exception", String.valueOf(e));
+        }
+
+    }
+
+
+    public String getInstalledAppList(){
+        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> pkgAppsList = getApplicationContext().getPackageManager().queryIntentActivities( mainIntent, 0);
+        Log.d("installed apps", String.valueOf(pkgAppsList));
+        return String.valueOf(pkgAppsList);
+    }
+
+    public String getNetworkClass(Context context) {
+        TelephonyManager mTelephonyManager = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = mTelephonyManager.getNetworkType();
+        switch (networkType) {
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return "2G";
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return "3G";
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return "4G";
+            default:
+                return "Unknown";
+        }
+    }
+    public String getMNC(){
+
+
+        TelephonyManager tel = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+        String networkOperator = tel.getNetworkOperator();
+
+        if (!TextUtils.isEmpty(networkOperator)) {
+            mnc = networkOperator.substring(3);
+        }
+        return mnc;
+    }
+
+    public String getMCC(){
+
+
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            TelephonyManager tel = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+            String networkOperator = tel.getNetworkOperator();
+
+            if (!TextUtils.isEmpty(networkOperator)) {
+                mcc = networkOperator.substring(0, 3);
+            }
+        }
+        return mcc;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    public String getMNC2(){
+
+
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            SubscriptionManager subManager = (SubscriptionManager) getApplicationContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            if (subManager.getActiveSubscriptionInfoCount() >= 2) {
+
+                if (subManager.getActiveSubscriptionInfo(1)!= null) {
+
+                    mnc = String.valueOf(subManager.getActiveSubscriptionInfo(1).getMnc());
+                }
+            }
+        }
+        return mnc;
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    public String getMCC2(){
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            SubscriptionManager subManager = (SubscriptionManager) getApplicationContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            if (subManager.getActiveSubscriptionInfoCount() >= 2) {
+                if (subManager.getActiveSubscriptionInfo(1)!= null)
+                {
+                    mcc = String.valueOf(subManager.getActiveSubscriptionInfo(1).getMcc());
+                }
+            }
+        }
+        return mcc;
     }
 
 }

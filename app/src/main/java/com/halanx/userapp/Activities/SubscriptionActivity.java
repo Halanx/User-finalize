@@ -767,7 +767,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 }
 
                 subtotal = subtotal * subscriptionInfo.getDeliveriesLeft();
-                tax = tax + subscriptionInfo.getDeliveriesLeft();
+                tax = tax * subscriptionInfo.getDeliveriesLeft();
 
                 total = subtotal + tax;
                 tvSubtotal.setText(Double.toString(subtotal));

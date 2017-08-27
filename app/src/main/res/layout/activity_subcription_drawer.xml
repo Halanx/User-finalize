@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Subscription Status"
+                android:text="Delivery Status"
                 android:textColor="#000000"
                 android:textSize="18dp"
                 android:typeface="sans" />

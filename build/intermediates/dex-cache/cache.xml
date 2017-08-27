@@ -7,8 +7,17 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="e8f1718efcf6b4edf9c3766df1f855c71707286a">
+        sha1="dc70b5c3101f84281d06b3b1e7f0e3bffb3170a7">
         <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_4bd94487a4353fa89aed7f9d4f5717e63000fb3f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Nishant/.android/build-cache/f530b8fa73916b2ae21cdbffc51dddb7f0b194f7/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="78ea232052df889856dcb7b7b542707c89bb3bfb">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/release/folders/1000/10/classes_40b8209cd396aac407f9338a8049a380805497bf/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -18,6 +27,24 @@
         revision="25.0.2"
         sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
         <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_1e0059df1131f5046af2cf3421c2b4d17aabc439/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Nishant/.android/build-cache/5f465121fa3701a6473cdd74ab94f5d30c10f763/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1db28e119b406a5fe367b63fb1be083d5dfe298a">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/release/folders/1000/10/classes_26ceb11eb405eeea57a1f5457b744424222b1f87/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Nishant/Desktop/Halanx-User-Done/sdkui/build/intermediates/bundles/default/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="db2fc4543eb983e516cf329e40bdc423be34af15">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/release/folders/1000/4/classes_e0ecf3276d90f8a45a309b7121a581b71f02d3df/classes.dex" />
     </item>
 
 </items>

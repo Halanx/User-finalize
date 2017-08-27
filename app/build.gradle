@@ -7,8 +7,8 @@ android {
         applicationId "com.halanx.userapp"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 25
-        versionName "3.0.5"
+        versionCode 26
+        versionName "3.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

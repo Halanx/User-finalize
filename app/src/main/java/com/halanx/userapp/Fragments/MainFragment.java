@@ -83,6 +83,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     RelativeLayout brand_name;
     RecyclerView categories_Recycler;
     CategoryAdapter categoryAdapter;
+    Boolean checked[];
 
 
 
@@ -502,7 +503,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         try{
             JSONArray obj = new JSONArray(this.product_category);
             Log.d("product_data", String.valueOf(obj.get(2)));
-            for(int i =1;i<obj.length();i++){
+            for(int i =0;i<obj.length();i++){
                 categories.add(String.valueOf(obj.get(i)));
             }
 
@@ -651,10 +652,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
 
-    private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>{
+    private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
         Context context;
         List<String> categories;
-        Button category_name;
 
 
         public CategoryAdapter(Context c, List<String> categories) {
@@ -667,24 +667,100 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         @Override
         public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_layout, parent, false);
-            CategoryViewHolder holder = new CategoryAdapter.CategoryViewHolder(view,context);
+            CategoryViewHolder holder = new CategoryAdapter.CategoryViewHolder(view, context);
             return holder;
 
         }
 
         @Override
-        public void onBindViewHolder(CategoryViewHolder holder, int position) {
+        public void onBindViewHolder(final CategoryViewHolder holder, final int position) {
 
+            checked = new Boolean[categories.size()];
+            for (int i=0;i<categories.size();i++){
+                checked[i] = false;
+            }
             holder.category_name.setText(categories.get(position));
+            holder.category_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    for(int i= 0; i<categories.size();i++){
+                        if (checked[i]==true) {
+                            holder.category_name.setBackgroundColor((Color.parseColor("#ffffff")));
+                            holder.category_name.setTextColor(Color.parseColor("#000000"));
+                            checked[i] = false;
+                        }
+                    }
+
+                    holder.category_name.getText();
+//                for(int i=0;i<categories.size();i++){
+//                    category_name
+//
+//                }
+//
+//
+//
+//                    holder.category_name.setBackgroundColor((Color.parseColor("#c22828")));
+//                    holder.category_name.setTextColor(Color.parseColor("#ffffff"));
+
+
+                    Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));
+                    callProductsStore.enqueue(new Callback<List<ProductInfo>>() {
+                        @Override
+                        public void onResponse(Call<List<ProductInfo>> call, Response<List<ProductInfo>> response) {
+                            pbProducts.setVisibility(View.GONE);
+                            if (response.body() != null) {
+                                List<ProductInfo> products = response.body();
+                                List<ProductInfo> product_with_specific_category = new ArrayList<ProductInfo>();
+
+                                if(holder.category_name.getText().equals("ALL")){
+                                    for (int i = 0; i < products.size(); i++) {
+                                        product_with_specific_category.add(products.get(i));
+                                    }
+                                }
+                                else{
+                                    for (int i = 0; i < products.size(); i++) {
+                                    if (products.get(i).getCategory().equals(String.valueOf(holder.category_name.getText())))
+                                        product_with_specific_category.add(products.get(i));
+                                }
+
+                                adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, String.valueOf(holder.category_name.getText()));
+
+                                if (HomeActivity.storeCat.equals("Food")) {
+                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                    recyclerView.setLayoutManager(layoutManager);
+                                } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                    GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                    recyclerView.setLayoutManager(layoutManager);
+                                }
+
+                                recyclerView.setAdapter(adapter);
+                                recyclerView.setHasFixedSize(true);
+                            }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<ProductInfo>> call, Throwable t) {
+                            Log.i("TAG", "R" + t.toString());
+                            pbProducts.setVisibility(View.GONE);
+                        }
+                    });
+
+
+
+                }
+            });
+
         }
 
 
         @Override
         public int getItemCount() {
-           return categories.size();
+            return categories.size();
         }
 
-        class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        class CategoryViewHolder extends RecyclerView.ViewHolder {
 
             Context context;
             Button category_name;
@@ -693,53 +769,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 super(itemView);
                 this.context = context;
                 category_name = (Button) itemView.findViewById(R.id.categories_name);
-                category_name.setOnClickListener(this);
 
             }
 
-            @Override
-            public void onClick(View view) {
-                category_name.getText();
-                category_name.setBackgroundColor((Color.parseColor("#c22828")));
-                category_name.setTextColor(Color.parseColor("#ffffff"));
 
-                Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));
-                callProductsStore.enqueue(new Callback<List<ProductInfo>>() {
-                    @Override
-                    public void onResponse(Call<List<ProductInfo>> call, Response<List<ProductInfo>> response) {
-                        pbProducts.setVisibility(View.GONE);
-                        if (response.body() != null) {
-                            List<ProductInfo> products = response.body();
-                            List<ProductInfo> product_with_specific_category = new ArrayList<ProductInfo>();
-                            for (int i =0;i<products.size();i++){
-                                if(products.get(i).getCategory().equals(String.valueOf(category_name.getText())))
-                                product_with_specific_category.add(products.get(i));
-                            }
-
-                            adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount,String.valueOf(category_name.getText()));
-
-                            if (HomeActivity.storeCat.equals("Food")) {
-                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                                recyclerView.setLayoutManager(layoutManager);
-                            } else if (HomeActivity.storeCat.equals("Grocery")) {
-                                GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-                                recyclerView.setLayoutManager(layoutManager);
-                            }
-
-                            recyclerView.setAdapter(adapter);
-                            recyclerView.setHasFixedSize(true);
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<ProductInfo>> call, Throwable t) {
-                        Log.i("TAG", "R" + t.toString());
-                        pbProducts.setVisibility(View.GONE);
-                    }
-                });
-
-            }
         }
+
     }
 }

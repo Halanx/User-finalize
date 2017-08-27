@@ -46,7 +46,7 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  * Created by samarthgupta on 23/05/17.
  */
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> implements View.OnClickListener {
 
     private List<ProductInfo> products = new ArrayList<>();
     private static int restQuantity[];
@@ -139,6 +139,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }
 
         }
+        holder.cvAddCart.setOnClickListener(this);
+        holder.rvInc.setOnClickListener(this);
+        holder.rvDec.setOnClickListener(this);
+        holder.ivFav.setOnClickListener(this);
+        holder.cvProducts.setOnClickListener(this);
 
     }
 
@@ -148,7 +153,53 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         return products.size();
     }
 
-    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @Override
+    public void onClick(View view) {
+
+        int position = holder.getAdapterPosition();
+        //Click on product
+        if (view.getId() == R.id.cvProducts) {
+            Intent intent = new Intent(c, ItemDisplayActivity.class);
+            intent.putExtra("Name", products.get(position).getProductName());
+            intent.putExtra("Price", products.get(position).getPrice());
+            intent.putExtra("Features", products.get(position).getFeatures());
+            intent.putExtra("Image", products.get(position).getProductImage());
+            intent.putExtra("ID", products.get(position).getId());
+            c.startActivity(intent);
+        }
+
+        //Click on add to cart
+        else if (view.getId() == R.id.cv_rest_add_cart) {
+            holder.pb_addtocart.setVisibility(View.VISIBLE);
+            holder.tvCart.setVisibility(View.GONE);
+            //Add to cart
+            Double val = Double.parseDouble(holder.etRestQuan.getText().toString());
+            int proId = products.get(position).getId();
+            Long mob = Long.parseLong(mobileNumber);
+            holder.addCartItem(mob, val, proId);
+
+        } else if (view.getId() == R.id.restIncrement) {
+
+            if (restQuantity[position] < 10) {
+                restQuantity[position]++;
+                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+            }
+
+        } else if (view.getId() == R.id.restDecrement) {
+
+            if (restQuantity[position] > 1) {
+                restQuantity[position]--;
+                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+            }
+        } else if (view.getId() == R.id.restFav) {
+            //Add to favorites
+            holder.productFav(products.get(position).getId(), "1");
+        }
+
+
+    }
+
+    public class ProductViewHolder extends RecyclerView.ViewHolder {
 
         CardView cvProducts, cvRest;
         ImageView productImage;
@@ -190,59 +241,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             rvInc = (RelativeLayout) itemView.findViewById(R.id.restIncrement);
             tvCart = (TextView) itemView.findViewById(R.id.tv_add_to_cart);
             ivFav = (ImageView) itemView.findViewById(R.id.restFav);
-            cvAddCart.setOnClickListener(this);
-            rvInc.setOnClickListener(this);
-            rvDec.setOnClickListener(this);
-            ivFav.setOnClickListener(this);
-            cvProducts.setOnClickListener(this);
-
-        }
-
-        @Override
-        public void onClick(View view) {
-
-            int position = getAdapterPosition();
-            //Click on product
-            if (view.getId() == R.id.cvProducts) {
-                Intent intent = new Intent(c, ItemDisplayActivity.class);
-                intent.putExtra("Name", products.get(position).getProductName());
-                intent.putExtra("Price", products.get(position).getPrice());
-                intent.putExtra("Features", products.get(position).getFeatures());
-                intent.putExtra("Image", products.get(position).getProductImage());
-                intent.putExtra("ID", products.get(position).getId());
-                c.startActivity(intent);
-            }
-
-            //Click on add to cart
-            else if (view.getId() == R.id.cv_rest_add_cart) {
-                pb_addtocart.setVisibility(View.VISIBLE);
-                tvCart.setVisibility(View.GONE);
-                //Add to cart
-                Double val = Double.parseDouble(etRestQuan.getText().toString());
-                int proId = products.get(position).getId();
-                Long mob = Long.parseLong(mobileNumber);
-                addCartItem(mob, val, proId);
-
-            } else if (view.getId() == R.id.restIncrement) {
-
-                if (restQuantity[position] < 10) {
-                    restQuantity[position]++;
-                    etRestQuan.setText(String.valueOf(restQuantity[position]));
-                }
-
-            } else if (view.getId() == R.id.restDecrement) {
-
-                if (restQuantity[position] > 1) {
-                    restQuantity[position]--;
-                    etRestQuan.setText(String.valueOf(restQuantity[position]));
-                }
-            } else if (view.getId() == R.id.restFav) {
-                //Add to favorites
-                productFav(products.get(position).getId(), "1");
-            }
 
 
         }
+
+
 
         private void productFav(Integer productID, final String option) {
             //option is 0 or 1 -

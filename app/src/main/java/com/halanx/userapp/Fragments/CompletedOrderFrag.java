@@ -118,7 +118,7 @@ public class CompletedOrderFrag extends Fragment {
             }
         });
 
-        Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/orders/user/9582184794",
+        Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/orders/user/9582184794",
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

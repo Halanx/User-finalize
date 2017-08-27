@@ -48,7 +48,7 @@ public class RatingActivity extends AppCompatActivity {
 
 
         Volley.newRequestQueue(RatingActivity.this).add(new StringRequest(Request.Method.GET,
-                "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/batch/" + id,
+                "https://api.halanx.com/batch/" + id,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -112,7 +112,7 @@ public class RatingActivity extends AppCompatActivity {
 
 
 
-                    String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/shoppers/" + mobileNumber +"/";
+                    String url = "https://api.halanx.com/shoppers/" + mobileNumber +"/";
 
                     JSONObject obj = new JSONObject();
                     try {

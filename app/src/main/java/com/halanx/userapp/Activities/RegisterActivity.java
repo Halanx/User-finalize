@@ -318,7 +318,7 @@ RegisterActivity extends AppCompatActivity {
                             putUserCart(cart);
 
                             //Save user details in sharedPreferences
-                            Volley.newRequestQueue(RegisterActivity.this).add(new StringRequest(Request.Method.GET, "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/" + mobileNumber, new com.android.volley.Response.Listener<String>() {
+                            Volley.newRequestQueue(RegisterActivity.this).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/users/" + mobileNumber, new com.android.volley.Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
 

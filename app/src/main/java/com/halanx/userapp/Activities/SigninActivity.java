@@ -263,7 +263,7 @@ public class SigninActivity extends AppCompatActivity {
                         //IF ERROR IS FALSE, LOGIN SUCCESS
                         if (!response.body().getError()) {
                               Toast.makeText(SigninActivity.this, "Login " + !response.body().getError(), Toast.LENGTH_SHORT).show();
-                            Volley.newRequestQueue(SigninActivity.this).add(new StringRequest(Request.Method.GET, "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/" + mobile, new com.android.volley.Response.Listener<String>() {
+                            Volley.newRequestQueue(SigninActivity.this).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/users/" + mobile, new com.android.volley.Response.Listener<String>() {
                                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                                 @Override
                                 public void onResponse(String response) {

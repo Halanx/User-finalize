@@ -346,7 +346,7 @@ public class HomeActivity extends AppCompatActivity
     private void displayFirebaseRegId() {
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
         String regId = pref.getString("regId", null);
-        String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/" +
+        String url = "https://api.halanx.com/users/" +
                 getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null) + "/";
         Log.i("Gcm", url);
         JSONObject obj = new JSONObject();

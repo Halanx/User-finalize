@@ -56,7 +56,7 @@ public class StoreSearchAdapter extends RecyclerView.Adapter<StoreSearchAdapter.
 
         String url = null;
         try {
-            url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/stores/" + storeList.getString("Id");
+            url = "https://api.halanx.com/stores/" + storeList.getString("Id");
 
         JSONObject obj = new JSONObject();
 

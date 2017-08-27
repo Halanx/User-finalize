@@ -170,7 +170,7 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
         //option is 0 or 1 -
         //1 for adding , 0 for removing
 
-        String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/favs/" + mobileNumber + "/" + option + "/";
+        String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/" + option + "/";
         JSONObject obj = new JSONObject();
         try {
             obj.put("LastItem", productID);

@@ -98,7 +98,7 @@ public class AccountActivity extends AppCompatActivity {
                             Log.d("TAG", addressDetails);
                             tvAddress.setText(addressDetails);
                             tvAddress.invalidate();
-                            String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/" +
+                            String url = "https://api.halanx.com/users/" +
                                     getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null)+"/";
                              JSONObject obj = new JSONObject();
                             try {

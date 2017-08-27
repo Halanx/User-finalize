@@ -181,7 +181,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
-                String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/"+mobile;
+                String url = "https://api.halanx.com/users/"+mobile;
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("SubscriptionStatus",b);

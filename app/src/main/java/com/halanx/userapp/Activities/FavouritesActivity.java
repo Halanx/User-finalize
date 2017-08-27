@@ -165,7 +165,7 @@ public class FavouritesActivity extends AppCompatActivity {
                 switch (view.getId()) {
                     case R.id.bt_product_delete: {
 
-                        String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/favs/" + mobileNumber + "/0/";
+                        String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/0/";
                         JSONObject obj = new JSONObject();
                         try {
                             obj.put("LastItem", favPros.get(pos).getId());

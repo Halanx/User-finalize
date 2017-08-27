@@ -87,7 +87,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                 holder.cvProducts.setVisibility(View.VISIBLE);
                 holder.cvRest.setVisibility(View.GONE);
 
-                String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/products/" + products.getString("Id");
+                String url = "https://api.halanx.com/products/" + products.getString("Id");
                 JSONObject obj = new JSONObject();
 
                 Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.GET, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
@@ -269,7 +269,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
             //option is 0 or 1 -
             //1 for adding , 0 for removing
 
-            String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/favs/" + mobileNumber + "/" + option + "/";
+            String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/" + option + "/";
             JSONObject obj = new JSONObject();
             try {
                 obj.put("LastItem", productID);

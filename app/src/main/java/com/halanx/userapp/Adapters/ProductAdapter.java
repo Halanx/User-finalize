@@ -48,7 +48,7 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> implements View.OnClickListener {
 
-    private List<ProductInfo> products = new ArrayList<>();
+    private List<ProductInfo> products = new ArrayList<ProductInfo>();
     private static int restQuantity[];
     private Context c;
     private String storeCategory;
@@ -61,6 +61,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public ProductAdapter(List<ProductInfo> products, Context c, String storeCat, String mobileNumber, TextView itemCount, String text) {
         this.products = products;
+        Log.d("textvie", String.valueOf(products));
+
         this.c = c;
         storeCategory = storeCat;
         catetgory_text = text;
@@ -251,7 +253,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             //option is 0 or 1 -
             //1 for adding , 0 for removing
 
-            String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users/favs/" + mobileNumber + "/" + option + "/";
+            String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/" + option + "/";
             JSONObject obj = new JSONObject();
             try {
                 obj.put("LastItem", productID);

@@ -130,7 +130,7 @@ public class StoresFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 suggestions.clear();
 
-                String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com:9200/store/_search?q=StoreName:" + newText + "*";
+                String url = "https://api.halanx.com:9200/store/_search?q=StoreName:" + newText + "*";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
                     @Override

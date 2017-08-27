@@ -166,7 +166,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 list.setAdapter(null);
                 suggestions.clear();
 
-                String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com:9200/product/_search?q=ProductName:" + newText + "*";
+                String url = "api.halanx.com:9200/product/_search?q=ProductName:" + newText + "*";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
                     @Override
@@ -711,32 +711,51 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                             if (response.body() != null) {
                                 List<ProductInfo> products = response.body();
                                 List<ProductInfo> product_with_specific_category = new ArrayList<ProductInfo>();
+                                Log.d("category_name", String.valueOf(holder.category_name.getText()));
 
-                                if(holder.category_name.getText().equals("ALL")){
-                                    for (int i = 0; i < products.size(); i++) {
-                                        product_with_specific_category.add(products.get(i));
+                                if(String.valueOf(holder.category_name.getText()).equals("All")){
+                                    Log.d("category_name", "done");
+                                    if (response.body() != null) {
+                                        List<ProductInfo> productsa = response.body();
+                                        adapter = new ProductAdapter(productsa, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, null);
+
+                                        if (HomeActivity.storeCat.equals("Food")) {
+                                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                            recyclerView.setLayoutManager(layoutManager);
+                                        } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                            recyclerView.setLayoutManager(layoutManager);
+                                        }
+
+                                        recyclerView.setAdapter(adapter);
+                                        recyclerView.setHasFixedSize(true);
                                     }
+
                                 }
-                                else{
+                                else {
+                                    Log.d("category_name", "done");
                                     for (int i = 0; i < products.size(); i++) {
-                                    if (products.get(i).getCategory().equals(String.valueOf(holder.category_name.getText())))
-                                        product_with_specific_category.add(products.get(i));
+                                        if (products.get(i).getCategory().equals(String.valueOf(holder.category_name.getText())))
+                                            product_with_specific_category.add(products.get(i));
+
+                                    }
+                                    adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, String.valueOf(holder.category_name.getText()));
+
+                                    if (HomeActivity.storeCat.equals("Food")) {
+                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                        recyclerView.setLayoutManager(layoutManager);
+                                    } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                        recyclerView.setLayoutManager(layoutManager);
+                                    }
+
+                                    recyclerView.setAdapter(adapter);
+                                    recyclerView.setHasFixedSize(true);
+
                                 }
 
-                                adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, String.valueOf(holder.category_name.getText()));
+                                 }
 
-                                if (HomeActivity.storeCat.equals("Food")) {
-                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                                    recyclerView.setLayoutManager(layoutManager);
-                                } else if (HomeActivity.storeCat.equals("Grocery")) {
-                                    GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-                                    recyclerView.setLayoutManager(layoutManager);
-                                }
-
-                                recyclerView.setAdapter(adapter);
-                                recyclerView.setHasFixedSize(true);
-                            }
-                            }
                         }
 
                         @Override

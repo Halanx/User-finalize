@@ -134,7 +134,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     int pos = getAdapterPosition();
-                    String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/items/" + holderCartItemList.get(pos).getId();
+                    String url = "https://api.halanx.com/carts/items/" + holderCartItemList.get(pos).getId();
                     JSONObject obj = new JSONObject();
 
                     try {
@@ -179,7 +179,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
 
                      if (i < 10) {
                         final int position = getAdapterPosition();
-                        String ur = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/items/" + holderCartItemList.get(position).getId();
+                        String ur = "https://api.halanx.com/carts/items/" + holderCartItemList.get(position).getId();
                         JSONObject obj = new JSONObject();
 
                         try {
@@ -216,7 +216,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                         etQuantity.setText(val);
                         notifyDataSetChanged();
                         final int position = getAdapterPosition();
-                        String ur = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/items/" + holderCartItemList.get(position).getId();
+                        String ur = "https://api.halanx.com/carts/items/" + holderCartItemList.get(position).getId();
                         JSONObject obj = new JSONObject();
 
                         try {

@@ -294,7 +294,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_pts) {
-            startActivity(new Intent(HomeActivity.this, PointsActivity.class));
+            startActivity(new Intent(HomeActivity.this, Wallet.class));
 
 
         } else if (id == R.id.nav_ref) {

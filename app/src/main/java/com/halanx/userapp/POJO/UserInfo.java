@@ -65,16 +65,26 @@ public class UserInfo {
     @SerializedName("AccountBalance")
     @Expose
     private Double accountBalance;
+    @SerializedName("MyReferralCode")
+    @Expose
+    private String myreferalCode;
+    @SerializedName("ReferralCode")
+    @Expose
+    private String referalCode;
+    @SerializedName("PromotionalBalance")
+    @Expose
+    private Double promotionalBalance;
 
 
 
-    public UserInfo(long phoneNo, String emailId, String firstName, String lastName, String password, String address) {
+    public UserInfo(long phoneNo, String emailId, String firstName, String lastName, String password, String address, String inputIcode) {
         this.phoneNo = phoneNo;
         this.emailId = emailId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         gcmid = address;
+        referalCode = inputIcode;
     }
 
     public void setGcmid(String gcmid) {
@@ -231,5 +241,29 @@ public class UserInfo {
 
     public void setN(Integer n) {
         this.n = n;
+    }
+
+    public String getReferalCode() {
+        return referalCode;
+    }
+
+    public void setReferalCode(String referalCode) {
+        this.referalCode = referalCode;
+    }
+
+    public String getMyreferalCode() {
+        return myreferalCode;
+    }
+
+    public void setMyreferalCode(String myreferalCode) {
+        this.myreferalCode = myreferalCode;
+    }
+
+    public Double getPromotionalBalance() {
+        return promotionalBalance;
+    }
+
+    public void setPromotionalBalance(Double promotionalBalance) {
+        this.promotionalBalance = promotionalBalance;
     }
 }

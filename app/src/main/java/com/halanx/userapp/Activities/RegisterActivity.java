@@ -306,7 +306,7 @@ RegisterActivity extends AppCompatActivity {
 //                    Toast.makeText(RegisterActivity.this, "Registeration success", Toast.LENGTH_LONG).show();
 
                     //Put user on Django on successful registration on php
-                    UserInfo info = new UserInfo(Long.parseLong(mobileNumber), email, firstName, lastName, password, regId);
+                    UserInfo info = new UserInfo(Long.parseLong(mobileNumber), email, firstName, lastName, password, regId,icode);
                     Call<UserInfo> callPost = client.putUserDataOnServer(info);
                     callPost.enqueue(new Callback<UserInfo>() {
                         @Override

@@ -26,13 +26,13 @@
 
         <item
             android:id="@+id/subscription"
-            android:icon="@drawable/fav_48"
+            android:icon="@drawable/subscription"
             android:title="Subscription" />
 
         <item
             android:id="@+id/nav_pts"
             android:icon="@drawable/coins_filled_50"
-            android:title="Points" />
+            android:title="Wallet" />
         <item
             android:id="@+id/nav_ref"
             android:icon="@drawable/ic_menu_share"

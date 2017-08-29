@@ -90,7 +90,7 @@
             android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.PointsActivity"
+            android:name=".Activities.Wallet"
             android:label="Points"
             android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />

@@ -642,7 +642,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                         }
 
                         if (Double.parseDouble(amount.getText().toString()) <= 0) {
-                            Toast.makeText(SubscriptionActivity.this, "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SubscriptionActivity.this, "Please enater a valid amount", Toast.LENGTH_SHORT).show();
                             return;
                         }
 

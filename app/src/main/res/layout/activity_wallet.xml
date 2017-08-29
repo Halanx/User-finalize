@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context="com.halanx.userapp.Activities.Wallet">
+
+
+        <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wallet Ballance: "
+        android:gravity="center"
+            android:id="@+id/wallet"
+        android:typeface="sans"
+        android:textSize="25dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" X"
+            android:gravity="end"
+            android:layout_gravity="end"
+            android:id="@+id/wallet_balance"
+            android:typeface="sans"
+            android:layout_centerVertical="true"
+            android:textSize="25dp"
+            android:layout_toEndOf="@+id/wallet" />
+
+        <Button
+            android:id="@+id/add_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_alignParentEnd="true"
+
+            android:background="#c21818"
+            android:text="add money"
+            android:textColor="#ffffff" />
+
+    </RelativeLayout>
+
+
+
+            <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+                android:layout_marginTop="50dp"
+                android:id="@+id/x">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X-Money: "
+            android:gravity="center"
+            android:id="@+id/x_money"
+            android:typeface="sans"
+            android:textSize="25dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=" X"
+            android:id="@+id/bonus_balance"
+            android:layout_toRightOf="@id/x_money"
+            android:typeface="sans"
+
+            android:textSize="25dp" />
+
+    </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Have a referal code ?"
+                android:textSize="20dp"
+                android:layout_margin="30dp"
+                android:id="@+id/haveReferal"
+                android:layout_gravity="center"/>
+
+
+        </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:id="@+id/enterCode"
+                android:layout_below="@id/x">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/promotionCode"
+            android:layout_marginRight="20dp"
+            android:hint="Enter Your Code"/>
+    </android.support.design.widget.TextInputLayout>
+
+
+    <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:layout_gravity="center"
+        android:layout_alignParentEnd="true"
+
+                android:id="@+id/promotionCodeAdd"
+                android:background="#c21818"
+                android:textColor="#ffffff"/>
+
+</RelativeLayout>
+</LinearLayout>

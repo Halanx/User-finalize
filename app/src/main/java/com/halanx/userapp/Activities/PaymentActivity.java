@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -197,6 +201,35 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     });
 
                 }
+                else
+                {
+                    String uri = "https://api.halanx.com/users/"+getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null)+"/";
+                    JSONObject jsonObject = new JSONObject();
+                    Log.d("ammount added",uri);
+                    try {
+                        jsonObject.put("AccountBalance",total);
+                        Log.d("ammount added",total);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, uri, jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("ammount added",total);
+                            startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                            finish();
+
+
+                        }
+                    },new com.android.volley.Response.ErrorListener(){
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("ammount added", String.valueOf(error));
+                        }
+                    }));
+                }
+
 
                 break;
 
@@ -651,6 +684,27 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                 }
 
+                else{
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("AccountBalance",total);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, "https://api.halanx.com/users/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            Log.d("ammount added",total);
+                        }
+                    },new com.android.volley.Response.ErrorListener(){
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }));
+                }
             } else {
                 Toast.makeText(this, "Payment cancelled", Toast.LENGTH_LONG).show();
             }

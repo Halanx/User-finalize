@@ -84,7 +84,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     RecyclerView categories_Recycler;
     CategoryAdapter categoryAdapter;
     Boolean checked[];
-
+    int selectedPosition=-1;
 
 
     SearchView svProducts;
@@ -115,7 +115,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
         categories_Recycler = (RecyclerView) view.findViewById(R.id.categories_recycler);
         categoryAdapter = new CategoryAdapter(getActivity(),categories);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, false);
         categories_Recycler.setLayoutManager(layoutManager);
         categories_Recycler.setAdapter(categoryAdapter);
         categories_Recycler.setHasFixedSize(true);
@@ -675,33 +675,26 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         @Override
         public void onBindViewHolder(final CategoryViewHolder holder, final int position) {
 
-            checked = new Boolean[categories.size()];
-            for (int i=0;i<categories.size();i++){
-                checked[i] = false;
+            if(selectedPosition==position) {
+                holder.category_name.setBackgroundColor(Color.parseColor("#c22828"));
+
+                holder.category_name.setTextColor(Color.parseColor("#ffffff"));
+            }
+            else{
+                holder.category_name.setBackgroundColor(Color.parseColor("#ffffff"));
+
+            holder.category_name.setTextColor(Color.parseColor("#000000"));
             }
             holder.category_name.setText(categories.get(position));
             holder.category_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    for(int i= 0; i<categories.size();i++){
-                        if (checked[i]==true) {
-                            holder.category_name.setBackgroundColor((Color.parseColor("#ffffff")));
-                            holder.category_name.setTextColor(Color.parseColor("#000000"));
-                            checked[i] = false;
-                        }
-                    }
 
                     holder.category_name.getText();
-//                for(int i=0;i<categories.size();i++){
-//                    category_name
-//
-//                }
-//
-//
-//
-//                    holder.category_name.setBackgroundColor((Color.parseColor("#c22828")));
-//                    holder.category_name.setTextColor(Color.parseColor("#ffffff"));
 
+                    selectedPosition=position;
+                    notifyDataSetChanged();selectedPosition=position;
+                    notifyDataSetChanged();
 
                     Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));
                     callProductsStore.enqueue(new Callback<List<ProductInfo>>() {

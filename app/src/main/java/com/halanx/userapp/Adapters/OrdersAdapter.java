@@ -44,7 +44,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
     }
 
     @Override
-    public void onBindViewHolder(CompletedOrdersHolder holder, int position) {
+    public void onBindViewHolder(final CompletedOrdersHolder holder, int position) {
 
 
         String orderTotal = Double.toString(info.get(position).getTotal());
@@ -52,7 +52,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
 
 //        String shopperMobile = Long.toString(info.get(position).getShopperPhoneNo());
 
-        String orderId = info.get(position).getId().toString();
+        final String orderId = info.get(position).getId().toString();
         holder.orderNo.setText(orderId);
         holder.orderTotal.setText(orderTotal);
 
@@ -90,6 +90,20 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
             holder.llCompleted.setVisibility(View.GONE);
         }
 
+        holder.ivNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int pos = holder.getAdapterPosition();
+//                    info.get(pos).getOrderItems()
+
+
+                c.startActivity(new Intent(c, Tracking.class).putExtra("orderId",orderId));
+                Log.i("CLICK", "CLICK");
+
+            }
+        });
+
     }
 
 
@@ -102,7 +116,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
         TextView orderNo, orderTotal, orderDeliverDate, orderDeliveredBy;
         LinearLayout llIOnGoing, llCompleted;
         ImageView ivNav;
-
         RecyclerView rvProducts;
 
         public CompletedOrdersHolder(View itemView, boolean isCompleted) {
@@ -118,19 +131,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
 
             ivNav = (ImageView) itemView.findViewById(R.id.iv_navigate);
 
-            ivNav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int pos = getAdapterPosition();
-//                    info.get(pos).getOrderItems()
-
-
-                    c.startActivity(new Intent(c, Tracking.class));
-                    Log.i("CLICK", "CLICK");
-
-                }
-            });
 
 
         }

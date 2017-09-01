@@ -1,6 +1,5 @@
 package com.halanx.userapp.Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +7,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.gson.GsonBuilder;
-import com.halanx.userapp.POJO.UserInfo;
 import com.halanx.userapp.R;
 
 
@@ -25,26 +22,26 @@ public class ReferEarnActivity extends AppCompatActivity {
         setContentView(R.layout.activity_refer_earn);
 
         referal = (TextView) findViewById(R.id.referal_code);
-        ib_frag_share = (ImageButton) findViewById(R.id.ib_frag_share);
+    //    ib_frag_share = (ImageButton) findViewById(R.id.ib_frag_share);
         tvShare = (TextView) findViewById(R.id.tv_share);
-        ib_frag_share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareIt();
-            }
-        });
+//        ib_frag_share.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                shareIt();
+//            }
+//        });
         tvShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 shareIt();
             }
         });
-
-        String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
-        UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
-
-        referal.setText(user.getMyreferalCode());
-
+//
+//        String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
+//        UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
+//
+//        referal.setText(user.getMyreferalCode());
+//
 
 //        JSONObject jsonObject = new JSONObject();
 //        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/"+getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null), jsonObject, new Response.Listener<JSONObject>() {
@@ -65,7 +62,6 @@ public class ReferEarnActivity extends AppCompatActivity {
 //
 //            }
 //        }));
-
 
     }
 

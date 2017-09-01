@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" X"
+            android:text=" "
             android:gravity="end"
             android:layout_gravity="end"
             android:id="@+id/wallet_balance"
@@ -73,7 +73,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=" X"
+            android:text=" "
             android:id="@+id/bonus_balance"
             android:layout_toRightOf="@id/x_money"
             android:typeface="sans"

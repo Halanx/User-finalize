@@ -50,6 +50,7 @@ public class OngoingOrderFrag extends Fragment {
     List<OrderInfo> allOrdersList, onGoingOrderList;
 
 
+
     public OngoingOrderFrag() {
         // Required empty public constructor
     }
@@ -89,6 +90,8 @@ public class OngoingOrderFrag extends Fragment {
                         if (!allOrdersList.get(i).getIsDelivered()) {
                             //Completed order = isDelivered is true
                             onGoingOrderList.add(allOrdersList.get(i));
+
+
                         }
                     }
 

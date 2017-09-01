@@ -43,7 +43,7 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  * Created by Nishant on 15/08/17.
  */
 
-public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder> {
+public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder> implements View.OnClickListener {
 
     JSONObject products,specific_detail;
     private static int restQuantity[];
@@ -51,6 +51,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
     public String mobileNumber;
     Boolean already= false;
 
+    ProductSearchAdapter.ProductViewHolder holder;
     TextView itemCount;
     String data;
 
@@ -148,6 +149,12 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
             e.printStackTrace();
         }
 
+        holder.cvAddCart.setOnClickListener(this);
+        holder.rvInc.setOnClickListener(this);
+        holder.rvDec.setOnClickListener(this);
+        holder.ivFav.setOnClickListener(this);
+        holder.cvProducts.setOnClickListener(this);
+
 
     }
 
@@ -156,8 +163,70 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
 
         return 1;
     }
+    @Override
+    public void onClick(View view) {
 
-    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        int position = holder.getAdapterPosition();
+        //Click on product
+        if (view.getId() == R.id.cvProducts) {
+            Intent intent = new Intent(c, ItemDisplayActivity.class);
+            try {
+
+                Log.d(("item_data"), String.valueOf(products));
+                intent.putExtra("Name", products.getString("ProductName"));
+                intent.putExtra("Price", products.getDouble("Price"));
+                intent.putExtra("Features", products.getString("Features"));
+                intent.putExtra("Image", data);
+                intent.putExtra("ID", products.getInt("Id"));
+                c.startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        //Click on add to cart
+        else if (view.getId() == R.id.cv_rest_add_cart) {
+            //Add to cart
+            Double val = Double.parseDouble(holder.etRestQuan.getText().toString());
+            int proId = 0;
+            try {
+                proId = Integer.parseInt(products.getString("Id"));
+                Long mob = Long.parseLong(mobileNumber);
+                holder.addCartItem(mob, val, proId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        } else if (view.getId() == R.id.restIncrement) {
+
+            if (restQuantity[position] < 10) {
+                restQuantity[position]++;
+                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+            }
+
+        } else if (view.getId() == R.id.restDecrement) {
+
+            if (restQuantity[position] > 1) {
+                restQuantity[position]--;
+                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+            }
+        } else if (view.getId() == R.id.restFav) {
+            //Add to favorites
+            try {
+                holder.productFav(Integer.valueOf(products.getString("Id")), "1");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+
+
+    public class ProductViewHolder extends RecyclerView.ViewHolder {
 
         CardView cvProducts, cvRest;
         ImageView productImage;
@@ -196,74 +265,9 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
             rvInc = (RelativeLayout) itemView.findViewById(R.id.restIncrement);
             tvCart = (TextView) itemView.findViewById(R.id.tv_add_to_cart);
             ivFav = (ImageView) itemView.findViewById(R.id.restFav);
-            cvAddCart.setOnClickListener(this);
-            rvInc.setOnClickListener(this);
-            rvDec.setOnClickListener(this);
-            ivFav.setOnClickListener(this);
-            cvProducts.setOnClickListener(this);
 
         }
 
-        @Override
-        public void onClick(View view) {
-
-            int position = getAdapterPosition();
-            //Click on product
-            if (view.getId() == R.id.cvProducts) {
-                Intent intent = new Intent(c, ItemDisplayActivity.class);
-                try {
-
-                    Log.d(("item_data"), String.valueOf(products));
-                    intent.putExtra("Name", products.getString("ProductName"));
-                    intent.putExtra("Price", products.getDouble("Price"));
-                   intent.putExtra("Features", products.getString("Features"));
-                    intent.putExtra("Image", data);
-                    intent.putExtra("ID", products.getInt("Id"));
-                    c.startActivity(intent);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            //Click on add to cart
-            else if (view.getId() == R.id.cv_rest_add_cart) {
-                //Add to cart
-                Double val = Double.parseDouble(etRestQuan.getText().toString());
-                int proId = 0;
-                try {
-                    proId = Integer.parseInt(products.getString("Id"));
-                    Long mob = Long.parseLong(mobileNumber);
-                    addCartItem(mob, val, proId);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-            } else if (view.getId() == R.id.restIncrement) {
-
-                if (restQuantity[position] < 10) {
-                    restQuantity[position]++;
-                    etRestQuan.setText(String.valueOf(restQuantity[position]));
-                }
-
-            } else if (view.getId() == R.id.restDecrement) {
-
-                if (restQuantity[position] > 1) {
-                    restQuantity[position]--;
-                    etRestQuan.setText(String.valueOf(restQuantity[position]));
-                }
-            } else if (view.getId() == R.id.restFav) {
-                //Add to favorites
-                try {
-                    productFav(Integer.valueOf(products.getString("Id")), "1");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-        }
 
         private void productFav(Integer productID, final String option) {
             //option is 0 or 1 -

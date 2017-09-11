@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -24,7 +26,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
 
 
-public class ItemDisplayActivity extends AppCompatActivity implements View.OnClickListener {
+public class ItemDisplayActivity extends AppCompatActivity {
     EditText etQuantity;
     TextView plus, minus;
     Boolean already = false;
@@ -47,6 +51,7 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
     Boolean isFav;
     Integer productID;
     TextView itemcount;
+    int cartId;
 
     String productName, productFeatures, productImage;
     Double productPrice;
@@ -105,37 +110,29 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
             a.printStackTrace();
         }
 
-        plus.setOnClickListener(this);
-        minus.setOnClickListener(this);
-        cart.setOnClickListener(this);
-        iv_fav.setOnClickListener(this);
-
-
-    }
-
-    @Override
-    public void onClick(View view) {
-
-        switch (view.getId()) {
-            case R.id.increment:
-
+        plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (i < 10) {
                     i++;
                     val = Integer.toString(i);
                     etQuantity.setText(val);
                 }
-                break;
-
-            case R.id.decrement:
+            }
+        });
+        minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (i != 0) {
                     i--;
                     val = Integer.toString(i);
                     etQuantity.setText(val);
                 }
-
-                break;
-            case R.id.bt_add_to_cart:
-
+            }
+        });
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (!already) {
 
                     addCartItem();
@@ -143,10 +140,12 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
                 } else {
                     Toast.makeText(getApplicationContext(), "Already added to cart", Toast.LENGTH_SHORT).show();
                 }
-                break;
 
-            case R.id.imgFav:
-
+            }
+        });
+        iv_fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (!isFav) {
                     isFav = true;
                     Picasso.with(getApplicationContext()).load(R.drawable.fav_filled_48).into(iv_fav);
@@ -159,18 +158,19 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
 
                 }
 
-                break;
+            }
+        });
 
 
-        }
     }
+
 
 
     private void productFav(Integer productID, final String option) {
         //option is 0 or 1 -
         //1 for adding , 0 for removing
 
-        String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/" + option + "/";
+        String url = "https://api.halanx.com/users/favs/" + option + "/";
         JSONObject obj = new JSONObject();
         try {
             obj.put("LastItem", productID);
@@ -190,35 +190,69 @@ public class ItemDisplayActivity extends AppCompatActivity implements View.OnCli
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(ItemDisplayActivity.this, "Network error", Toast.LENGTH_SHORT).show();
             }
-        }));
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                return params;
+            }
+
+        });
     }
 
 
     void addCartItem() {
 
 
-        CartItemPost item = new CartItemPost(Long.parseLong(mobileNumber), Double.parseDouble(val), productID, null);
-        Retrofit.Builder builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
-                addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        final DataInterface client = retrofit.create(DataInterface.class);
-
-        Call<CartItemPost> call = client.putCartItemOnServer(item);
-        call.enqueue(new Callback<CartItemPost>() {
+        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
-                already = true;
+            public void onResponse(JSONObject response) {
+                try {
+                    cartId = response.getInt("id");
+                    final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", "token1");
+                    Log.d("token", token);
+                    CartItemPost item = new CartItemPost(cartId, Double.parseDouble(val), productID, null);
 
-                cart.setText("Added to cart");
+                    Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item, token);
+                    call.enqueue(new Callback<CartItemPost>() {
+                        @Override
+                        public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
+
+                            cart.setText("Added to cart");
+                        }
+
+                        @Override
+                        public void onFailure(Call<CartItemPost> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
+        }, new com.android.volley.Response.ErrorListener() {
             @Override
-            public void onFailure(Call<CartItemPost> call, Throwable t) {
+            public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(ItemDisplayActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+            }
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                return params;
             }
 
+        }
+        );
 
-        });
+
     }
 }

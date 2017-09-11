@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -22,6 +23,9 @@ import com.halanx.userapp.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Wallet extends AppCompatActivity {
@@ -63,9 +67,10 @@ public class Wallet extends AppCompatActivity {
 
 
 
-        final String uri = "https://api.halanx.com/users/"+getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null)+"/";
+        final String uri = "https://api.halanx.com/users/detail/";
         Log.d("patchingdone",uri);
 
+        Log.d("token",getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
 
 
 
@@ -95,7 +100,16 @@ public class Wallet extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ammount added", String.valueOf(error));
                     }
-                }));
+                }){
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Content-Type", "application/json");
+                        params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token",null));
+                        return params;
+                    }
+
+                });
 
             }
         });
@@ -125,7 +139,16 @@ public class Wallet extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.d("ammount added", String.valueOf(error));
             }
-        }));
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token",null));
+                return params;
+            }
+
+        });
 
 
         add_money.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +177,7 @@ public class Wallet extends AppCompatActivity {
                             String ammount = String.valueOf(Double.parseDouble(String.valueOf(wallet_balance.getText())) + Double.parseDouble(String.valueOf(amount.getText())));
                             Log.d("ammount",ammount);Log.d("ammount", String.valueOf(Double.parseDouble(String.valueOf(wallet_balance.getText()))));Log.d("ammount", String.valueOf(Double.parseDouble(String.valueOf(amount.getText()))));
                             startActivity(new Intent(Wallet.this,PaymentActivity.class).putExtra("total_cost",ammount).putExtra("isOrder",false));
+                            dialAddMoney.dismiss();
                             finish();
                         }
 
@@ -169,8 +193,8 @@ public class Wallet extends AppCompatActivity {
                     }
                 });
 
-                dialAddMoney.show();
 
+                dialAddMoney.show();
 
             }
         });

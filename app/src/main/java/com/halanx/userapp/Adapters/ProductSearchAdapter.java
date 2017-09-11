@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -29,7 +30,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,6 +57,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
     ProductSearchAdapter.ProductViewHolder holder;
     TextView itemCount;
     String data;
+    int cartId;
 
     public ProductSearchAdapter(JSONObject products, Context c, String storeCat, String mobileNumber, TextView itemCount) throws JSONException {
         this.products = products;
@@ -90,6 +94,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
 
                 String url = "https://api.halanx.com/products/" + products.getString("Id");
                 JSONObject obj = new JSONObject();
+
 
                 Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.GET, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
@@ -273,7 +278,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
             //option is 0 or 1 -
             //1 for adding , 0 for removing
 
-            String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/" + option + "/";
+            String url = "https://api.halanx.com/users/favs/"+ option + "/";
             JSONObject obj = new JSONObject();
             try {
                 obj.put("LastItem", productID);
@@ -301,21 +306,47 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
 
         void addCartItem(Long mobile, Double val, int productID) {
 
-            CartItemPost item = new CartItemPost(mobile, val, productID, null);
+            Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        cartId = response.getInt("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json");
+                    params.put("Authorization", c.getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                    return params;
+                }
+
+            });
 
 
-            Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item);
+            CartItemPost item = new CartItemPost(cartId,val, productID, null);
+
+            String token = c.getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
+
+            Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item,token);
             call.enqueue(new Callback<CartItemPost>() {
                 @Override
                 public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
                     tvCart.setText("Added to cart");
                     if (!already) {
+                        String token = c.getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
 
-
-
-
-                    Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
-                            .getUserCartItems(mobileNumber);
+                        Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                            .getUserCartItems(token);
                     callItems.enqueue(new Callback<List<CartItem>>() {
                         @Override
                         public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {

@@ -3,11 +3,29 @@
 
     <item
         is-multidex="true"
+        jar="/Users/Nishant/.android/build-cache/5f465121fa3701a6473cdd74ab94f5d30c10f763/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1db28e119b406a5fe367b63fb1be083d5dfe298a">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/release/folders/1000/10/classes_26ceb11eb405eeea57a1f5457b744424222b1f87/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Nishant/.gradle/wrapper/dists/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.9.0/1b6c10b5120995a7542c1a31b7828fb8593c8ba/okhttp-3.9.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="01b6c10b5120995a7542c1a31b7828fb8593c8ba">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10/okhttp-3.9.0_7227c285257ed7d88bbf3e28d0634139c3ac704f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="d6e09f51cb8869d2852c8060ff70bbeef541130a">
+        sha1="43cfe5a8490ee52cd982b96c6322c5bb023915bf">
         <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_4bd94487a4353fa89aed7f9d4f5717e63000fb3f/classes.dex" />
     </item>
     <item
@@ -30,12 +48,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="/Users/Nishant/.android/build-cache/5f465121fa3701a6473cdd74ab94f5d30c10f763/output/jars/classes.jar"
-        jumboMode="false"
+        jar="/Users/Nishant/.gradle/wrapper/dists/caches/modules-2/files-2.1/com.squareup.okio/okio/1.13.0/a9283170b7305c8d92d25aff02a6ab7e45d06cbe/okio-1.13.0.jar"
+        jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="1db28e119b406a5fe367b63fb1be083d5dfe298a">
-        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/release/folders/1000/10/classes_26ceb11eb405eeea57a1f5457b744424222b1f87/classes.dex" />
+        sha1="a9283170b7305c8d92d25aff02a6ab7e45d06cbe">
+        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10/okio-1.13.0_f805236f0a40a613ed863216dc8420d7f502bdb1/classes.dex" />
     </item>
     <item
         is-multidex="true"

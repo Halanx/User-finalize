@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -46,7 +47,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,6 +72,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     DataInterface client;
     OrderInfo order;
     ProgressDialog pd;
+    int cartId;
 
     String total;
     private String merchantKey, userCredentials;
@@ -155,6 +159,32 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
                     String trans_id = null;
 
+//                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
+//                        @Override
+//                        public void onResponse(JSONObject response) {
+//                            try {
+//                                cartId = response.getInt("id");
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                        }
+//                    }, new com.android.volley.Response.ErrorListener() {
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+//
+//                        }
+//                    }){
+//                        @Override
+//                        public Map<String, String> getHeaders() throws AuthFailureError {
+//                            Map<String, String> params = new HashMap<String, String>();
+//                            params.put("Content-Type", "application/json");
+//                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+//                            return params;
+//                        }
+//
+//                    });
+
                     if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
                         order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id);
                         Log.d("done", "done");
@@ -176,7 +206,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     pd.setCancelable(false);
                     pd.show();
 
-                    Call<OrderInfo> callOrder = client.postUserOrder(order);
+                    Call<OrderInfo> callOrder = client.postUserOrder(getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null),order);
                     callOrder.enqueue(new Callback<OrderInfo>() {
                         @Override
                         public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
@@ -203,7 +233,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 else
                 {
-                    String uri = "https://api.halanx.com/users/"+getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null)+"/";
+                    String uri = "https://api.halanx.com/users/detail/";
                     JSONObject jsonObject = new JSONObject();
                     Log.d("ammount added",uri);
                     try {
@@ -227,7 +257,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         public void onErrorResponse(VolleyError error) {
                             Log.d("ammount added", String.valueOf(error));
                         }
-                    }));
+                    }){
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json");
+                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                            return params;
+                        }
+
+                    });
                 }
 
 
@@ -384,7 +423,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             try {
 
                 //TODO Below url is just for testing purpose, merchant needs to replace this with their server side hash generation url
-                URL url = new URL("http://ec2-52-39-243-143.us-west-2.compute.amazonaws.com/Payment/hash.php");       //replace this
+                URL url = new URL("http://ec2-34-208-169-55.us-west-2.compute.amazonaws.com/payment/payment.php");       //replace this
 
                 // get the payuConfig first
                 String postParam = postParams[0];
@@ -618,7 +657,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     pd.setCancelable(false);
                     pd.show();
 
-                    Call<OrderInfo> callOrder = client.postUserOrder(order);
+                    Call<OrderInfo> callOrder = client.postUserOrder(getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null),order);
                     callOrder.enqueue(new Callback<OrderInfo>() {
                         @Override
                         public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
@@ -691,7 +730,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, "https://api.halanx.com/users/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, "https://api.halanx.com/users/deatil/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
 
@@ -703,7 +742,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         public void onErrorResponse(VolleyError error) {
 
                         }
-                    }));
+                    }){
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json");
+                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                            return params;
+                        }
+
+                    });
                 }
             } else {
                 Toast.makeText(this, "Payment cancelled", Toast.LENGTH_LONG).show();

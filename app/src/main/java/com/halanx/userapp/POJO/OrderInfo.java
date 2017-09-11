@@ -75,6 +75,7 @@ public class OrderInfo {
 
     public OrderInfo(long customerPhoneNo, String deliveryAddress, String deliveryDate, String startTime, String endTime, Boolean isASAP, String notes, float lat, float lon, String trans_id) {
         this.customerPhoneNo = customerPhoneNo;
+
         this.deliveryAddress = deliveryAddress;
         this.deliveryDate = deliveryDate;
         this.startTime = startTime;

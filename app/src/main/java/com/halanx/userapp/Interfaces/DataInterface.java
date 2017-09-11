@@ -6,7 +6,6 @@ import com.halanx.userapp.POJO.CartItemPost;
 import com.halanx.userapp.POJO.CartsInfo;
 import com.halanx.userapp.POJO.OrderInfo;
 import com.halanx.userapp.POJO.ProductInfo;
-import com.halanx.userapp.POJO.Resp;
 import com.halanx.userapp.POJO.StoreInfo;
 import com.halanx.userapp.POJO.SubscriptionInfo;
 import com.halanx.userapp.POJO.SubscriptionInfoGet;
@@ -16,9 +15,8 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -28,31 +26,13 @@ import retrofit2.http.Path;
 
 public interface DataInterface {
 
-    //User Registration
-    @FormUrlEncoded
-    @POST("/NewRegUser/register.php/")
-    Call<Resp> register(@Field("firstname") String firstName, @Field("lastname") String lastName,
-                        @Field("email") String email, @Field("password") String password,
-                        @Field("mobilenumber") String mobileNumber);
-
-    //User Login
-    @FormUrlEncoded
-    @POST("/NewRegUser/login.php/")
-    Call<Resp> login(@Field("mobilenumber") String mobileNumber, @Field("password") String password);
-
     //Register User On Django
     @POST("/users/")
     Call<UserInfo> putUserDataOnServer(@Body UserInfo userData);
 
-    //Post user cart
-    @POST("/carts/")
-    Call<CartsInfo> putUserCartOnServer(@Body CartsInfo cart);
-
-    //http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/carts/2222222222/active
-
     //Get User Cart Items where isRemoved is false
-    @GET("/carts/{UserMobile}/active/")
-    Call<List<CartItem>> getUserCartItems(@Path("UserMobile") String mobileNumber);
+    @GET("/carts/active/")
+    Call<List<CartItem>> getUserCartItems(@Header("Authorization") String token);
 
     //Showing products on home fragment
     @GET("/products/")
@@ -64,43 +44,31 @@ public interface DataInterface {
 
     //Post cart item when add to cart clicked - while posting item is sent as an integer
     @POST("/carts/items/")
-    Call<CartItemPost> putCartItemOnServer(@Body CartItemPost cartItem);
+    Call<CartItemPost> putCartItemOnServer(@Body CartItemPost cartItem, @Header("Authorization") String token);
 
     //Get cart details for order total etc
-    @GET("/carts/{mobileNumber}")
-    Call<CartsInfo> getCartDetails(@Path("mobileNumber") String mobileNumber);
+    @GET("/carts/detail/")
+    Call<CartsInfo> getCartDetails(@Header("Authorization") String token);
 
     //Posting an order
     @POST("/orders/")
-    Call<OrderInfo> postUserOrder(@Body OrderInfo order);
+    Call<OrderInfo> postUserOrder(@Header("Authorization") String token,@Body OrderInfo order);
 
     //Getting user orders
-    @GET("/orders/user/{mobileNumber}/")
-    Call<List<OrderInfo>> getUserOrders(@Path("mobileNumber") String mobileNumber);
+    @GET("/orders/user/")
+    Call<List<OrderInfo>> getUserOrders( @Header("Authorization") String token);
 
     //Getting store list
     @GET("/stores/verified")
     Call<List<StoreInfo>> getStoreInfo();
 
-    @GET("/users/{mobile}")
-    Call<UserInfo> getUserInfo(@Path("mobile") String mobile);
+    @GET("/users/detail/")
+    Call<UserInfo> getUserInfo( @Header("Authorization") String token);
 
     @POST("/subscriptions/")
-    Call<SubscriptionInfo> postSubscription(@Body SubscriptionInfo info);
+    Call<SubscriptionInfo> postSubscription(@Body SubscriptionInfo info, @Header("Authorization") String token);
 
-    @GET("/subscriptions/{MobileNumber}/items")
-    Call<List<SubscriptionInfoGet>> getUserSubscribedItems(@Path("MobileNumber") String mob);
-
-
-//
-//    @DELETE("/carts/items/{cartItemId}")
-//    Call<CartsItems> deleteCartItemFromServer(@Path("cartItemId") String cartItemId);
-//
-//    @PUT("/carts/items/{cartItemId}")
-//    Call<CartsItems> updateCartItemFromServer(@Path("cartItemId") String cartItemId,CartsItems cartsItem);
-//
-
-
-
+    @GET("/subscriptions/items/")
+    Call<List<SubscriptionInfoGet>> getUserSubscribedItems(@Header("Authorization") String token);
 
 }

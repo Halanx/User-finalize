@@ -12,10 +12,6 @@ public class CartItemPost  {
     @Expose
     private Integer item;
 
-    @SerializedName("CartPhoneNo")
-    @Expose
-    private long cartPhoneNo;
-
     @SerializedName("Quantity")
     @Expose
     private Double quantity;
@@ -24,10 +20,15 @@ public class CartItemPost  {
     @Expose
     private String notes;
 
-    public CartItemPost(long cartPhoneNo, Double quantity, Integer item, String notes) {
+    @SerializedName("Cart")
+    @Expose
+    private Integer CartId;
+
+
+    public CartItemPost(Integer cartId,Double quantity, Integer item, String notes) {
         this.item = item;
-        this.cartPhoneNo = cartPhoneNo;
         this.quantity = quantity;
         this.notes = notes;
+        CartId = cartId;
     }
 }

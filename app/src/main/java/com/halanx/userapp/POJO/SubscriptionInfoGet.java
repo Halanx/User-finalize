@@ -12,9 +12,6 @@ public class SubscriptionInfoGet {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("Subscriber")
-    @Expose
-    private long subscriber;
     @SerializedName("QuantityPerDay")
     @Expose
     private Double quantityPerDay;
@@ -79,14 +76,6 @@ public class SubscriptionInfoGet {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public long getSubscriber() {
-        return subscriber;
-    }
-
-    public void setSubscriber(long subscriber) {
-        this.subscriber = subscriber;
     }
 
     public Double getQuantityPerDay() {

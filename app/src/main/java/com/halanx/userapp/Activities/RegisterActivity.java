@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
@@ -22,29 +21,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.Interfaces.DataInterface;
-import com.halanx.userapp.POJO.CartsInfo;
 import com.halanx.userapp.POJO.Resp;
-import com.halanx.userapp.POJO.UserInfo;
 import com.halanx.userapp.R;
 import com.halanx.userapp.app.Config;
 import com.katepratik.msg91api.MSG91;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
-import static com.halanx.userapp.GlobalAccess.phpBaseUrl;
 
 /**
  * Created by samarthgupta on 13/02/17.
@@ -79,14 +73,6 @@ RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         msg91.validate();
-        builderRegister = new Retrofit.Builder().baseUrl(phpBaseUrl).
-                addConverterFactory(GsonConverterFactory.create());
-        retrofitRegister = builderRegister.build();
-        clientRegister = retrofitRegister.create(DataInterface.class);
-
-        builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).addConverterFactory(GsonConverterFactory.create());
-        retrofit = builder.build();
-        client = retrofit.create(DataInterface.class);
         inputPassword = (EditText) findViewById(R.id.tv_password);
         btnVerify = (Button) findViewById(R.id.btn_verify);
         inputEmail = (EditText) findViewById(R.id.tv_email);
@@ -169,7 +155,8 @@ RegisterActivity extends AppCompatActivity {
 
                     Toast.makeText(RegisterActivity.this, "Please enter valid email address", Toast.LENGTH_SHORT).show();
                     return;
-                } else if (password.length() < 6) { btnVerify.setVisibility(View.VISIBLE);
+                } else if (password.length() < 6) {
+                    btnVerify.setVisibility(View.VISIBLE);
                     progressRegister.setVisibility(View.GONE);
 
 
@@ -200,7 +187,7 @@ RegisterActivity extends AppCompatActivity {
                 if (isNetworkAvailable(getApplicationContext())) {
 
 
-                    random = sendOtp();
+//                    random = sendOtp();
 
                     dialog = new Dialog(RegisterActivity.this);
                     dialog.setContentView(R.layout.activity_verify);
@@ -210,6 +197,25 @@ RegisterActivity extends AppCompatActivity {
                     Window window = dialog.getWindow();
                     window.setLayout(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
 
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("FirstName",firstName);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/getotp/" + mobileNumber+"/", json, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("otp_response", String.valueOf(response));
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }));
+
                     final TextView tvResendOtp = (TextView) dialog.findViewById(R.id.resend);
 
                     otp = (EditText) dialog.findViewById(R.id.enterOTP);
@@ -217,19 +223,12 @@ RegisterActivity extends AppCompatActivity {
                     TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
 
                     tvNumber.setText(mobileNumber);
+                    btnOtpSubmit.setVisibility(View.GONE);
                     btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
-                            Log.e("OTP",otp.getText().toString() + " "+ random);
-                            if (otp.getText().toString().equals(random)) {
-                                Toast.makeText(RegisterActivity.this, "User Verified", Toast.LENGTH_LONG).show();
-                                dialog.dismiss();
-                                registration();
-                            } else {
-                                Toast.makeText(RegisterActivity.this, "Incorrect OTP entered", Toast.LENGTH_LONG).show();
-                                return;
-                            }
+                            registration(otp.getText().toString());
                         }
                     });
 
@@ -238,29 +237,24 @@ RegisterActivity extends AppCompatActivity {
                         public void onClick(View view) {
 
 
-                            tvResendOtp.setText("Resending OTP. Please wait.");
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    tvResendOtp.setText("Resend OTP");
-                                    Random r = new Random();
-                                    int randomOTP = r.nextInt(9999 - 1000) + 1000;
-                                    String randomRes = Integer.toString(randomOTP);
-                                    MSG91 msg91 = new MSG91("156475AdUYanwCiKI35970f67d");
-                                    msg91.validate();
-                                    msg91.getBalance("4");
-                                    msg91.composeMessage("HALANX", "Hi " + firstName + "! " + randomRes + " is your One Time Password(OTP) for " +
-                                            "Halanx User App.");
-                                    msg91.to(mobileNumber);
-                                    msg91.setCountryCode("91");
-                                    msg91.setRoute("4");
+                            JSONObject json = new JSONObject();
+                            try {
+                                json.put("FirstName",firstName);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                                    msg91.send();
-                                    random = randomRes;
+                            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/getotp/" + mobileNumber, null, new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Log.d("otp_response", String.valueOf(response));
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
 
                                 }
-                            },2000);
-
+                            }));
 
 
 //                            if (otp.getText().toString().equals(randomRes)) {
@@ -293,105 +287,77 @@ RegisterActivity extends AppCompatActivity {
     }
 
 
-    public void registration() {
+    public void registration(String text) {
 
-        Call<Resp> call = clientRegister.register(firstName, lastName, email, password, mobileNumber);
-        call.enqueue(new Callback<Resp>() {
+        //Put cart on server after account is created
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("username", "c" + mobileNumber);
+            jsonObject.put("email", email);
+            jsonObject.put("password", password);
+            jsonObject.put("FirstName", firstName);
+            jsonObject.put("LastName", lastName);
+            jsonObject.put("PhoneNo", mobileNumber);
+            jsonObject.put("otp",Integer.parseInt(text));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Save user details in sharedPreferences
+        Log.d("user", "done");
+        Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(Call<Resp> call, Response<Resp> response) {
-                resp = response.body();
+            public void onResponse(JSONObject response) {
 
-                if (!resp.getError()) {
+                Log.i("TAG", String.valueOf(response));
 
-//                    Toast.makeText(RegisterActivity.this, "Registeration success", Toast.LENGTH_LONG).show();
-
-                    //Put user on Django on successful registration on php
-                    UserInfo info = new UserInfo(Long.parseLong(mobileNumber), email, firstName, lastName, password, regId,icode);
-                    Call<UserInfo> callPost = client.putUserDataOnServer(info);
-                    callPost.enqueue(new Callback<UserInfo>() {
-                        @Override
-                        public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                            Log.i("TAG", "User Data put on Django");
-
-                            //Put cart on server after account is created
-                            CartsInfo cart = new CartsInfo(Double.parseDouble(mobileNumber));
-                            putUserCart(cart);
-
-                            //Save user details in sharedPreferences
-                            Volley.newRequestQueue(RegisterActivity.this).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/users/" + mobileNumber, new com.android.volley.Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-
-                                    Log.i("TAG", response);
-
-                                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                                            putString("UserInfo", response).putString("MobileNumber", mobileNumber).
-                                            putBoolean("first_login", true).
-                                            putBoolean("Loginned", true).apply();
-
-                                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                                            putBoolean("first_login", true).apply();
-
-
-                                    startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-                                    progressRegister.setVisibility(View.GONE);
-                                    finish();
-
-                                }
-                            }, new com.android.volley.Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-
-                                }
-                            }));
-
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<UserInfo> call, Throwable t) {
-
-                            Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
-                }
-
-                //REGISTRATION FAILED ON PHP
-                else {
-
-                    Toast.makeText(RegisterActivity.this, "Already Registered", Toast.LENGTH_LONG).show();
+                try {
+                    getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).edit().putString("token","token "+response.getString("key")).commit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
 
-            }
+                getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                        putBoolean("first_login", true).apply();
 
+
+
+                startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
+                progressRegister.setVisibility(View.GONE);
+                finish();
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
             @Override
-            public void onFailure(Call<Resp> call, Throwable t) {
+            public void onErrorResponse(VolleyError error) {
+                Log.d("error", String.valueOf(error));
 
-                Toast.makeText(RegisterActivity.this, "Already Registered", Toast.LENGTH_LONG).show();
             }
-        });
+        }));
+
 
     }
 
 
-    private void putUserCart(CartsInfo cart) {
-
-        Call<CartsInfo> call = client.putUserCartOnServer(cart);
-        call.enqueue(new Callback<CartsInfo>() {
-            @Override
-            public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
-                Log.i("TAG", "Cart put on Django");
-            }
-
-            @Override
-            public void onFailure(Call<CartsInfo> call, Throwable t) {
-
-            }
-        });
-    }
+//    private void putUserCart(CartsInfo cart) {
+//
+//        String token = getApplicationContext().getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
+//
+//        Call<CartsInfo> call = client.putUserCartOnServer(cart,token);
+//        call.enqueue(new Callback<CartsInfo>() {
+//            @Override
+//            public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
+//                Log.i("TAG", "Cart put on Django");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<CartsInfo> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 
     String sendOtp() {
 
@@ -416,6 +382,7 @@ RegisterActivity extends AppCompatActivity {
 
 
     }
+
 
     public boolean emailValidator(String email) {
         Pattern pattern;

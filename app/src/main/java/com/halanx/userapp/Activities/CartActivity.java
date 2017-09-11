@@ -147,15 +147,16 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
-        SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-         String mobileNumber = sharedPreferences.getString("MobileNumber", null);
 
 
-        Call<List<CartItem>> call = client.getUserCartItems(mobileNumber);
+        final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
+        Log.d("token",token);
 
+        Call<List<CartItem>> call = client.getUserCartItems(token);
         call.enqueue(new Callback<List<CartItem>>() {
             @Override
             public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                Log.d("Response", String.valueOf(response));
 
                 List<CartItem> items = response.body();
 
@@ -181,8 +182,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
                 } else {
                     progressBar.setVisibility(View.INVISIBLE);
-
-
                     alertBuilder = new AlertDialog.Builder(CartActivity.this);
                     alertBuilder.setMessage("You have no items in your carts!");
                     alertBuilder.setCancelable(false);
@@ -376,14 +375,16 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     dial.show();
                     return;
                 }
-                SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-                String mobileNumber = sharedPreferences.getString("MobileNumber", null);
-                Call<CartsInfo> callCart = client.getCartDetails(mobileNumber);
+
+                String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+                Log.d("token",token);
+                Call<CartsInfo> callCart = client.getCartDetails(token);
                 callCart.enqueue(new Callback<CartsInfo>() {
                     @Override
                     public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
                         CartsInfo cart = response.body();
 
+                        Log.d("subtotal",cart.getSubtotal().toString());
                         subtotal = cart.getSubtotal().toString();
                         total = cart.getTotal().toString();
                         taxes = cart.getTaxes().toString();

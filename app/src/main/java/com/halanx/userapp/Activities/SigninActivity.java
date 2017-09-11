@@ -39,35 +39,29 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
-import com.halanx.userapp.Interfaces.DataInterface;
-import com.halanx.userapp.POJO.Resp;
 import com.halanx.userapp.R;
 import com.halanx.userapp.app.Config;
 import com.katepratik.msg91api.MSG91;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import java.util.Map;
 
 import static com.halanx.userapp.Activities.MapsActivity.MY_PERMISSIONS_REQUEST_LOCATION;
-import static com.halanx.userapp.GlobalAccess.phpBaseUrl;
 
 /**
  * Created by samarthgupta on 12/02/17.
@@ -248,70 +242,98 @@ public class SigninActivity extends AppCompatActivity {
 
 
 
-                Retrofit.Builder builder = new Retrofit.Builder().baseUrl(phpBaseUrl)
-                        .addConverterFactory(GsonConverterFactory.create());
-                Retrofit retrofit = builder.build();
-                DataInterface client = retrofit.create(DataInterface.class);
-                Call<Resp> call = client.login(mobile, password);
+                final JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("username","c"+ mobile);
+                    jsonObject.put("password",password);
 
-                call.enqueue(new Callback<Resp>() {
-                    @Override
-                    public void onResponse(Call<Resp> call, Response<Resp> response) {
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                        Log.e("TAG", "LOGIN SUCCESS" + !response.body().getError());
-
-                        //IF ERROR IS FALSE, LOGIN SUCCESS
-                        if (!response.body().getError()) {
-                              Toast.makeText(SigninActivity.this, "Login " + !response.body().getError(), Toast.LENGTH_SHORT).show();
-                            Volley.newRequestQueue(SigninActivity.this).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/users/" + mobile, new com.android.volley.Response.Listener<String>() {
+                Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/rest-auth/login/",jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
                                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                                 @Override
-                                public void onResponse(String response) {
-                                    data();
-                                    Log.i("TAG", response);
-                                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                                            putString("UserInfo", response).putString("MobileNumber", mobile).
-                                            putBoolean("first_login", true).
-                                            putBoolean("Loginned", true).apply();
+                                public void onResponse(JSONObject response) {
 
-                                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                                            putBoolean("first_login", true).apply();
+                                    Log.d("data", String.valueOf(response));
+                                    final String token;
+                                    try {
+                                        token = response.getString("key");
+                                        Log.d("key", token);
+
+                                        getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).edit().putString("token","token "+token).commit();
+                                        Log.d("token_key",getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                                        Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/",jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                Log.d("data", String.valueOf(response));
+                                                data();
+                                                try {
+                                                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                                            putString("firstname",response.getJSONObject("user").getString("first_name")).
+                                                            putString("lastname",response.getJSONObject("user").getString("last_name")).
+                                                            putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
+                                                            putBoolean("first_login", true).
+                                                            putBoolean("Loginned", true).apply();
+                                                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                                                            putBoolean("first_login", true).apply();
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
 
 
-                                    Log.i("TAG", response);
-                                    Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
-                                    startActivity(new Intent(SigninActivity.this, MapsActivity.class));
-                                    progressBar.setVisibility(View.INVISIBLE);
+                                                Log.i("TAG", String.valueOf(response));
+                                                Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
+                                                startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                                                progressBar.setVisibility(View.INVISIBLE);
 //
-                                    finish();
+                                                finish();
 
+
+                                            }
+                                        }, new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                Toast.makeText(getApplicationContext(),"Invalid username/password",Toast.LENGTH_SHORT).show();
+                                                progressBar.setVisibility(View.GONE);
+                                                btnLogin.setVisibility(View.VISIBLE);
+
+                                            }
+                                        }) {
+                                            @Override
+                                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                                Map<String, String> params = new HashMap<String, String>();
+                                                params.put("Content-Type", "application/json");
+                                                params.put("Authorization", "token "+token);
+                                                return params;
+                                            }
+
+                                        });
+
+
+
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
 
                                 }
                             }, new com.android.volley.Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
 
-                                    Toast.makeText(getApplicationContext(), "network", Toast.LENGTH_SHORT).show();
-                                    return;
+                                    Toast.makeText(getApplicationContext(),"Invalid username/password",Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.GONE);
+                                    btnLogin.setVisibility(View.VISIBLE);
 
                                 }
-                            }));
+                            }
+                            ));
 
 
-                        } else {
-                            Toast.makeText(getApplicationContext(), "New User! Signup First", Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
-                            btnLogin.setVisibility(View.VISIBLE);
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<Resp> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), "New User! Signup First", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
 
             }
         });
@@ -323,10 +345,10 @@ public class SigninActivity extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), "Please Enter the correct number", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (RegisterActivity.isNetworkAvailable(getApplicationContext())) {
 
 
                         random = sendOtp();
+                        mobile = inputMobile.getText().toString().trim();
 
                         final Dialog dialog = new Dialog(SigninActivity.this);
                         dialog.setContentView(R.layout.activity_verify);
@@ -347,34 +369,94 @@ public class SigninActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
 
-                                Log.e("OTP", otp.getText().toString() + " " + random);
-                                if (otp.getText().toString().equals(random)) {
-                                    Toast.makeText(SigninActivity.this, "User Verified", Toast.LENGTH_LONG).show();
-                                    dialog.dismiss();
-                                    Dialog dialog1 = new Dialog(getApplicationContext());
-                                    dialog1.setContentView(R.layout.forgot_password_layout);
-                                    EditText new_password = (EditText) dialog1.findViewById(R.id.password);
-                                    Button done = (Button) dialog1.findViewById(R.id.button_done);
+                                String url = "https://api.halanx.com/users/loginotp/";
+                                JSONObject json = new JSONObject();
+                                try {
+                                    json.put("username","c"+mobile);
+                                    json.put("password",Integer.parseInt(otp.getText().toString()));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        String token = null;
 
-                                    done.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
+                                        Log.d("response", String.valueOf(response));
+                                        try {
+                                            token = response.getString("key");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        {
+                                            Toast.makeText(SigninActivity.this, "User Verified", Toast.LENGTH_LONG).show();
+                                            dialog.dismiss();
+                                            Toast.makeText(SigninActivity.this, "User Verified", Toast.LENGTH_LONG).show();
+                                            dialog.dismiss();
+                                            final Dialog dialog1 = new Dialog(getApplicationContext());
+                                            dialog1.setContentView(R.layout.forgot_password_layout);
+                                            final EditText new_password = (EditText) dialog1.findViewById(R.id.password);
+                                            Button done = (Button) dialog1.findViewById(R.id.button_done);
 
+                                            final String finalToken = token;
+                                            done.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+                                                    String url = "https://api.halanx.com/rest-auth/password/change/";
+                                                    JSONObject json = new JSONObject();
+
+                                                    try {
+                                                        json.put("new_password1",new_password);
+                                                        json.put("new_password2",new_password);
+
+                                                        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
+                                                            @Override
+                                                            public void onResponse(JSONObject response) {
+                                                                Toast.makeText(getApplicationContext(),"Password change",Toast.LENGTH_SHORT).show();
+                                                                dialog1.dismiss();
+
+                                                            }
+                                                        }, new Response.ErrorListener() {
+                                                            @Override
+                                                            public void onErrorResponse(VolleyError error) {
+                                                                Log.d("ERROR" ,"error");
+
+                                                            }
+                                                        })
+                                                        {
+                                                            @Override
+                                                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                                                Map<String, String> params = new HashMap<String, String>();
+                                                                params.put("Content-Type", "application/json");
+                                                                params.put("Authorization", "token "+ finalToken);
+                                                                return params;
+                                                            }
+
+                                                        });
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
 
                                         }
-                                    });
+                                    }
+                                }, new com.android.volley.Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.d("error", String.valueOf(error));
+
+                                    }
+                                }));
 
 
-                                } else {
-                                    Toast.makeText(SigninActivity.this, "Incorrect OTP entered", Toast.LENGTH_LONG).show();
-                                    return;
-                                }
                             }
                         });
 
 
                     }
-                }
+
             }
         });
 
@@ -541,23 +623,33 @@ public class SigninActivity extends AppCompatActivity {
     String sendOtp() {
 
 
-        Random r = new Random();
-        int randomOTP = r.nextInt(9999 - 1000) + 1000;
-        String random = Integer.toString(randomOTP);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("FirstName","User");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/getotp/" + mobile+"/", json, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("otp_response", String.valueOf(response));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }));
+
+
+
 
 //        Toast.makeText(getApplicationContext(), random, Toast.LENGTH_SHORT).show();
 
-        msg91.getBalance("4");
-        msg91.composeMessage("HALANX", "Hi " + "! " + random + " is your One Time Password(OTP) for " +
-                "Halanx User App.");
-        msg91.to(String.valueOf(inputMobile.getText()));
-        msg91.setCountryCode("91");
-        msg91.setRoute("4");
 
-        msg91.send();
-        Log.d("doneabc", random);
+        return "sent";
 
-        return random;
 
 
     }

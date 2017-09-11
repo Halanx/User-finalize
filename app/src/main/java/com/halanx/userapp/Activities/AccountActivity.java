@@ -15,7 +15,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -25,6 +27,9 @@ import com.halanx.userapp.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -56,13 +61,37 @@ public class AccountActivity extends AppCompatActivity {
         String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
         UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
 
-        tvFirstName.setText(user.getFirstName());
-        tvLastName.setText(user.getLastName());
-        tvEmail.setText(user.getEmailId());
-        tvMobile.setText(Long.toString(user.getPhoneNo()));
-        tvAddress.setText(user.getAddress());
-        Log.d("dataa",String.valueOf(user.getAddress()));
-        tvAddress.setText(user.getAddress());
+        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    tvFirstName.setText(response.getJSONObject("user").getString("first_name"));
+                    tvLastName.setText(response.getJSONObject("user").getString("last_name"));
+                    tvEmail.setText(response.getJSONObject("user").getString("email"));
+                    tvMobile.setText(response.getString("PhoneNo").toString());
+                    tvAddress.setText(response.getString("Address"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                return params;
+            }
+
+        });
 
 
         getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
@@ -98,8 +127,7 @@ public class AccountActivity extends AppCompatActivity {
                             Log.d("TAG", addressDetails);
                             tvAddress.setText(addressDetails);
                             tvAddress.invalidate();
-                            String url = "https://api.halanx.com/users/" +
-                                    getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null)+"/";
+                            String url = "https://api.halanx.com/users/detail/";
                              JSONObject obj = new JSONObject();
                             try {
                                 obj.put("Address", addressDetails);
@@ -118,7 +146,17 @@ public class AccountActivity extends AppCompatActivity {
                                 public void onErrorResponse(VolleyError error) {
 
                                 }
-                            }));
+                            }){
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("Content-Type", "application/json");
+                                    params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+
+                                    return params;
+                                }
+
+                            });
 
                             getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
                                     putString("Address", addressDetails).apply();
@@ -137,13 +175,6 @@ public class AccountActivity extends AppCompatActivity {
                 dialog.show();
 
             }});
-
-
-
-
-
-
-
 
 
 

@@ -221,27 +221,12 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                                             recyclerView.setAdapter(sadapter);
                                             recyclerView.setHasFixedSize(true);
-
-//
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
 
-
-//
-
-
                                 }
                             });
-
-
-
-
-                            // Recycler Adapter
-//                            adapterTemp = new SuggestionAdapter(suggestions, getActivity().getApplicationContext(), svProducts,json);
-//                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-//                            suggestion_data.setAdapter(adapterTemp);
-//                            suggestion_data.setLayoutManager(layoutManager);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -386,50 +371,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             }
         });
 
-
-
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                if (dy > 0) {
-//                    Log.d("scroll_value", String.valueOf(dy));
-////               brand_name.setVisibility(View.GONE);
-//                    TranslateAnimation collapseAnim = new TranslateAnimation(0.0f, 0.0f, 0.0f, -brand_name.getHeight());
-//                    collapseAnim.setAnimationListener(new Animation.AnimationListener() {
-//
-//                        @Override
-//                        public void onAnimationStart(Animation animation) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onAnimationEnd(Animation animation) {
-//                            brand_name.setVisibility(View.GONE);
-//                        }
-//
-//                        @Override
-//                        public void onAnimationRepeat(Animation animation) {
-//
-//                        }
-//                    });
-//
-//                    collapseAnim.setDuration(20);
-//                    //Starts Animation
-//                    brand_name.startAnimation(collapseAnim);
-//                    // Scrolling up
-//                } else {
-//
-//                    Log.d("scroll_value", String.valueOf(dy));
-//
-//                    // Scrolling down
-//                }
-//            }
-//
-//        });
-
-
         return view;
 
     }
@@ -439,12 +380,12 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(storeID));
         callProductsStore.enqueue(new Callback<List<ProductInfo>>() {
             @Override
+
             public void onResponse(Call<List<ProductInfo>> call, Response<List<ProductInfo>> response) {
                 pbProducts.setVisibility(View.GONE);
                 if (response.body() != null) {
                     List<ProductInfo> products = response.body();
                     adapter = new ProductAdapter(products, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, null);
-
                     if (storeCategory.equals("Food")) {
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                         recyclerView.setLayoutManager(layoutManager);
@@ -452,11 +393,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
                         recyclerView.setLayoutManager(layoutManager);
                     }
-
                     recyclerView.setAdapter(adapter);
                     recyclerView.setHasFixedSize(true);
                 }
-
             }
 
             @Override
@@ -512,88 +451,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         }
 
     }
-
-//    class SuggestionAdapter extends RecyclerView.Adapter<MainFragment.SuggestionAdapter.TempViewHolder> {
-//
-//        List<String> suggestion;
-//        Context context;
-//        SearchView searchView;
-//        JSONObject json;
-//        TextView data;
-//
-//        SuggestionAdapter(List<String> s, Context applicationContext, SearchView searchView, JSONObject json) {
-//            suggestion = s;
-//            context = applicationContext;
-//            this.searchView = searchView;
-//            this.json = json;
-//        }
-//
-//        @Override
-//        public MainFragment.SuggestionAdapter.TempViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item, parent, false);
-//            return new MainFragment.SuggestionAdapter.TempViewHolder(view, context, suggestion,json);
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(MainFragment.SuggestionAdapter.TempViewHolder holder, int position) {
-//            holder.number.setText(String.valueOf(position + 1));
-//            holder.data.setText(suggestion.get(position));
-//        }
-//
-//
-//        public class TempViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
-//            List<String> suggestion;
-//            TextView data, number;
-//            Context c;
-//            JSONObject json;
-//            TempViewHolder(View view, Context context, List<String> suggestion, JSONObject json) {
-//                super(view);
-//                this.suggestion = suggestion;
-//                c = context;
-//                this.json = json;
-//                Log.d("json", String.valueOf(json));
-//                data = (TextView) view.findViewById(R.id.search_item);
-//                number = (TextView) view.findViewById(R.id.number);
-//                data.setOnClickListener(this);
-//                number.setOnClickListener(this);
-//            }
-//
-//
-//            @Override
-//            public void onClick(View view) {
-//                int pos = getAdapterPosition();
-//                Log.d("position", String.valueOf(suggestion));
-//                String proName = null;
-//
-//
-//                JSONArray array = null;
-//                try {
-//                    array = json.getJSONObject("hits").getJSONArray("hits");
-//                    proName = array.getJSONObject(pos).getJSONObject("_source").toString();
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                Log.d("productname123",(proName));
-//
-//
-//
-////                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-////                recyclerView.setLayoutManager(layoutManager);
-////                recyclerView.setAdapter(adapter);
-////                recyclerView.setHasFixedSize(true);
-//
-//
-//            }
-//        }
-//
-//
-//        @Override
-//        public int getItemCount() {
-//            return suggestion.size();
-//        }
-//   }
-
 
     public static class ListViewAdapter extends BaseAdapter {
 
@@ -693,7 +550,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                     holder.category_name.getText();
 
                     selectedPosition=position;
-                    notifyDataSetChanged();selectedPosition=position;
+                    notifyDataSetChanged();
+                    selectedPosition=position;
                     notifyDataSetChanged();
 
                     Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));

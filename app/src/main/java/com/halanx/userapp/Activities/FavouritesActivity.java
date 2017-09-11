@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -34,7 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,6 +52,7 @@ public class FavouritesActivity extends AppCompatActivity {
     RecyclerView rvFavs;
     String mobileNumber;
     ProgressBar pbFav;
+    int cartId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +66,10 @@ public class FavouritesActivity extends AppCompatActivity {
         Retrofit.Builder builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).addConverterFactory(GsonConverterFactory.create());
         Retrofit retrofit = builder.build();
         DataInterface cl = retrofit.create(DataInterface.class);
-        Call<UserInfo> call = cl.getUserInfo(mobileNumber);
+        Call<UserInfo> call = cl.getUserInfo(getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token",null));
         call.enqueue(new Callback<UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-
 
                 pbFav.setVisibility(View.GONE);
                 List<ProductInfo> favPros = response.body().getFavItems();
@@ -165,7 +168,7 @@ public class FavouritesActivity extends AppCompatActivity {
                 switch (view.getId()) {
                     case R.id.bt_product_delete: {
 
-                        String url = "https://api.halanx.com/users/favs/" + mobileNumber + "/0/";
+                        String url = "https://api.halanx.com/users/favs/0/";
                         JSONObject obj = new JSONObject();
                         try {
                             obj.put("LastItem", favPros.get(pos).getId());
@@ -190,7 +193,16 @@ public class FavouritesActivity extends AppCompatActivity {
                             public void onErrorResponse(VolleyError error) {
                                 Toast.makeText(FavouritesActivity.this, "Network error", Toast.LENGTH_SHORT).show();
                             }
-                        }));
+                        }){
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> params = new HashMap<String, String>();
+                                params.put("Content-Type", "application/json");
+                                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                                return params;
+                            }
+
+                        });
 
                         break;
                     }
@@ -198,14 +210,42 @@ public class FavouritesActivity extends AppCompatActivity {
 
                     case R.id.bt_add_cart: {
 
-                        CartItemPost item = new CartItemPost(Long.parseLong(mobileNumber),favQuantity.getSelectedItemPosition()+1.0, favPros.get(pos).getId(), null);
+                        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    cartId = response.getInt("id");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new com.android.volley.Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }){
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> params = new HashMap<String, String>();
+                                params.put("Content-Type", "application/json");
+                                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                                return params;
+                            }
+
+                        });
+
+
+                        CartItemPost item = new CartItemPost(cartId,favQuantity.getSelectedItemPosition()+1.0, favPros.get(pos).getId(), null);
                         Retrofit.Builder builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                                 addConverterFactory(GsonConverterFactory.create());
 
                         Retrofit retrofit = builder.build();
                         DataInterface client = retrofit.create(DataInterface.class);
+                        String token = getApplicationContext().getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
 
-                        Call<CartItemPost> call = client.putCartItemOnServer(item);
+                        Call<CartItemPost> call = client.putCartItemOnServer(item,token);
                         call.enqueue(new Callback<CartItemPost>() {
                             @Override
                             public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {

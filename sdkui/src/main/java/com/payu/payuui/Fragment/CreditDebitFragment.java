@@ -183,10 +183,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                    if(cardExpiryYearEditText.getText().toString().length()==4)     //size as per your requirement
-                    {
-                        cardCvvEditText.requestFocus();
-                    }
 
                 }
 
@@ -202,7 +198,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                         isExpiryYearValid = false;
 
                 }
-
 
             });
 
@@ -263,29 +258,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             private static final char space = ' ';
             int currentPosition;
             int len = 0;
-
-//
-//et1.addTextChangedListener(new TextWatcher() {
-//
-//                public void onTextChanged(CharSequence s, int start,int before, int count)
-//                {
-//                    // TODO Auto-generated method stub
-//                    if(et1.getText().toString().length()==size)     //size as per your requirement
-//                    {
-//                        et2.requestFocus();
-//                    }
-//                }
-//            public void beforeTextChanged(CharSequence s, int start,
-//                                          int count, int after) {
-//                // TODO Auto-generated method stub
-//
-//            }
-//
-//            public void afterTextChanged(Editable s) {
-//                // TODO Auto-generated method stub
-//            }
-//
-//        });
 
 
             @Override
@@ -353,14 +325,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                 }else if(charSequence.length() < 7 ){
                     issuingBankDown.setVisibility(View.GONE);
                 }
-
-                if(cardNameEditText.getText().toString().length()==16)     //size as per your requirement
-                {
-                    cardExpiryYearEditText.setFocusable(true); ;
-                }
-
-
-
             }
 
             @Override
@@ -440,10 +404,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                         cvvImage.setAlpha((float)0.5);
                     isCvvValid = false;
                     uiValidation();
-                }
-                if(cardCvvEditText.getText().toString().length()==3)     //size as per your requirement
-                {
-                    nameOnCardEditText.requestFocus();
                 }
             }
 

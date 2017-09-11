@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -25,7 +26,9 @@ import com.halanx.userapp.POJO.OrderInfo;
 import com.halanx.userapp.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,9 +77,11 @@ public class CompletedOrderFrag extends Fragment {
         builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.build();
         client = retrofit.create(DataInterface.class);
+        final String token = getActivity().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
+        Log.d("token",token);
 
         progressBar.setVisibility(View.VISIBLE);
-        Call<List<OrderInfo>> orderCall = client.getUserOrders(mobileNumber);
+        Call<List<OrderInfo>> orderCall = client.getUserOrders(token);
         orderCall.enqueue(new Callback<List<OrderInfo>>() {
             @Override
             public void onResponse(Call<List<OrderInfo>> call, Response<List<OrderInfo>> response) {
@@ -118,7 +123,7 @@ public class CompletedOrderFrag extends Fragment {
             }
         });
 
-        Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/orders/user/9582184794",
+        Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, "https://api.halanx.com/orders/user/",
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -132,7 +137,16 @@ public class CompletedOrderFrag extends Fragment {
             public void onErrorResponse(VolleyError error) {
 
             }
-        }));
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", token);
+                return params;
+            }
+
+        });
 
 
         return v;

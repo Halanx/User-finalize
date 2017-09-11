@@ -79,7 +79,7 @@
             android:autoLink="phone"
             android:typeface="sans"
             android:gravity="center"
-            android:text="Call : +911127890252"
+            android:text="Call : +91 11 27890252"
             android:textSize="18sp" />
 
 

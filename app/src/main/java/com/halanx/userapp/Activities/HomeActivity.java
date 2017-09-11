@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -46,7 +47,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -117,6 +120,34 @@ public class HomeActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.frag_container, frg);
         fragmentTransaction.commit();
 
+        String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
+
+        Log.d("tokenkey",token);
+
+        Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                .getUserCartItems(token);
+        callItems.enqueue(new Callback<List<CartItem>>() {
+            @Override
+            public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                List<CartItem> items = response.body();
+
+
+                Log.d("items", String.valueOf(items));
+
+                if (items != null && items.size() > 0) {
+                    //Accesss views?
+                    Log.d("itemcount", String.valueOf(items.size()));
+                    HomeActivity.cartItems.setVisibility(View.VISIBLE);
+                    itemCount.setText(String.valueOf(items.size()));
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+            }
+        });
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -153,7 +184,7 @@ public class HomeActivity extends AppCompatActivity
         if (getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null) != null) {
             String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
             UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
-            nametv.setText("Hi " + user.getFirstName() + " !");
+            nametv.setText("Hi " + getApplicationContext().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("firstname", null) + " !");
         } else {
             SharedPreferences sharedPreferences = getSharedPreferences("FB_DATA", Context.MODE_PRIVATE);
             String fName = sharedPreferences.getString("fbName", "halanx");
@@ -195,9 +226,10 @@ public class HomeActivity extends AppCompatActivity
 
         SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
         final String mobileNumber = sharedPreferences.getString("MobileNumber", null);
+        token = getApplicationContext().getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token", null);
 
 
-        Call<List<CartItem>> call = client.getUserCartItems(mobileNumber);
+        Call<List<CartItem>> call = client.getUserCartItems(token);
 
         call.enqueue(new Callback<List<CartItem>>() {
                          @Override
@@ -207,20 +239,16 @@ public class HomeActivity extends AppCompatActivity
                              //Log.d("items", String.valueOf(items));
 
                              if (items != null && items.size() > 0) {
-                                 cartItems.setVisibility(View.VISIBLE);
-                                 itemCount.setText(String.valueOf(items.size()));
+                                 HomeActivity.cartItems.setVisibility(View.VISIBLE);
+                                 HomeActivity.itemCount.setText(String.valueOf(items.size()));
 
                              } else {
                                  cartItems.setVisibility(View.GONE);
                              }
-
                          }
-
                          @Override
                          public void onFailure(Call<List<CartItem>> call, Throwable t) {
-
                          }
-
                      }
         );
 
@@ -346,9 +374,11 @@ public class HomeActivity extends AppCompatActivity
     private void displayFirebaseRegId() {
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
         String regId = pref.getString("regId", null);
-        String url = "https://api.halanx.com/users/" +
-                getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null) + "/";
+        String url = "https://api.halanx.com/users/detail/";
+        final String finalToken = getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+
         Log.i("Gcm", url);
+        Log.i("Gcm", finalToken);
         JSONObject obj = new JSONObject();
         try {
             obj.put("GcmId", regId);
@@ -365,7 +395,17 @@ public class HomeActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
 
             }
-        }));
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                Log.d("token",finalToken);
+
+                params.put("Authorization", finalToken);
+                return params;
+            }
+        });
 
         Log.e(TAG, "Firebase reg id: " + regId);
 
@@ -381,33 +421,37 @@ public class HomeActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
         final String mobileNumber = sharedPreferences.getString("MobileNumber", null);
 
+        String token = getApplicationContext().getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
 
-        Call<List<CartItem>> call = client.getUserCartItems(mobileNumber);
 
-        call.enqueue(new Callback<List<CartItem>>() {
-                         @Override
-                         public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+        Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                .getUserCartItems(token);
+        callItems.enqueue(new Callback<List<CartItem>>() {
+            @Override
+            public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                List<CartItem> items = response.body();
 
-                             items = response.body();
-                             // Log.d("items", String.valueOf(items));
 
-                             if (items != null && items.size() > 0) {
-                                 cartItems.setVisibility(View.VISIBLE);
-                                 itemCount.setText(String.valueOf(items.size()));
+                Log.d("items", String.valueOf(items));
 
-                             } else {
-                                 cartItems.setVisibility(View.GONE);
-                             }
+                if (items != null && items.size() > 0) {
+                    //Accesss views?
+                    Log.d("itemcount", String.valueOf(items.size()));
+                    cartItems.setVisibility(View.VISIBLE);
+                    itemCount.setText(String.valueOf(items.size()));
 
-                         }
 
-                         @Override
-                         public void onFailure(Call<List<CartItem>> call, Throwable t) {
+                } else {
 
-                         }
+                    //                         cartItems.setVisibility(View.GONE);
+                }
+            }
 
-                     }
-        );
+            @Override
+            public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+            }
+        });
 
 
         // register GCM registration complete receiver

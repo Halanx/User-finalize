@@ -86,6 +86,8 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
     float latitude; // LATITUDE
     float longitude; // LONGITUDE
 
+    int cartId;
+
     static Integer quantityList[];
     static List<Boolean> isItemChecked;
     RadioButton daily, monday, tuesday, wednesday, thursday, friday, saturday, sunday;
@@ -157,9 +159,10 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
             map.setVisibility(View.GONE);
         }
 
+        String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
 
         mobile = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null);
-        Call<List<CartItem>> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).getUserCartItems(mobile);
+        Call<List<CartItem>> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).getUserCartItems(token);
         call.enqueue(new Callback<List<CartItem>>() {
             @Override
             public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
@@ -714,7 +717,36 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
 
             case R.id.confirm_details:
 
-                subscriptionInfo.setSubscriber(Long.parseLong(mobile));
+
+
+//                Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            cartId = response.getInt("id");
+//                            subscriptionInfo.setSubscriber(cartId);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                }, new com.android.volley.Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//                }){
+//                    @Override
+//                    public Map<String, String> getHeaders() throws AuthFailureError {
+//                        Map<String, String> params = new HashMap<String, String>();
+//                        params.put("Content-Type", "application/json");
+//                        params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+//                        return params;
+//                    }
+//
+//                });
+//
+
                 subscriptionInfo.setLatitude(latitude + 0.0);
                 subscriptionInfo.setLongitude(longitude + 0.0);
 
@@ -888,10 +920,14 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
         Log.i("Crap", "IN func");
         subscriptionInfo.setItem(activeItems.get(productIndex).getItem().getId());
         subscriptionInfo.setQuantityPerDay(quantityList[productIndex] + 0.0);
+        String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+        Log.d("subscription_token",token);
+
+
 
         Call<SubscriptionInfo> subscriptionInfoCall = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                 addConverterFactory(GsonConverterFactory.create()).build().create(DataInterface.class).
-                postSubscription(subscriptionInfo);
+                postSubscription(subscriptionInfo,token);
         subscriptionInfoCall.enqueue(new Callback<SubscriptionInfo>() {
             @Override
             public void onResponse(Call<SubscriptionInfo> call, Response<SubscriptionInfo> response) {

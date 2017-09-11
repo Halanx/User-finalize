@@ -17,6 +17,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -30,7 +31,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,7 +73,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
         tvBalanceAmount = (TextView) findViewById(R.id.balance_amount);
 
         Call<UserInfo> userCall = new Retrofit.Builder().baseUrl(djangoBaseUrl).addConverterFactory(GsonConverterFactory.
-                create()).build().create(DataInterface.class).getUserInfo(mobile);
+                create()).build().create(DataInterface.class).getUserInfo(getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
         userCall.enqueue(new Callback<UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
@@ -85,9 +88,11 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
             }
         });
 
+        String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+        Log.d("subscription_token",token);
 
         Call<List<SubscriptionInfoGet>> call = new Retrofit.Builder().baseUrl(djangoBaseUrl).addConverterFactory(GsonConverterFactory.
-                create()).build().create(DataInterface.class).getUserSubscribedItems(mobile);
+                create()).build().create(DataInterface.class).getUserSubscribedItems(token);
         call.enqueue(new Callback<List<SubscriptionInfoGet>>() {
             @Override
             public void onResponse(Call<List<SubscriptionInfoGet>> call, Response<List<SubscriptionInfoGet>> response) {
@@ -181,7 +186,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
-                String url = "https://api.halanx.com/users/"+mobile;
+                String url = "https://api.halanx.com/users/detail/";
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("SubscriptionStatus",b);
@@ -199,7 +204,16 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError volleyError) {
 
                     }
-                }));
+                }){
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Content-Type", "application/json");
+                        params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                        return params;
+                    }
+
+                });
 
 
                 if (activeItems != null && !activeItems.isEmpty()) {
@@ -233,7 +247,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
 
     void changeRemoveTemporarily(Integer id, Boolean b) {
 
-        url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/subscriptions/" + id;
+        url = "http://api.halanx.com/subscriptions/" + id;
         JSONObject obj = new JSONObject();
         try {
             obj.put("TemporaryRemoved", b);
@@ -250,7 +264,16 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError volleyError) {
 
             }
-        }));
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                return params;
+            }
+
+        });
     }
 
     class SubsAdapter extends RecyclerView.Adapter<SubsAdapter.SubsHolder> {
@@ -340,7 +363,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                 if (view == tvUnsubs) {
 
                     int id = subscriptionInfoList.get(pos).getId();
-                    url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/subscriptions/" + id;
+                    url = "http://api.halanx.com/subscriptions/" + id;
                     JSONObject obj = new JSONObject();
                     try {
                         obj.put("PermanentRemoved", true);
@@ -359,7 +382,16 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError volleyError) {
                             Toast.makeText(SubscriptionDrawerActivity.this, "Network error", Toast.LENGTH_SHORT).show();
                         }
-                    }));
+                    }){
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json");
+                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                            return params;
+                        }
+
+                    });
                 }
             }
         }

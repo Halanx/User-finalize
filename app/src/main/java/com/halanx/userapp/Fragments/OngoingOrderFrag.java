@@ -2,7 +2,6 @@ package com.halanx.userapp.Fragments;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,9 +68,9 @@ public class OngoingOrderFrag extends Fragment {
         client = retrofit.create(DataInterface.class);
 
         progressBar.setVisibility(View.VISIBLE);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE);
-        String mobileNumber = sharedPreferences.getString("MobileNumber", null);
-        Call<List<OrderInfo>> orderCall = client.getUserOrders(mobileNumber);
+        String token = getActivity().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+        Log.d("token",token);
+        Call<List<OrderInfo>> orderCall = client.getUserOrders(token);
         orderCall.enqueue(new Callback<List<OrderInfo>>() {
             @Override
             public void onResponse(Call<List<OrderInfo>> call, Response<List<OrderInfo>> response) {

@@ -176,7 +176,7 @@ public class Wallet extends AppCompatActivity {
                         {
                             String ammount = String.valueOf(Double.parseDouble(String.valueOf(amount.getText())));
                             Log.d("ammount",ammount);Log.d("ammount", String.valueOf(Double.parseDouble(String.valueOf(wallet_balance.getText()))));Log.d("ammount", String.valueOf(Double.parseDouble(String.valueOf(amount.getText()))));
-                            startActivity(new Intent(Wallet.this,PaymentActivity.class).putExtra("total_cost",ammount).putExtra("isOrder",false));
+                            startActivity(new Intent(Wallet.this,PaymentActivity.class).putExtra("total_cost",ammount).putExtra("current_ammount",wallet_balance.getText()).putExtra("isOrder",false));
                             dialAddMoney.dismiss();
                             finish();
                         }

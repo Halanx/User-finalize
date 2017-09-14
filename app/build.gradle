@@ -7,8 +7,8 @@ android {
         applicationId "com.halanx.userapp"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 35
-        versionName "3.1.6"
+        versionCode 41
+        versionName "3.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -22,11 +22,11 @@ android {
         abortOnError false
     }
 }
+
 repositories {
     maven {
         url "https://raw.github.com/PayU/paytouch-android/mvn-repo/"
     }
-
     maven {
         url "https://jitpack.io"
     }

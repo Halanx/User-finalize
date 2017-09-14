@@ -8,7 +8,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.payu.india.Model.PayuResponse;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.payuui.Fragment.CreditDebitFragment;
+import com.payu.payuui.Fragment.NetBankingFragment;
+import com.payu.payuui.Fragment.PayuMoneyFragment;
 import com.payu.payuui.Fragment.SavedCardsFragment;
+import com.payu.payuui.Fragment.UPIFragment;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 
 import java.util.ArrayList;
@@ -55,6 +58,28 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 bundle.putSerializable(SdkUIConstants.VALUE_ADDED, valueAddedResponse.getIssuingBankStatus());
                 bundle.putInt(SdkUIConstants.POSITION, i);
                 fragment.setArguments(bundle);
+                mPageReference.put(i, fragment);
+                return fragment;
+
+            case SdkUIConstants.NET_BANKING:
+                fragment = new NetBankingFragment();
+                bundle.putParcelableArrayList(PayuConstants.NETBANKING, payuResponse.getNetBanks());
+                bundle.putSerializable(SdkUIConstants.VALUE_ADDED, valueAddedResponse.getNetBankingDownStatus());
+                fragment.setArguments(bundle);
+                mPageReference.put(i, fragment);
+                return fragment;
+
+            case SdkUIConstants.UPI:
+                fragment = new UPIFragment();
+                bundle.putParcelableArrayList(PayuConstants.NETBANKING, payuResponse.getNetBanks());
+                bundle.putSerializable(SdkUIConstants.VALUE_ADDED, valueAddedResponse.getNetBankingDownStatus());
+                fragment.setArguments(bundle);
+                mPageReference.put(i, fragment);
+                return fragment;
+
+            case SdkUIConstants.PAYU_MONEY:
+                fragment = new PayuMoneyFragment();
+                bundle.putParcelableArrayList(PayuConstants.PAYU_MONEY, payuResponse.getPaisaWallet());
                 mPageReference.put(i, fragment);
                 return fragment;
 

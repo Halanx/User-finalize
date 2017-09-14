@@ -237,7 +237,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     JSONObject jsonObject = new JSONObject();
                     Log.d("ammount added",uri);
                     try {
-                        jsonObject.put("AccountBalance",total);
+                        jsonObject.put("AccountBalance",Double.parseDouble(total)+Double.parseDouble(getIntent().getStringExtra("current_ammount")));
                         Log.d("ammount added",total);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -285,7 +285,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         merchantKey = "f1tDUh";
         int environment = PayuConstants.PRODUCTION_ENV;
-        String email = user.getEmailId();
+        String email = getApplicationContext().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("email",null);
         String amount = total;
 
 //        merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
@@ -311,7 +311,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         mPaymentParams.setKey(merchantKey);
         mPaymentParams.setAmount(amount);
         mPaymentParams.setProductInfo("product_info");
-        mPaymentParams.setFirstName(user.getFirstName());
+        mPaymentParams.setFirstName(getApplicationContext().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("firstname","sidhhant"));
         mPaymentParams.setEmail(email);
 
         /*
@@ -726,7 +726,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 else{
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put("AccountBalance",total);
+                        jsonObject.put("AccountBalance",Double.parseDouble(total)+Double.parseDouble(getIntent().getStringExtra("current_ammount")));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

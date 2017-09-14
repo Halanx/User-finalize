@@ -19,53 +19,51 @@
             >
 
             <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:orientation="vertical"-->
-                <!--android:layout_marginLeft="40dp"-->
-                <!--android:layout_marginRight="40dp"-->
-                <!--android:layout_marginTop="30dp"-->
-                <!--android:layout_marginBottom="30dp"-->
-                <!--android:layout_weight="5"-->
-                <!-->-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_marginLeft="40dp"-->
+            <!--android:layout_marginRight="40dp"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:layout_marginBottom="30dp"-->
+            <!--android:layout_weight="5"-->
+            <!-->-->
 
 
-                <TextView android:layout_height="wrap_content"
-                    android:id="@+id/edit_text_title"
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_enter_cvv"
-                    android:textSize="22dp"
-                    android:layout_gravity="center"
-                    android:text="@string/text_enter_cvv"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    ></TextView>
+            <TextView android:layout_height="wrap_content"
+                android:id="@+id/edit_text_title"
+                android:layout_width="wrap_content"
+                android:textColor="@color/color_enter_cvv"
+                android:textSize="22dp"
+                android:layout_gravity="center"
+                android:text="@string/text_enter_cvv"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                ></TextView>
 
 
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/pager_saved_card"
-                    android:layout_width="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_height="200dp" />
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager_saved_card"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_height="200dp" />
 
 
-                <com.payu.payuui.Widget.CirclePageIndicator
-                    android:id="@+id/indicator"
-                    android:padding="10dip"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    />
+            <com.payu.payuui.Widget.CirclePageIndicator
+                android:id="@+id/indicator"
+                android:padding="10dip"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                />
 
-            <TextView
+            <ImageButton
                 android:id="@+id/button_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#000000"
-                android:text="REMOVE"
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:src="@drawable/ic_delete_black_24dp"
+                android:text="Delete"
                 android:layout_gravity="right"
                 android:background="#FFFFFF"
                 android:layout_marginRight="15dp"

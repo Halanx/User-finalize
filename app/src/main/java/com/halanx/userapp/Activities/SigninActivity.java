@@ -242,6 +242,7 @@ public class SigninActivity extends AppCompatActivity {
                                     try {
                                         getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
                                                 putString("firstname", response.getJSONObject("user").getString("first_name")).
+                                                putString("email", response.getJSONObject("user").getString("email")).
                                                 putString("lastname", response.getJSONObject("user").getString("last_name")).
                                                 putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
                                                 putBoolean("first_login", true).

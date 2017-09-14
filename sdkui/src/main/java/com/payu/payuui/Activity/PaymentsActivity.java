@@ -42,7 +42,7 @@ public class PaymentsActivity extends FragmentActivity {
 
                 String[] list=null;
                 if(payuConfig.getData()!=null)
-                list = payuConfig.getData().split("&");
+                    list = payuConfig.getData().split("&");
 
                 if(list != null) {
                     for (String item : list) {
@@ -146,7 +146,7 @@ public class PaymentsActivity extends FragmentActivity {
                         webview.setWebViewClient(new PayUWebViewClient(payUCustomBrowser, magicRetryFragment, merchantKey));
                         Map<String, String> urlList = new HashMap<String, String>();
                         if(payuConfig!=null)
-                        urlList.put(url, payuConfig.getData());
+                            urlList.put(url, payuConfig.getData());
                         payUCustomBrowser.setMagicRetry(urlList);
                     }
                 };
@@ -175,7 +175,7 @@ public class PaymentsActivity extends FragmentActivity {
                 customBrowserConfig.setPostURL(url);
 
                 if (payuConfig!=null)
-                customBrowserConfig.setPayuPostData(payuConfig.getData());
+                    customBrowserConfig.setPayuPostData(payuConfig.getData());
 
                 new CustomBrowser().addCustomBrowser(PaymentsActivity.this, customBrowserConfig, payUCustomBrowserCallback);
             }

@@ -61,15 +61,22 @@ public class Tracking extends AppCompatActivity {
 
                 Log.d("Response", String.valueOf(response));
                 try {
-                    Log.d("Response",response.getString(0));
-                    adapter = new Trackadapter(getApplicationContext(),response);
-                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-                    trackRecycler.setLayoutManager(layoutManager);
-                    trackRecycler.setAdapter(adapter);
-                    trackRecycler.setHasFixedSize(true);
+                    if (response.length()>0) {
+                        Log.d("Response", response.getString(0));
+                        adapter = new Trackadapter(getApplicationContext(), response);
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                        trackRecycler.setLayoutManager(layoutManager);
+                        trackRecycler.setAdapter(adapter);
+                        trackRecycler.setHasFixedSize(true);
+                    }
+                    else{
+                        startActivity(new Intent(Tracking.this,track.class));
+
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
 
 

@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.payu.india.Model.StoredCard;
@@ -156,7 +155,7 @@ public final class SavedCardItemFragment extends Fragment {
     }
 
     private int getIssuingBankImage(String issuingBank) {
-        
+
         int resID = getResources().getIdentifier(issuingBank.toLowerCase(), "drawable", getActivity().getPackageName());
 
         if (resID == 0)

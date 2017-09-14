@@ -194,7 +194,7 @@ public class OldPaymentActivity  extends AppCompatActivity implements MagicRetry
             magicRetryFragment.initMRSettingsFromSharedPreference(this);
 
             mWebView.postUrl(url, payuConfig.getData().getBytes());
-           // (new PayuUtils()).deviceAnalytics(OldPaymentActivity.this, Bank.Version, "data", txnId); //oqMs
+            // (new PayuUtils()).deviceAnalytics(OldPaymentActivity.this, Bank.Version, "data", txnId); //oqMs
         } catch (ClassNotFoundException e) {
             mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             mWebView.getSettings().setSupportMultipleWindows(true);

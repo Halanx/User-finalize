@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +32,10 @@ import com.payu.india.Tasks.DeleteCardTask;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.Adapter.PagerAdapter;
 import com.payu.payuui.Adapter.SavedCardItemFragmentAdapter;
-import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 import com.payu.payuui.Widget.CirclePageIndicator;
+import com.payu.payuui.R;
+
 import com.payu.payuui.Widget.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
     private SavedCardItemFragmentAdapter mAdapter;
     private ViewPager mPager;
     private ArrayList<StoredCard> mStoreCards;
-    private TextView deleteButton;
+    private ImageButton deleteButton;
     private CirclePageIndicator indicator;
     private View mView;
     private TextView titleText;
@@ -99,7 +101,7 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
         mPager = (ViewPager) mView.findViewById(R.id.pager_saved_card);
         mPager.setAdapter(mAdapter);
         mPager.setClipToPadding(false);
-        (deleteButton = (TextView) mView.findViewById(R.id.button_delete)).setOnClickListener(this);
+        (deleteButton = (ImageButton) mView.findViewById(R.id.button_delete)).setOnClickListener(this);
         titleText = (TextView) mView.findViewById(R.id.edit_text_title);
 
 
@@ -133,7 +135,7 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
                 PagerAdapter activityAdapter = (PagerAdapter) activityViewPager.getAdapter();
                 if(activityAdapter != null && activityAdapter.getPageTitle(activityViewPager.getCurrentItem()).toString().equals(SdkUIConstants.SAVED_CARDS)) {
 
-              if (mStoreCards.get(position).getEnableOneClickPayment() == 1 && mStoreCards.get(position).getOneTapCard() == 1) {
+                    if (mStoreCards.get(position).getEnableOneClickPayment() == 1 && mStoreCards.get(position).getOneTapCard() == 1) {
 
                         getActivity().findViewById(R.id.button_pay_now).setEnabled(true);
                     } else if (mStoreCards.get(position).getCardType().equals("SMAE")) {
@@ -262,7 +264,7 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
             }
 
         } else {
-                Toast.makeText(getActivity(), "Error While Deleting Card", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Error While Deleting Card", Toast.LENGTH_LONG).show();
 
         }
         deleteButton.setEnabled(true);

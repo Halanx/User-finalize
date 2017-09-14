@@ -49,6 +49,7 @@ public class CompletedOrderFrag extends Fragment {
     ProgressBar progressBar;
     LinearLayout llNoOrders;
 
+    Boolean flag;
 
     Retrofit.Builder builder;
     Retrofit retrofit;
@@ -95,8 +96,14 @@ public class CompletedOrderFrag extends Fragment {
                         for (int j = 0;j<allOrdersList.get(i).getOrderItems().size();j++) {
                             if (allOrdersList.get(i).getOrderItems().get(j).getIsdeliver()) {
                                 //Completed order = isDelivered is true
-                                completedOrderList.add(allOrdersList.get(i));
+                                flag = true;
                             }
+                            else{
+                                flag =false;
+                            }
+                        }
+                        if(flag) {
+                            completedOrderList.add(allOrdersList.get(i));
                         }
                     }
 

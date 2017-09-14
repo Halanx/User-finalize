@@ -217,6 +217,18 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                             public void onResponse(JSONObject response) {
                                                 Log.d("responsedata", String.valueOf(response));
                                                 try {
+
+                                                    JSONArray array = new JSONArray(response.getString("CategoriesAvailable"));
+                                                    for(int i = 0; i<array.length();i++){
+                                                        categories.add(String.valueOf(array.get(i)));
+                                                    }
+                                                    categoryAdapter = new CategoryAdapter(getActivity(),categories);
+                                                    RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, false);
+                                                    categories_Recycler.setLayoutManager(layoutManager1);
+                                                    categories_Recycler.setAdapter(categoryAdapter);
+                                                    categories_Recycler.setHasFixedSize(true);
+
+
                                                     Picasso.with(getActivity()).load(response.getString("StoreLogo")).into(brandLogo);
                                                     brandName.setText(response.getString("StoreName"));
 

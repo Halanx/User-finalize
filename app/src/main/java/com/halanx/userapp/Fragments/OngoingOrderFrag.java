@@ -40,6 +40,7 @@ public class OngoingOrderFrag extends Fragment {
     ProgressBar progressBar;
     LinearLayout llNoOrders;
     OrdersAdapter adapter;
+    Boolean flag;
 
 
     Retrofit.Builder builder;
@@ -76,6 +77,7 @@ public class OngoingOrderFrag extends Fragment {
             public void onResponse(Call<List<OrderInfo>> call, Response<List<OrderInfo>> response) {
                 allOrdersList = response.body();
                 progressBar.setVisibility(View.GONE);
+                Log.d("responsebody", String.valueOf(response.body()));
 
                 Log.i("OrderBro","retrofit "+response.body().size());
 
@@ -85,13 +87,18 @@ public class OngoingOrderFrag extends Fragment {
                 if (!allOrdersList.isEmpty()) {
                     onGoingOrderList = new ArrayList<>();
 
-                    for (int i = allOrdersList.size()-1; i >0 ; i--) {
+                    for (int i = allOrdersList.size()-1; i >=0 ; i--) {
                         for(int j= 0;j<allOrdersList.get(i).getOrderItems().size();j++){
                         if (!allOrdersList.get(i).getOrderItems().get(j).getIsdeliver()) {
                             //Completed order = isDelivered is true
-                            onGoingOrderList.add(allOrdersList.get(i));
-
+                            flag=true;
                         }
+                        else{
+                            flag =false;
+                             }
+                        }
+                        if (flag){
+                            onGoingOrderList.add(allOrdersList.get(i));
                         }
                     }
 

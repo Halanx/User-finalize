@@ -46,7 +46,7 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  * Created by Nishant on 15/08/17.
  */
 
-public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder> implements View.OnClickListener {
+public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder>{
 
     JSONObject products,specific_detail;
     private static int restQuantity[];
@@ -85,7 +85,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
     }
 
     @Override
-    public void onBindViewHolder(final ProductViewHolder holder, int position) {
+    public void onBindViewHolder(final ProductViewHolder holder, final int position) {
 
         try {
             if (products.getString("StoreId").equals("1")) {
@@ -93,18 +93,18 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                 holder.cvRest.setVisibility(View.GONE);
 
                 String url = "https://api.halanx.com/products/" + products.getString("Id");
+                Log.d("stringurl",url);
                 JSONObject obj = new JSONObject();
-
 
                 Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.GET, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+
                         specific_detail = response;
                         Log.d("specific detail", String.valueOf(specific_detail));
                         try {
                             data = specific_detail.getString("ProductImage");
                             Picasso.with(c).load(data).into(holder.productImage);
-
                             Log.d("data",data);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -113,11 +113,8 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                 }, new com.android.volley.Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
                     }
                 }));
-
-
                 try {
                     holder.productName.setText(products.getString("ProductName"));
                     if (products.getString("Features") != null) {
@@ -125,27 +122,22 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                         holder.description.setText(products.getString("Features"));
                     }
                     holder.productPrice.setText("₹ " + String.valueOf(products.get("Price")));
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
             else {
                 Picasso.with(c).load(R.drawable.fav_48).into(holder.productImage);
-
                 holder.cvProducts.setVisibility(View.GONE);
                 holder.cvRest.setVisibility(View.VISIBLE);
                 try {
                     if(products.get("Features")!=null){
                         holder.description.setVisibility(View.VISIBLE);
                         holder.description.setText(products.getString("Features"));
-
                     }
                     holder.tvRestName.setText(products.getString("ProductName"));
                     holder.tvRestPrice.setText("₹ " + String.valueOf(products.getString("Price")));
                    holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -153,80 +145,160 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        holder.cvAddCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+        //        holder.pb_addtocart.setVisibility(View.VISIBLE);
+          //      holder.tvCart.setVisibility(View.GONE);
+                //Add to cart
+                Log.d("position_selected", String.valueOf(position));
+                final Double val = Double.parseDouble(holder.etRestQuan.getText().toString());
+                int proId = 0;
+                try {
+                    proId = products.getInt("Id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Long mob = Long.parseLong(mobileNumber);
+                //              addCartItem(val, proId);
+                final int finalProId = proId;
+                Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            cartId = response.getInt("id");
 
-        holder.cvAddCart.setOnClickListener(this);
-        holder.rvInc.setOnClickListener(this);
-        holder.rvDec.setOnClickListener(this);
-        holder.ivFav.setOnClickListener(this);
-        holder.cvProducts.setOnClickListener(this);
+                            final String token = c.getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
+                            Log.d("token",token);
+                            CartItemPost item = new CartItemPost(cartId,val, finalProId, null);
+
+                            Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item,token);
+                            call.enqueue(new Callback<CartItemPost>() {
+                                @Override
+                                public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
+
+                                    Log.d("done","donepb");
+
+//                                    holder.pb_addtocart.setVisibility(View.GONE);
+//                                    holder.tvCart.setVisibility(View.VISIBLE);
+                                    holder.tvCart.setText("Added to cart");
+
+                                    Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                                            .getUserCartItems(token);
+                                    callItems.enqueue(new Callback<List<CartItem>>() {
+                                        @Override
+                                        public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                                            List<CartItem> items = response.body();
 
 
+                                            Log.d("items", String.valueOf(items));
+
+                                            if (items != null && items.size() > 0) {
+                                                //Accesss views?
+                                                Log.d("itemcount", String.valueOf(items.size()));
+                                                HomeActivity.cartItems.setVisibility(View.VISIBLE);
+                                                itemCount.setText(String.valueOf(items.size()));
+                                                notifyDataSetChanged();
+
+                                            }
+                                            else
+                                            {
+                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                                @Override
+                                public void onFailure(Call<CartItemPost> call, Throwable t) {
+                                    Toast.makeText(c, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }){
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Content-Type", "application/json");
+                        params.put("Authorization", c.getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                        return params;
+                    }
+
+                });
+
+
+            }
+
+        });
+        holder.rvInc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (restQuantity[position] < 10) {
+                    restQuantity[position]++;
+                    holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+                }
+            }
+        });
+        holder.rvDec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (restQuantity[position] > 1) {
+                    restQuantity[position]--;
+                    holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+                }
+            }
+        });
+        holder.ivFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    holder.productFav(Integer.valueOf(products.getString("Id")), "1");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        holder.cvProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(c, ItemDisplayActivity.class);
+                try {
+
+                    Log.d(("item_data"), String.valueOf(products));
+                    intent.putExtra("Name", products.getString("ProductName"));
+                    intent.putExtra("Price", products.getDouble("Price"));
+                    if (products.getString("Features") != null) {
+                        intent.putExtra("Features", products.getString("Features"));
+
+                    }
+                    intent.putExtra("Image", data);
+
+                    intent.putExtra("ID", products.getInt("Id"));
+                    c.startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
 
         return 1;
-    }
-    @Override
-    public void onClick(View view) {
-
-        int position = holder.getAdapterPosition();
-        //Click on product
-        if (view.getId() == R.id.cvProducts) {
-            Intent intent = new Intent(c, ItemDisplayActivity.class);
-            try {
-
-                Log.d(("item_data"), String.valueOf(products));
-                intent.putExtra("Name", products.getString("ProductName"));
-                intent.putExtra("Price", products.getDouble("Price"));
-                intent.putExtra("Features", products.getString("Features"));
-                intent.putExtra("Image", data);
-                intent.putExtra("ID", products.getInt("Id"));
-                c.startActivity(intent);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        //Click on add to cart
-        else if (view.getId() == R.id.cv_rest_add_cart) {
-            //Add to cart
-            Double val = Double.parseDouble(holder.etRestQuan.getText().toString());
-            int proId = 0;
-            try {
-                proId = Integer.parseInt(products.getString("Id"));
-                Long mob = Long.parseLong(mobileNumber);
-                holder.addCartItem(mob, val, proId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-        } else if (view.getId() == R.id.restIncrement) {
-
-            if (restQuantity[position] < 10) {
-                restQuantity[position]++;
-                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
-            }
-
-        } else if (view.getId() == R.id.restDecrement) {
-
-            if (restQuantity[position] > 1) {
-                restQuantity[position]--;
-                holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
-            }
-        } else if (view.getId() == R.id.restFav) {
-            //Add to favorites
-            try {
-                holder.productFav(Integer.valueOf(products.getString("Id")), "1");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-
     }
 
 
@@ -300,7 +372,16 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(c, "Network error", Toast.LENGTH_SHORT).show();
                 }
-            }));
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json");
+                    params.put("Authorization", c.getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                    return params;
+                }
+
+            });
         }
 
 

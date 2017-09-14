@@ -50,6 +50,10 @@ public class CartItem {
     @Expose
     private Integer batchId;
 
+    @SerializedName("IsDelivered")
+    @Expose
+    private Boolean isdeliver;
+
     public Boolean getOrdered() {
         return isOrdered;
     }
@@ -166,6 +170,13 @@ public class CartItem {
         this.orderId = orderId;
     }
 
+    public Boolean getIsdeliver() {
+        return isdeliver;
+    }
+
+    public void setIsdeliver(Boolean isdeliver) {
+        this.isdeliver = isdeliver;
+    }
 }
 
 

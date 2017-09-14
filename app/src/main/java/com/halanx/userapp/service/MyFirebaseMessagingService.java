@@ -95,8 +95,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         try {
             String message = json.getString("type").trim();
             String batch_id = json.getString("BatchId").trim();
-            Log.d("batch_id",","+message);
+            String shopper_id = json.getString("ShopperId").trim();
+            Log.d("batch_id",message);
             getSharedPreferences("BatchData",Context.MODE_PRIVATE).edit().putString("BatchID", batch_id).apply();
+            getSharedPreferences("BatchData",Context.MODE_PRIVATE).edit().putString("ShopperID", shopper_id).apply();
 
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
@@ -127,7 +129,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     piResulta = PendingIntent.getActivity(this,
                             (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
                 }
-                else {
+                if(message.equals("BatchDelivered")){
 
                     getSharedPreferences("OrderStatus",MODE_PRIVATE).edit().putBoolean("BatchAccept",false).apply();
 
@@ -150,7 +152,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
                                 .setContentIntent(piResulta)
                                 .setVibrate(pattern)
-                                .setOngoing(true)
                                 .setAutoCancel(true);
 //set intents and pending intents to call activity on click of "show activity" action button of notification
 

@@ -83,8 +83,6 @@ public class SigninActivity extends AppCompatActivity {
 
     LoginButton fblogin;
     CallbackManager callbackManager;
-    String name, email;
-    String[] nameSplit;
     String mobile;
     String password;
     AccessToken accessToken;
@@ -122,40 +120,12 @@ public class SigninActivity extends AppCompatActivity {
 
         accessToken = AccessToken.getCurrentAccessToken();
 
-//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setTitle("Location services not enabled");  // GPS not found
-//            builder.setMessage("Kindly enable the location services to proceed"); // Want to enable?
-//            builder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-//                }
-//            });
-//
-//            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    finish();
-//                }
-//            });
-//            dial1 = builder.create();
-//            dial1.show();
-//        }
-
-//        int PERMISSION_ALL = 1;
-//        String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS,Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_NETWORK_STATE};
-//
-//        if(!hasPermissions(this, PERMISSIONS)){
-//            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
-//        }
-
         forgot_password = (TextView) findViewById(R.id.forgot_password);
 
         int MyVersion = Build.VERSION.SDK_INT;
         if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (!checkIfAlreadyhavePermission()) {
-                requestForSpecificPermission();
+//                requestForSpecificPermission();
             }
         }
 
@@ -164,7 +134,7 @@ public class SigninActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                 dial2 = new AlertDialog.Builder(this)
+                dial2 = new AlertDialog.Builder(this)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -185,15 +155,16 @@ public class SigninActivity extends AppCompatActivity {
         }
 
 
-
         sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
         Boolean loginStatus = sharedPreferences.getBoolean("Loginned", false);
 
         if (loginStatus) {
-            if(dial1!=null){
-            dial1.dismiss();}
-            if(dial2!=null){
-            dial2.dismiss();}
+            if (dial1 != null) {
+                dial1.dismiss();
+            }
+            if (dial2 != null) {
+                dial2.dismiss();
+            }
 
             if (sharedPreferences.getBoolean("first_login", false)) {
                 startActivity(new Intent(SigninActivity.this, HomeActivity.class));
@@ -241,98 +212,93 @@ public class SigninActivity extends AppCompatActivity {
                 }
 
 
-
                 final JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("username","c"+ mobile);
-                    jsonObject.put("password",password);
+                    jsonObject.put("username", "c" + mobile);
+                    jsonObject.put("password", password);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/rest-auth/login/",jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-                                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+                Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/rest-auth/login/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        Log.d("data", String.valueOf(response));
+                        final String token;
+                        try {
+                            token = response.getString("key");
+                            Log.d("key", token);
+
+                            getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).edit().putString("token", "token " + token).commit();
+                            Log.d("token_key", getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                            Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-
                                     Log.d("data", String.valueOf(response));
-                                    final String token;
+                                    data();
                                     try {
-                                        token = response.getString("key");
-                                        Log.d("key", token);
-
-                                        getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).edit().putString("token","token "+token).commit();
-                                        Log.d("token_key",getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
-                                        Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/",jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                Log.d("data", String.valueOf(response));
-                                                data();
-                                                try {
-                                                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                                                            putString("firstname",response.getJSONObject("user").getString("first_name")).
-                                                            putString("lastname",response.getJSONObject("user").getString("last_name")).
-                                                            putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
-                                                            putBoolean("first_login", true).
-                                                            putBoolean("Loginned", true).apply();
-                                                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                                                            putBoolean("first_login", true).apply();
-
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-
-                                                Log.i("TAG", String.valueOf(response));
-                                                Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
-                                                startActivity(new Intent(SigninActivity.this, MapsActivity.class));
-                                                progressBar.setVisibility(View.INVISIBLE);
-//
-                                                finish();
-
-
-                                            }
-                                        }, new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                Toast.makeText(getApplicationContext(),"Invalid username/password",Toast.LENGTH_SHORT).show();
-                                                progressBar.setVisibility(View.GONE);
-                                                btnLogin.setVisibility(View.VISIBLE);
-
-                                            }
-                                        }) {
-                                            @Override
-                                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                                Map<String, String> params = new HashMap<String, String>();
-                                                params.put("Content-Type", "application/json");
-                                                params.put("Authorization", "token "+token);
-                                                return params;
-                                            }
-
-                                        });
-
-
-
-
+                                        getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                                putString("firstname", response.getJSONObject("user").getString("first_name")).
+                                                putString("lastname", response.getJSONObject("user").getString("last_name")).
+                                                putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
+                                                putBoolean("first_login", true).
+                                                putBoolean("Loginned", true).apply();
+                                        getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                                                putBoolean("first_login", true).apply();
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
 
+
+                                    Log.i("TAG", String.valueOf(response));
+                                    Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
+                                    startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                                    progressBar.setVisibility(View.INVISIBLE);
+//
+                                    finish();
+
+
                                 }
-                            }, new com.android.volley.Response.ErrorListener() {
+                            }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-
-                                    Toast.makeText(getApplicationContext(),"Invalid username/password",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
                                     progressBar.setVisibility(View.GONE);
                                     btnLogin.setVisibility(View.VISIBLE);
 
                                 }
-                            }
-                            ));
+                            }) {
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("Content-Type", "application/json");
+                                    params.put("Authorization", "token " + token);
+                                    return params;
+                                }
 
+                            });
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                        btnLogin.setVisibility(View.VISIBLE);
+
+                    }
+                }
+                ));
 
 
             }
@@ -347,115 +313,123 @@ public class SigninActivity extends AppCompatActivity {
                 } else {
 
 
-                        random = sendOtp();
-                        mobile = inputMobile.getText().toString().trim();
+                    random = sendOtp();
+                    mobile = inputMobile.getText().toString().trim();
 
-                        final Dialog dialog = new Dialog(SigninActivity.this);
-                        dialog.setContentView(R.layout.activity_verify);
-                        dialog.setTitle("OTP has been sent to" + inputMobile.getText());
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.show();
-                        Window window = dialog.getWindow();
-                        window.setLayout(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                    final Dialog dialog = new Dialog(SigninActivity.this);
+                    dialog.setContentView(R.layout.activity_verify);
+                    dialog.setTitle("OTP has been sent to" + inputMobile.getText());
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+                    Window window = dialog.getWindow();
+                    window.setLayout(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
 
-                        final TextView tvResendOtp = (TextView) dialog.findViewById(R.id.resend);
+                    final TextView tvResendOtp = (TextView) dialog.findViewById(R.id.resend);
+                    tvResendOtp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendOtp();
+                        }
+                    });
 
-                        final EditText otp = (EditText) dialog.findViewById(R.id.enterOTP);
-                        Button btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
-                        TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
+                    final EditText otp = (EditText) dialog.findViewById(R.id.enterOTP);
+                    Button btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
+                    TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
 
-                        tvNumber.setText(inputMobile.getText());
-                        btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                    tvNumber.setText(inputMobile.getText());
+                    btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                                String url = "https://api.halanx.com/users/loginotp/";
-                                JSONObject json = new JSONObject();
-                                try {
-                                    json.put("username","c"+mobile);
-                                    json.put("password",Integer.parseInt(otp.getText().toString()));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        String token = null;
-
-                                        Log.d("response", String.valueOf(response));
-                                        try {
-                                            token = response.getString("key");
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                        {
-                                            Toast.makeText(SigninActivity.this, "User Verified", Toast.LENGTH_LONG).show();
-                                            dialog.dismiss();
-                                            Toast.makeText(SigninActivity.this, "User Verified", Toast.LENGTH_LONG).show();
-                                            dialog.dismiss();
-                                            final Dialog dialog1 = new Dialog(getApplicationContext());
-                                            dialog1.setContentView(R.layout.forgot_password_layout);
-                                            final EditText new_password = (EditText) dialog1.findViewById(R.id.password);
-                                            Button done = (Button) dialog1.findViewById(R.id.button_done);
-
-                                            final String finalToken = token;
-                                            done.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-
-                                                    String url = "https://api.halanx.com/rest-auth/password/change/";
-                                                    JSONObject json = new JSONObject();
-
-                                                    try {
-                                                        json.put("new_password1",new_password);
-                                                        json.put("new_password2",new_password);
-
-                                                        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
-                                                            @Override
-                                                            public void onResponse(JSONObject response) {
-                                                                Toast.makeText(getApplicationContext(),"Password change",Toast.LENGTH_SHORT).show();
-                                                                dialog1.dismiss();
-
-                                                            }
-                                                        }, new Response.ErrorListener() {
-                                                            @Override
-                                                            public void onErrorResponse(VolleyError error) {
-                                                                Log.d("ERROR" ,"error");
-
-                                                            }
-                                                        })
-                                                        {
-                                                            @Override
-                                                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                                                Map<String, String> params = new HashMap<String, String>();
-                                                                params.put("Content-Type", "application/json");
-                                                                params.put("Authorization", "token "+ finalToken);
-                                                                return params;
-                                                            }
-
-                                                        });
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            });
-
-                                        }
-                                    }
-                                }, new com.android.volley.Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Log.d("error", String.valueOf(error));
-
-                                    }
-                                }));
-
-
+                            String url = "https://api.halanx.com/users/loginotp/";
+                            JSONObject json = new JSONObject();
+                            try {
+                                json.put("username", "c" + mobile);
+                                json.put("password", Integer.parseInt(otp.getText().toString()));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        });
+                            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    String token = null;
+
+                                    Log.d("response", String.valueOf(response));
+                                    try {
+                                        token = response.getString("key");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    {
+                                        dialog.dismiss();
+                                        final Dialog dialog1 = new Dialog(SigninActivity.this);
+                                        dialog1.setContentView(R.layout.forgot_password_layout);
+                                        dialog1.setTitle("Set Your New Password");
+                                        dialog1.setCanceledOnTouchOutside(false);
+                                        dialog1.show();
+                                        Window window = dialog1.getWindow();
+                                        window.setLayout(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+
+                                        final EditText new_password = (EditText) dialog1.findViewById(R.id.password);
+                                        Button done = (Button) dialog1.findViewById(R.id.button_done);
+
+                                        final String finalToken = token;
+                                        done.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                String url = "https://api.halanx.com/rest-auth/password/change/";
+                                                JSONObject json = new JSONObject();
+
+                                                try {
+                                                    json.put("new_password1", new_password);
+                                                    json.put("new_password2", new_password);
+
+                                                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
+                                                        @Override
+                                                        public void onResponse(JSONObject response) {
+                                                            Toast.makeText(getApplicationContext(), "Password change", Toast.LENGTH_SHORT).show();
+                                                            dialog1.dismiss();
+
+                                                        }
+                                                    }, new Response.ErrorListener() {
+                                                        @Override
+                                                        public void onErrorResponse(VolleyError error) {
+                                                            Log.d("ERROR", "error");
+
+                                                        }
+                                                    }) {
+                                                        @Override
+                                                        public Map<String, String> getHeaders() throws AuthFailureError {
+                                                            Map<String, String> params = new HashMap<String, String>();
+                                                            params.put("Content-Type", "application/json");
+                                                            params.put("Authorization", "token " + finalToken);
+                                                            return params;
+                                                        }
+
+                                                    });
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }, new com.android.volley.Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("error", String.valueOf(error));
+
+                                }
+                            }));
 
 
-                    }
+                        }
+                    });
+
+
+                }
 
             }
         });
@@ -472,123 +446,7 @@ public class SigninActivity extends AppCompatActivity {
         });
 
 
-        //-----------
-
-//        fblogin = (LoginButton) findViewById(R.id.login_button);
-//        fblogin.setReadPermissions(Arrays.asList(
-//                "public_profile", "email", "user_birthday", "user_friends", ""));
-//        callbackManager = CallbackManager.Factory.create();
-//
-//        fblogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(final LoginResult loginResult) {
-//                Log.d("Facebook", "1");
-//
-//
-//                GraphRequest request = GraphRequest.newMeRequest(
-//                        loginResult.getAccessToken(),
-//                        new GraphRequest.GraphJSONObjectCallback() {
-//                            @Override
-//                            public void onCompleted(JSONObject object, GraphResponse response) {
-//                                Log.d("Facebook", "2");
-//
-//                                Log.v("LoginActivity", String.valueOf(loginResult.getAccessToken().getToken()));
-//                                Log.d("fb_data", String.valueOf(object));
-//
-//                                try {// Application code
-//
-//                                    name = object.getString("name");
-//                                    Log.d("FB NAME", name);
-//
-//                                    email = object.getString("email");
-//                                    Log.d("FB NAME", email);
-////
-//                                    nameSplit = name.trim().split("\\s+");
-//                                    Log.d("updatedata", nameSplit[0] + "," + nameSplit[1]);
-//
-//                                    getSharedPreferences("fbdata", Context.MODE_PRIVATE).edit().
-//                                            putBoolean("fbloginned", true).apply();
-//
-//                                    String url = "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/users";
-//
-//
-//
-//
-//
-//                                    Volley.newRequestQueue(SigninActivity.this).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
-//                                        @Override
-//                                        public void onResponse(String response) {
-//                                            Log.e("Response", response);
-//                                            if (response.isEmpty()) {
-//                                                Intent intent = new Intent(SigninActivity.this, RegisterActivity.class);
-//                                                intent.putExtra("first_name", nameSplit[0]);
-//                                                intent.putExtra("last_name", nameSplit[1]);
-//                                                intent.putExtra("access_token", loginResult.getAccessToken().getToken());
-//                                                intent.putExtra("email", email);
-//                                                startActivity(intent);
-//                                            } else {
-//                                                getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-//                                                        putString("UserInfo", response).putString("MobileNumber", mobile).
-//                                                        putBoolean("first_login", true).
-//                                                        putBoolean("Loginned", true).apply();
-//
-//                                                getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-//                                                        putBoolean("first_login", true).apply();
-//
-//                                                startActivity(new Intent(SigninActivity.this, MapsActivity.class));
-//                                                finish();
-//
-//                                            }
-//                                        }
-//                                    }, new com.android.volley.Response.ErrorListener() {
-//                                        @Override
-//                                        public void onErrorResponse(VolleyError error) {
-//                                            Log.d("Facebook", "3");
-//                                        }
-//                                    }));
-//
-//
-////                                   // 01/31/1980 format
-//                                } catch (JSONException e) {
-//                                    Log.d("Facebook", "4");
-//                                    Log.d("catch", e.toString());
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//
-//                        });
-//
-//                Bundle parameters = new Bundle();
-//
-//                parameters.putString("fields", "id,name,email,gender,birthday");
-//                request.setParameters(parameters);
-//                request.executeAsync();
-//
-//
-////                Toast.makeText(SigninActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
-//
-//            }
-//
-
-//            @Override
-//            public void onCancel() {
-//                // App code
-//                Log.v("LoginActivity", "cancel");
-//                Log.d("Facebook", "5");
-//
-//            }
-//
-//            @Override
-//            public void onError(FacebookException exception) {
-//                // App code
-//                Log.d("Facebook ex", exception + " " + exception.getCause());
-//                Log.d("Facebook", "6");
-//            }
-//        });
-
-//--------------
     }
-
 
     private boolean checkIfAlreadyhavePermission() {
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS);
@@ -598,26 +456,26 @@ public class SigninActivity extends AppCompatActivity {
             return false;
         }
     }
-
-    private void requestForSpecificPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE,Manifest.permission.GET_ACCOUNTS}, 101);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 101:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //granted
-                  } else {
-                    //not granted
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
+//
+//    private void requestForSpecificPermission() {
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE,Manifest.permission.GET_ACCOUNTS}, 101);
+//    }
+//
+//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        switch (requestCode) {
+//            case 101:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    //granted
+//                  } else {
+//                    //not granted
+//                }
+//                break;
+//            default:
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
+//    }
 
 
     String sendOtp() {

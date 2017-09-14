@@ -86,11 +86,12 @@ public class OngoingOrderFrag extends Fragment {
                     onGoingOrderList = new ArrayList<>();
 
                     for (int i = allOrdersList.size()-1; i >0 ; i--) {
-                        if (!allOrdersList.get(i).getIsDelivered()) {
+                        for(int j= 0;j<allOrdersList.get(i).getOrderItems().size();j++){
+                        if (!allOrdersList.get(i).getOrderItems().get(j).getIsdeliver()) {
                             //Completed order = isDelivered is true
                             onGoingOrderList.add(allOrdersList.get(i));
 
-
+                        }
                         }
                     }
 

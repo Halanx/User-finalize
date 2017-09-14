@@ -157,7 +157,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
                     float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
                     float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
-                    String trans_id = null;
+                    String trans_id = "cash";
 
 //                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
 //                        @Override

@@ -36,8 +36,7 @@ import java.util.Map;
 
 public class Tracking extends AppCompatActivity {
 
-//    ImageView tick1,tick2,tick3;
-    RecyclerView trackRecycler;
+  RecyclerView trackRecycler;
     Trackadapter adapter;
     String orderId;
     JSONArray orderResponse;
@@ -93,18 +92,6 @@ public class Tracking extends AppCompatActivity {
         });
 
 
-
-//        tick1 = (ImageView) findViewById(R.id.tick1);
-//        tick2 = (ImageView) findViewById(R.id.tick2);
-//        tick3 = (ImageView) findViewById(R.id.tick3);
-//
-//        if(getSharedPreferences("OrderStatus",MODE_PRIVATE).getBoolean("BatchAccept",true)){
-//         tick2.setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            tick2.setVisibility(View.GONE);
-//            tick3.setVisibility(View.GONE);
-//        }
     }
 
     private class Trackadapter extends RecyclerView.Adapter<Trackadapter.TrackViewHolder> {
@@ -139,13 +126,14 @@ public class Tracking extends AppCompatActivity {
                 holder.rvProducts.setAdapter(rvAdapter);
                 RecyclerView.LayoutManager manager = new LinearLayoutManager(c);
                 holder.rvProducts.setLayoutManager(manager);
-                holder.shopper_name.setText(orderResponse.getJSONObject(position).getJSONObject("ShopperId").getString("FirstName")+" "+orderResponse.getJSONObject(position).getJSONObject("ShopperId").getString("LastName"));
+                holder.shopper_name.setText(orderResponse.getJSONObject(position).getJSONObject("ShopperId").getJSONObject("user").getString("first_name")+" "+orderResponse.getJSONObject(position).getJSONObject("ShopperId").getJSONObject("user").getString("last_name"));
                 holder.ivCall.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String mobile = null;
                         try {
                             mobile = String.valueOf(Long.parseLong(orderResponse.getJSONObject(position).getJSONObject("ShopperId").getString("PhoneNo")));
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -166,7 +154,8 @@ public class Tracking extends AppCompatActivity {
             holder.ivOrderStatus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent());
+                    startActivity(new Intent(Tracking.this,track.class));
+
                 }
             });
 

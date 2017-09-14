@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -34,6 +35,8 @@ import com.katepratik.msg91api.MSG91;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -223,7 +226,6 @@ RegisterActivity extends AppCompatActivity {
                     TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
 
                     tvNumber.setText(mobileNumber);
-                    btnOtpSubmit.setVisibility(View.GONE);
                     btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -291,7 +293,7 @@ RegisterActivity extends AppCompatActivity {
 
         //Put cart on server after account is created
 
-        JSONObject jsonObject = new JSONObject();
+        final JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("username", "c" + mobileNumber);
             jsonObject.put("email", email);
@@ -308,12 +310,61 @@ RegisterActivity extends AppCompatActivity {
         Log.d("user", "done");
         Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(final JSONObject response1) {
 
-                Log.i("TAG", String.valueOf(response));
+                Log.i("TAG", String.valueOf(response1));
 
                 try {
-                    getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).edit().putString("token","token "+response.getString("key")).commit();
+                    getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).edit().putString("token","token "+response1.getString("key")).commit();
+                    Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("data", String.valueOf(response));
+
+                            try {
+                                getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                        putString("firstname", response.getJSONObject("user").getString("first_name")).
+                                        putString("lastname", response.getJSONObject("user").getString("last_name")).
+                                        putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobileNumber).
+                                        putBoolean("first_login", true).
+                                        putBoolean("Loginned", true).apply();
+                                getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                                        putBoolean("first_login", true).apply();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            Log.i("TAG", String.valueOf(response));
+                            Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
+                            startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
+
+                            finish();
+
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            try {
+                                params.put("Content-Type", "application/json");
+                                params.put("Authorization", "token "+response1.getString("key"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            return params;
+                        }
+
+                    });
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

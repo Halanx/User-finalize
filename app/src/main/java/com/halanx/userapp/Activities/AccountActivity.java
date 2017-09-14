@@ -58,6 +58,7 @@ public class AccountActivity extends AppCompatActivity {
 
         signout = (TextView) findViewById(R.id.signout);
 
+
         String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
         UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
 
@@ -94,9 +95,6 @@ public class AccountActivity extends AppCompatActivity {
         });
 
 
-        getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                putString("Address", user.getAddress()).apply();
-
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,7 +126,7 @@ public class AccountActivity extends AppCompatActivity {
                             tvAddress.setText(addressDetails);
                             tvAddress.invalidate();
                             String url = "https://api.halanx.com/users/detail/";
-                             JSONObject obj = new JSONObject();
+                            JSONObject obj = new JSONObject();
                             try {
                                 obj.put("Address", addressDetails);
                             } catch (JSONException e) {

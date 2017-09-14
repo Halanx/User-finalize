@@ -30,7 +30,7 @@
         tools:replace="android:icon,android:label,android:theme">
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD-0VJbSO56Eibi0QWycOptdG3mXH1L8YQ" />
+            android:value="AIzaSyDJmeEm-ZMoT-pkKiPkJ8DeHIoYGFAWh-Q" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -38,8 +38,8 @@
         <activity
             android:name=".Activities.RegisterActivity"
             android:label="Register"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.SigninActivity"/>
+            android:parentActivityName=".Activities.SigninActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SigninActivity"
             android:label="Sign In"
@@ -47,9 +47,7 @@
         <activity
             android:name=".Activities.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
         <activity
             android:name=".Activities.ItemDisplayActivity"
             android:screenOrientation="portrait" />
@@ -74,11 +72,13 @@
         <activity
             android:name=".Activities.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"><intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter></activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Activities.OrdersActivity"
             android:label="Orders"
@@ -91,7 +91,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.Wallet"
-            android:label="Points"
+            android:label="Wallet"
             android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -124,7 +124,6 @@
             android:label="Account"
             android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activities.ScheduleActivity"
             android:label="Schedule"
@@ -145,13 +144,16 @@
         </service>
         <!-- ./Firebase Notifications -->
 
-        <activity android:name=".Activities.SubscriptionActivity"
-            android:parentActivityName=".Activities.HomeActivity"
-            android:label="Subscription"></activity>
-
-        <activity android:name=".Activities.SubscriptionDrawerActivity"
-            android:parentActivityName=".Activities.HomeActivity"
-            android:label="Subscriptions"></activity>
+        <activity
+            android:name=".Activities.SubscriptionActivity"
+            android:label="Subscription"
+            android:parentActivityName=".Activities.CartActivity" />
+        <activity
+            android:name=".Activities.SubscriptionDrawerActivity"
+            android:label="Subscriptions"
+            android:parentActivityName=".Activities.HomeActivity" />
+        <activity android:name=".Activities.track"
+            android:label="Order Status"></activity>
     </application>
 
 </manifest><!--

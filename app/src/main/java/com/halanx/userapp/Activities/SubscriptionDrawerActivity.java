@@ -247,7 +247,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
 
     void changeRemoveTemporarily(Integer id, Boolean b) {
 
-        url = "http://api.halanx.com/subscriptions/" + id;
+        url = "https://api.halanx.com/subscriptions/" + id;
         JSONObject obj = new JSONObject();
         try {
             obj.put("TemporaryRemoved", b);
@@ -363,7 +363,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                 if (view == tvUnsubs) {
 
                     int id = subscriptionInfoList.get(pos).getId();
-                    url = "http://api.halanx.com/subscriptions/" + id;
+                    url = "https://api.halanx.com/subscriptions/" + id;
                     JSONObject obj = new JSONObject();
                     try {
                         obj.put("PermanentRemoved", true);

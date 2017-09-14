@@ -90,7 +90,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         holder. plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId()+"/";
+                String url = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId()+"/";
                 if (i < 10) {
                     String ur = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
                     JSONObject obj = new JSONObject();
@@ -124,7 +124,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         holder.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
+                String url = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
                 if (i != 0) {
                     i--;
                     val = Integer.toString(i);
@@ -169,7 +169,8 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId()+"/";
+                String url = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId()+"/";
+                Log.d("urlfordelete",url);
 
                 JSONObject obj = new JSONObject();
 
@@ -183,6 +184,8 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                 Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.PATCH, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        listItems.remove(position);
+                        notifyDataSetChanged();
 
 //                            Log.i("Cart", "Quantity changed of item " + holderCartItemList.get(pos).getId());
 
@@ -210,7 +213,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
         holder.btNotesProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
+                String url = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
                 holder.notes = holder.cartNotes.getText().toString();
                 JSONObject objNotes = new JSONObject();
                 try {

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.Activities.HomeActivity;
@@ -112,6 +113,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         categorySpinner = (Spinner) view.findViewById(R.id.for_spinner);
         brand_name = (RelativeLayout) view.findViewById(R.id.brand_name);
         list = (ListView) view.findViewById(R.id.listview);
+        brandName = (TextView) view.findViewById(R.id.brandName);
+        brandLogo = (ImageView) view.findViewById(R.id.logo);
+
 
         categories_Recycler = (RecyclerView) view.findViewById(R.id.categories_recycler);
         categoryAdapter = new CategoryAdapter(getActivity(),categories);
@@ -166,7 +170,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 list.setAdapter(null);
                 suggestions.clear();
 
-                String url = "api.halanx.com:9200/product/_search?q=ProductName:" + newText + "*";
+                String url = "http://api.halanx.com:9200/product/_search?q=ProductName:" + newText + "*";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
                     @Override
@@ -203,24 +207,46 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     Log.d("selected_position", suggestions.get(i));
 
+
                                     list.setVisibility(View.GONE);
                                     try {
                                         array = json.getJSONObject("hits").getJSONArray("hits");
-                                        JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
-                                        Log.d("category", String.valueOf(jsonObject));
-                                        sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
+                                        final JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
+                                        Volley.newRequestQueue(getActivity()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/stores/" + jsonObject.getString("StoreId"), null, new com.android.volley.Response.Listener<JSONObject>() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                Log.d("responsedata", String.valueOf(response));
+                                                try {
+                                                    Picasso.with(getActivity()).load(response.getString("StoreLogo")).into(brandLogo);
+                                                    brandName.setText(response.getString("StoreName"));
+
+                                                    sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
+                                                    if (response.getString("StoreCategory").equals("Grocery")) {
+                                                        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                                        recyclerView.setLayoutManager(layoutManager);
+
+                                                    } else { RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                                        recyclerView.setLayoutManager(layoutManager);
+                                                    }
+
+                                                    recyclerView.setAdapter(sadapter);
+                                                    recyclerView.setHasFixedSize(true);
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
 
 
-                                            if (jsonObject.getString("StoreId").equals("62")) {
-                                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                                                recyclerView.setLayoutManager(layoutManager);
-                                            } else {
-                                                GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-                                                recyclerView.setLayoutManager(layoutManager);
+
                                             }
+                                        }, new com.android.volley.Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
 
-                                            recyclerView.setAdapter(sadapter);
-                                            recyclerView.setHasFixedSize(true);
+                                            }
+                                        }));
+                                        Log.d("category", String.valueOf(jsonObject));
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -263,8 +289,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             }
         });
 
-        brandName = (TextView) view.findViewById(R.id.brandName);
-        brandLogo = (ImageView) view.findViewById(R.id.logo);
         List<String> suggestions = new ArrayList<>();
         main = (LinearLayout) view.findViewById(R.id.main);
         HomeActivity.backPress = 0;

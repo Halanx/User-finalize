@@ -92,9 +92,11 @@ public class CompletedOrderFrag extends Fragment {
                     completedOrderList = new ArrayList<>();
 
                     for (int i = allOrdersList.size()-1; i >= 0  ; i--) {
-                        if (allOrdersList.get(i).getIsDelivered()) {
-                            //Completed order = isDelivered is true
-                            completedOrderList.add(allOrdersList.get(i));
+                        for (int j = 0;j<allOrdersList.get(i).getOrderItems().size();j++) {
+                            if (allOrdersList.get(i).getOrderItems().get(j).getIsdeliver()) {
+                                //Completed order = isDelivered is true
+                                completedOrderList.add(allOrdersList.get(i));
+                            }
                         }
                     }
 

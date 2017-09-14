@@ -19,7 +19,7 @@
         android:text="Love Shopping? "
         android:textColor="@color/cast_expanded_controller_background_color"
         android:textSize="30sp"
-        android:textStyle="italic|bold" />
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="370dp"

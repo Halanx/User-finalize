@@ -174,7 +174,7 @@ public class Wallet extends AppCompatActivity {
 
                        else
                         {
-                            String ammount = String.valueOf(Double.parseDouble(String.valueOf(wallet_balance.getText())) + Double.parseDouble(String.valueOf(amount.getText())));
+                            String ammount = String.valueOf(Double.parseDouble(String.valueOf(amount.getText())));
                             Log.d("ammount",ammount);Log.d("ammount", String.valueOf(Double.parseDouble(String.valueOf(wallet_balance.getText()))));Log.d("ammount", String.valueOf(Double.parseDouble(String.valueOf(amount.getText()))));
                             startActivity(new Intent(Wallet.this,PaymentActivity.class).putExtra("total_cost",ammount).putExtra("isOrder",false));
                             dialAddMoney.dismiss();

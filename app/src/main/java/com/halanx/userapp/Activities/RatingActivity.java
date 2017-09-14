@@ -10,16 +10,19 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Retrofit;
 
@@ -43,35 +46,8 @@ public class RatingActivity extends AppCompatActivity {
         tvRating = (TextView) findViewById(R.id.tv_num_stars);
 
 
-        String id = getSharedPreferences("BatchData", Context.MODE_PRIVATE).getString("BatchID", null);
-
-
-
-        Volley.newRequestQueue(RatingActivity.this).add(new StringRequest(Request.Method.GET,
-                "https://api.halanx.com/batch/" + id,
-                new com.android.volley.Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject json = new JSONObject(response);
-                            mobileNumber = json.getString("PermanentShopper");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(RatingActivity.this, "Network error", Toast.LENGTH_SHORT).show();
-
-            }
-        }));
-
-
-
-
+        final String id = getSharedPreferences("BatchData", Context.MODE_PRIVATE).getString("ShopperID", null);
+        Log.d("stringid",id);
 
         rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -112,15 +88,16 @@ public class RatingActivity extends AppCompatActivity {
 
 
 
-                    String url = "https://api.halanx.com/shoppers/" + mobileNumber +"/";
+                    String url = "https://api.halanx.com/users/rateshopper/";
 
                     JSONObject obj = new JSONObject();
                     try {
-                        obj.put("LatestRating", final_rating);
+                        obj.put("Rating", final_rating);
+                        obj.put("sid", id);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.i("Rating_data", "Done");
@@ -134,7 +111,17 @@ public class RatingActivity extends AppCompatActivity {
                             Log.d("errror", String.valueOf(error));
 
                         }
-                    }));
+                    }){
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json");
+                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+
+                            return params;
+                        }
+
+                    });
 
 
                    }

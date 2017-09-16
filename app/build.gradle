@@ -5,10 +5,10 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.halanx.userapp"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 24
-        versionCode 41
-        versionName "3.2.2"
+        versionCode 46
+        versionName "3.2.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -20,6 +20,8 @@ android {
     }
     lintOptions {
         abortOnError false
+    }
+    productFlavors {
     }
 }
 
@@ -47,8 +49,6 @@ dependencies {
     //    compile 'com.payu.custombrowser:payu-custom-browser:6.1.1'
     compile project(':sdkui')
     //  compile 'com.android.support:appcompat-v7:24.2.1'
-    
-
     compile 'devs.mulham.horizontalcalendar:horizontalcalendar:1.1.7'
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'

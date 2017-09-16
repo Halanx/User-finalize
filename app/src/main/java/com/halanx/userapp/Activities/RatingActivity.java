@@ -73,7 +73,7 @@ public class RatingActivity extends AppCompatActivity {
                     isRated = true;
                     tvRating.setText("5 stars");
                 }
-                final_rating = v;
+                    final_rating = v;
 
 
             }

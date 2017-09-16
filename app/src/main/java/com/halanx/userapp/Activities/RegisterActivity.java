@@ -56,9 +56,10 @@ RegisterActivity extends AppCompatActivity {
     //For taking response
     Resp resp;
 
+    ProgressBar pb;
     ProgressBar progressRegister;
     String mobileNumber;
-
+    Button btnOtpSubmit;
     Retrofit.Builder builderRegister, builder;
     Retrofit retrofitRegister, retrofit;
     DataInterface clientRegister, client;
@@ -222,14 +223,17 @@ RegisterActivity extends AppCompatActivity {
                     final TextView tvResendOtp = (TextView) dialog.findViewById(R.id.resend);
 
                     otp = (EditText) dialog.findViewById(R.id.enterOTP);
-                    Button btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
+                    btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
                     TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
+                    pb = (ProgressBar) dialog.findViewById(R.id.pb);
 
                     tvNumber.setText(mobileNumber);
                     btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
+                            btnOtpSubmit.setVisibility(View.GONE);
+                            pb.setVisibility(View.VISIBLE);
                             registration(otp.getText().toString());
                         }
                     });
@@ -306,88 +310,106 @@ RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //Save user details in sharedPreferences
-        Log.d("user", "done");
-        Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(final JSONObject response1) {
+        try {
+            //Save user details in sharedPreferences
+            Log.d("user", "done");
+            Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(final JSONObject response1) {
 
-                Log.i("TAG", String.valueOf(response1));
+                    Log.i("TAG", String.valueOf(response1));
 
-                try {
-                    getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).edit().putString("token","token "+response1.getString("key")).commit();
-                    Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("data", String.valueOf(response));
+                    try {
+                        getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).edit().putString("token", "token " + response1.getString("key")).commit();
+                        Volley.newRequestQueue(RegisterActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d("data", String.valueOf(response));
 
-                            try {
-                                getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                                        putString("firstname", response.getJSONObject("user").getString("first_name")).
-                                        putString("lastname", response.getJSONObject("user").getString("last_name")).
-                                        putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobileNumber).
-                                        putBoolean("first_login", true).
-                                        putBoolean("Loginned", true).apply();
-                                getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                                        putBoolean("first_login", true).apply();
+                                try {
+                                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                            putString("firstname", response.getJSONObject("user").getString("first_name")).
+                                            putString("lastname", response.getJSONObject("user").getString("last_name")).
+                                            putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobileNumber).
+                                            putBoolean("first_login", true).
+                                            putBoolean("Loginned", true).apply();
+                                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                                            putBoolean("first_login", true).apply();
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                btnOtpSubmit.setVisibility(View.VISIBLE);
+                                pb.setVisibility(View.GONE);
+
+                                Log.i("TAG", String.valueOf(response));
+                                Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
+                                startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
+
+                                finish();
+
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                btnOtpSubmit.setVisibility(View.VISIBLE);
+                                pb.setVisibility(View.GONE);
+
+                                Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> params = new HashMap<String, String>();
+                                try {
+                                    params.put("Content-Type", "application/json");
+                                    params.put("Authorization", "token " + response1.getString("key"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                return params;
                             }
 
+                        });
 
-                            Log.i("TAG", String.valueOf(response));
-                            Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
-                            startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-
-                            finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
 
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                            putBoolean("first_login", true).apply();
 
-                        }
-                    }) {
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            try {
-                                params.put("Content-Type", "application/json");
-                                params.put("Authorization", "token "+response1.getString("key"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            return params;
-                        }
 
-                    });
+                    startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
+                    progressRegister.setVisibility(View.GONE);
+                    finish();
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("error", String.valueOf(error));
+
+                    btnOtpSubmit.setVisibility(View.VISIBLE);
+                    pb.setVisibility(View.GONE);
+
+                }
+            }));
+        }
+        catch(Exception e){
+            Toast.makeText(getApplicationContext(), "User already exists", Toast.LENGTH_SHORT).show();
+            btnOtpSubmit.setVisibility(View.VISIBLE);
+            pb.setVisibility(View.GONE);
 
 
-                getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                        putBoolean("first_login", true).apply();
 
-
-
-                startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-                progressRegister.setVisibility(View.GONE);
-                finish();
-
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("error", String.valueOf(error));
-
-            }
-        }));
-
+        }
 
     }
 

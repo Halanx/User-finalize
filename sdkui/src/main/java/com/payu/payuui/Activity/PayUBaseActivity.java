@@ -2,6 +2,7 @@ package com.payu.payuui.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
 import com.payu.india.Interfaces.ValueAddedServiceApiListener;
@@ -123,12 +125,14 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                         GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(this);
                         paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
                     } else {
+                        Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
 //                 close the progress bar
                         mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
         } else {
+            Toast.makeText(this, getString(R.string.could_not_receive_data), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -165,6 +169,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             } else {
                 //Enable the pay button for all other options
                 payNowButton.setEnabled(true);
+                payNowButton.setBackgroundColor(Color.parseColor("#ff0000"));
+
             }
             setupViewPagerAdapter(mPayuResponse, valueAddedResponse);
         }
@@ -190,7 +196,9 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             valueAddedServiceTask = new ValueAddedServiceTask(this);
             valueAddedServiceTask.execute(payuConfig);
         } else {
-
+            if (postData != null) {
+                //             Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -203,6 +211,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     private void setupViewPagerAdapter(final PayuResponse payuResponse, PayuResponse valueAddedResponse) {
 
         if (payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR) { // ok we are good to go
+            //   Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+
             if (payuResponse.isStoredCardsAvailable()) {
                 paymentOptionsList.add(SdkUIConstants.SAVED_CARDS);
 
@@ -212,19 +222,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 paymentOptionsList.add(SdkUIConstants.CREDIT_DEBIT_CARDS);
             }
 
-            if (payuResponse.isNetBanksAvailable()) { // okay we have net banks now.
-                paymentOptionsList.add(SdkUIConstants.NET_BANKING);
-            }
-
-            if(payuResponse.isUpiAvailable()){ // adding UPI
-                paymentOptionsList.add(SdkUIConstants.UPI);
-            }
-
-            if (payuResponse.isPaisaWalletAvailable() && payuResponse.getPaisaWallet().get(0).getBankCode().contains(PayuConstants.PAYUW)) {
-                paymentOptionsList.add(SdkUIConstants.PAYU_MONEY);
-            }
-
         } else {
+            Toast.makeText(this, "Something went wrong : " + payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
         }
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), paymentOptionsList, payuResponse, valueAddedResponse, oneClickCardTokens);
@@ -233,12 +232,12 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         viewPager.setAdapter(pagerAdapter);
 
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tab_layout);
-        slidingTabLayout.setDistributeEvenly(false);
+        slidingTabLayout.setDistributeEvenly(true);
 
         slidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
+                return getResources().getColor(R.color.cb_errorRed);
             }
         });
 
@@ -265,16 +264,21 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                                 break;
                             }
                             if (savedCards.get(currentPosition).getEnableOneClickPayment() == 1 && savedCards.get(currentPosition).getOneTapCard() == 1) {
+                                payNowButton.setTextColor(Color.parseColor("#ff0000"));
                                 payNowButton.setEnabled(true);
+
                             } else if (savedCards.get(currentPosition).getCardType().equals("SMAE")) {
+                                payNowButton.setTextColor(Color.parseColor("#ff0000"));
                                 payNowButton.setEnabled(true);
                             } else {
                                 SavedCardItemFragmentAdapter mSaveAdapter = (SavedCardItemFragmentAdapter) myViewPager.getAdapter();
                                 SavedCardItemFragment mSaveFragment = mSaveAdapter.getFragment(currentPosition) instanceof SavedCardItemFragment ? mSaveAdapter.getFragment(currentPosition) : null;
 
                                 if (mSaveFragment != null && mSaveFragment.cvvValidation()) {
+                                    payNowButton.setTextColor(Color.parseColor("#ff0000"));
                                     payNowButton.setEnabled(true);
                                 } else {
+
                                     payNowButton.setEnabled(false);
                                 }
                             }
@@ -285,18 +289,6 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                         CreditDebitFragment tempCreditDebitFragment = mPagerAdapter.getFragment(position) instanceof CreditDebitFragment ? (CreditDebitFragment) mPagerAdapter.getFragment(position) : null;
                         if(tempCreditDebitFragment != null)
                             tempCreditDebitFragment.checkData();
-                        break;
-                    case SdkUIConstants.NET_BANKING:
-                        payNowButton.setEnabled(true);
-                        hideKeyboard();
-                        break;
-                    case SdkUIConstants.PAYU_MONEY:
-                        payNowButton.setEnabled(true);
-                        hideKeyboard();
-                        break;
-                    case SdkUIConstants.UPI:
-                        payNowButton.setEnabled(true);
-                        hideKeyboard();
                         break;
                 }
 
@@ -330,7 +322,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                     case SdkUIConstants.CREDIT_DEBIT_CARDS:
                         makePaymentByCreditCard();
                         break;
-                   }
+                }
             }
 
             if (mPostData!=null && mPostData.getCode() == PayuErrors.NO_ERROR) {
@@ -340,6 +332,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
+                if(mPostData != null){}
+                //   Toast.makeText(this, mPostData.getResult(), Toast.LENGTH_LONG).show();
 
             }
         }

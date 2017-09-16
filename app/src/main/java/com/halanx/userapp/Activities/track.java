@@ -16,11 +16,13 @@ public class track extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track);
 
+        Boolean order_accept = getIntent().getBooleanExtra("batch_done",false);
+
         tick1 = (ImageView) findViewById(R.id.tick1);
         tick2 = (ImageView) findViewById(R.id.tick2);
         tick3 = (ImageView) findViewById(R.id.tick3);
 
-        if(getSharedPreferences("OrderStatus",MODE_PRIVATE).getBoolean("BatchAccept",true)){
+        if(order_accept){
          tick2.setVisibility(View.VISIBLE);
         }
         else {

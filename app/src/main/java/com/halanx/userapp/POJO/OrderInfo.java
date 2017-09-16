@@ -72,8 +72,11 @@ public class OrderInfo {
     @SerializedName("AsSoonAsPossible")
     @Expose
     private boolean isASAP;
+    @SerializedName("CashOnDelivery")
+    @Expose
+    private boolean cod;
 
-    public OrderInfo(long customerPhoneNo, String deliveryAddress, String deliveryDate, String startTime, String endTime, Boolean isASAP, String notes, float lat, float lon, String trans_id) {
+    public OrderInfo(long customerPhoneNo, String deliveryAddress, String deliveryDate, String startTime, String endTime, Boolean isASAP, String notes, float lat, float lon, String trans_id,Double total,Boolean cod) {
         this.customerPhoneNo = customerPhoneNo;
 
         this.deliveryAddress = deliveryAddress;
@@ -85,6 +88,8 @@ public class OrderInfo {
         latitude = lat;
         longitude = lon;
         transactionId = trans_id;
+        this.total = total;
+        this.cod = cod;
     }
 
     public Double getSubTotal() {
@@ -244,6 +249,13 @@ public class OrderInfo {
         this.priorityScore = priorityScore;
     }
 
+    public boolean isCod() {
+        return cod;
+    }
+
+    public void setCod(boolean cod) {
+        this.cod = cod;
+    }
 }
 
 

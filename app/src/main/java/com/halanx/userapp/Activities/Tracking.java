@@ -70,7 +70,9 @@ public class Tracking extends AppCompatActivity {
                         trackRecycler.setHasFixedSize(true);
                     }
                     else{
-                        startActivity(new Intent(Tracking.this,track.class));
+
+                        startActivity(new Intent(Tracking.this,track.class).putExtra("batch_done",false));
+                        finish();
 
                     }
                 } catch (JSONException e) {
@@ -161,7 +163,8 @@ public class Tracking extends AppCompatActivity {
             holder.ivOrderStatus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(Tracking.this,track.class));
+                    startActivity(new Intent(Tracking.this,track.class).putExtra("batch_done",true));
+                    finish();
 
                 }
             });

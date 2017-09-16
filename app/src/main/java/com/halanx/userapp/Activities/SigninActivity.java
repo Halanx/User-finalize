@@ -220,87 +220,94 @@ public class SigninActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                try {
+                    Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/rest-auth/login/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+                        @Override
+                        public void onResponse(JSONObject response) {
 
-                Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/rest-auth/login/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-                    @Override
-                    public void onResponse(JSONObject response) {
+                            Log.d("data", String.valueOf(response));
+                            final String token;
+                            try {
+                                token = response.getString("key");
+                                Log.d("key", token);
 
-                        Log.d("data", String.valueOf(response));
-                        final String token;
-                        try {
-                            token = response.getString("key");
-                            Log.d("key", token);
+                                getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).edit().putString("token", "token " + token).commit();
+                                Log.d("token_key", getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                                Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Log.d("data", String.valueOf(response));
+                                        data();
+                                        try {
+                                            getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                                    putString("firstname", response.getJSONObject("user").getString("first_name")).
+                                                    putString("email", response.getJSONObject("user").getString("email")).
+                                                    putString("lastname", response.getJSONObject("user").getString("last_name")).
+                                                    putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
+                                                    putBoolean("first_login", true).
+                                                    putBoolean("Loginned", true).apply();
+                                            getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                                                    putBoolean("first_login", true).apply();
 
-                            getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).edit().putString("token", "token " + token).commit();
-                            Log.d("token_key", getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
-                            Volley.newRequestQueue(SigninActivity.this).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Log.d("data", String.valueOf(response));
-                                    data();
-                                    try {
-                                        getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                                                putString("firstname", response.getJSONObject("user").getString("first_name")).
-                                                putString("email", response.getJSONObject("user").getString("email")).
-                                                putString("lastname", response.getJSONObject("user").getString("last_name")).
-                                                putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
-                                                putBoolean("first_login", true).
-                                                putBoolean("Loginned", true).apply();
-                                        getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                                                putBoolean("first_login", true).apply();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
 
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+
+                                        Log.i("TAG", String.valueOf(response));
+                                        Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
+                                        startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                                        progressBar.setVisibility(View.INVISIBLE);
+//
+                                        finish();
+
+
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+                                        progressBar.setVisibility(View.GONE);
+                                        btnLogin.setVisibility(View.VISIBLE);
+
+                                    }
+                                }) {
+                                    @Override
+                                    public Map<String, String> getHeaders() throws AuthFailureError {
+                                        Map<String, String> params = new HashMap<String, String>();
+                                        params.put("Content-Type", "application/json");
+                                        params.put("Authorization", "token " + token);
+                                        return params;
                                     }
 
-
-                                    Log.i("TAG", String.valueOf(response));
-                                    Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
-                                    startActivity(new Intent(SigninActivity.this, MapsActivity.class));
-                                    progressBar.setVisibility(View.INVISIBLE);
-//
-                                    finish();
+                                });
 
 
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    btnLogin.setVisibility(View.VISIBLE);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                                }
-                            }) {
-                                @Override
-                                public Map<String, String> getHeaders() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<String, String>();
-                                    params.put("Content-Type", "application/json");
-                                    params.put("Authorization", "token " + token);
-                                    return params;
-                                }
-
-                            });
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    }, new com.android.volley.Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
 
+                            Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                            btnLogin.setVisibility(View.VISIBLE);
+
+                        }
                     }
-                }, new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    ));
 
-                        Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
-                        btnLogin.setVisibility(View.VISIBLE);
-
-                    }
                 }
-                ));
+                catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    btnLogin.setVisibility(View.VISIBLE);
 
+                }
 
             }
         });

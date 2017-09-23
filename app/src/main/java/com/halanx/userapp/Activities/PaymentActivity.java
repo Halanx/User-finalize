@@ -99,7 +99,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         Log.i("IF",isOrder+" ");
         //If its an order post order, otherwise its a subscription. DON'T POST ORDER.
 
-
         Payu.setInstance(this);
 
         total = getIntent().getStringExtra("total_cost");
@@ -127,6 +126,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         ll1 = (LinearLayout) findViewById(R.id.ll_PayU);
         ll3 = (LinearLayout) findViewById(R.id.ll_Cash);
+        if(!isOrder){
+            ll3.setVisibility(View.GONE);
+            View v =findViewById(R.id.view);
+            v.setVisibility(View.GONE);
+        }
+
 
         ll1.setOnClickListener(this);
         ll3.setOnClickListener(this);
@@ -157,7 +162,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
                     float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
                     float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
-                    String trans_id = "cash";
+                    String trans_id = null;
 
 //                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
 //                        @Override
@@ -233,16 +238,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 else
                 {
-                    String uri = "https://api.halanx.com/users/detail/";
+                    String uri = "https://api.halanx.com/users/addbalance/";
                     JSONObject jsonObject = new JSONObject();
                     Log.d("ammount added",uri);
                     try {
-                        jsonObject.put("AccountBalance",Double.parseDouble(total)+Double.parseDouble(getIntent().getStringExtra("current_ammount")));
+                        jsonObject.put("Value",Double.parseDouble(total));
                         Log.d("ammount added",total);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, uri, jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, uri, jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d("ammount added",total);
@@ -726,15 +731,17 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 else{
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put("AccountBalance",Double.parseDouble(total)+Double.parseDouble(getIntent().getStringExtra("current_ammount")));
+                        jsonObject.put("Value",Double.parseDouble(total));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, "https://api.halanx.com/users/deatil/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/addbalance/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
 
                             Log.d("ammount added",total);
+                            startActivity(new Intent(PaymentActivity.this,HomeActivity.class));
+                            finish();
                         }
                     },new com.android.volley.Response.ErrorListener(){
 

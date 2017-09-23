@@ -793,12 +793,14 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                 double subtotal = 0.0, delCharge = 0.0, tax=0.0;
                 for(int i =0;i<activeItems.size();i++){
                     if(isItemChecked.get(i)){
+                        Log.d("taxdata", String.valueOf(activeItems.get(i).getItem().getTax()));
                         subtotal+=activeItems.get(i).getItem().getPrice();
-                        tax =+ activeItems.get(i).getItem().getTax();
+                        tax += activeItems.get(i).getItem().getTax();
                     }
                 }
 
                 subtotal = subtotal * subscriptionInfo.getDeliveriesLeft();
+                Log.d("tax", String.valueOf(tax));
                 tax = tax * subscriptionInfo.getDeliveriesLeft();
 
                 total = subtotal + tax;

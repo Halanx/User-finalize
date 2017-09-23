@@ -131,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Have a referal code ?"
+                android:text="Have a referral code ?"
                 android:textSize="20dp" />
 
 

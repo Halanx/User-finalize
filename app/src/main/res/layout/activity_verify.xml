@@ -74,6 +74,12 @@
         android:text="Submit"
         android:textColor="@android:color/background_light"
         android:textStyle="normal|bold" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:id="@+id/pbresend"/>
 
     <TextView
         android:id="@+id/resend"
@@ -81,10 +87,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30sp"
-        android:typeface="sans"
         android:text="Resend OTP"
         android:textIsSelectable="true"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:typeface="sans" />
 
     <TextView
         android:id="@+id/timer"

@@ -56,7 +56,7 @@ RegisterActivity extends AppCompatActivity {
     //For taking response
     Resp resp;
 
-    ProgressBar pb;
+    ProgressBar pb,pbresend;
     ProgressBar progressRegister;
     String mobileNumber;
     Button btnOtpSubmit;
@@ -226,21 +226,30 @@ RegisterActivity extends AppCompatActivity {
                     btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
                     TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
                     pb = (ProgressBar) dialog.findViewById(R.id.pb);
+                    pbresend = (ProgressBar) dialog.findViewById(R.id.pbresend);
 
                     tvNumber.setText(mobileNumber);
                     btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
-                            btnOtpSubmit.setVisibility(View.GONE);
-                            pb.setVisibility(View.VISIBLE);
-                            registration(otp.getText().toString());
+                            Log.d("data", String.valueOf(otp.getText()));
+                            if(!String.valueOf(otp.getText()).equals("")) {
+                                btnOtpSubmit.setVisibility(View.GONE);
+                                pb.setVisibility(View.VISIBLE);
+                                registration(otp.getText().toString());
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(),"Please enter the OTP",Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
 
                     tvResendOtp.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            pbresend.setVisibility(View.VISIBLE);
+                            tvResendOtp.setVisibility(View.GONE);
 
 
                             JSONObject json = new JSONObject();
@@ -250,14 +259,20 @@ RegisterActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/getotp/" + mobileNumber, null, new Response.Listener<JSONObject>() {
+                            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/getotp/" + mobileNumber+"/", json, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     Log.d("otp_response", String.valueOf(response));
+                                    tvResendOtp.setVisibility(View.VISIBLE);
+                                    pbresend.setVisibility(View.GONE);
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
+                                    tvResendOtp.setVisibility(View.VISIBLE);
+                                    pbresend.setVisibility(View.GONE);
+
+
 
                                 }
                             }));
@@ -279,6 +294,7 @@ RegisterActivity extends AppCompatActivity {
                 } else {
                     btnVerify.setVisibility(View.VISIBLE);
                     progressRegister.setVisibility(View.GONE);
+
 
 
                     Toast.makeText(RegisterActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();

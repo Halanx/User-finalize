@@ -94,9 +94,9 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                 if (i < 10) {
                     String ur = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
                     JSONObject obj = new JSONObject();
-
+                    i++;
                     try {
-                        obj.put("Quantity", i + 1);
+                        obj.put("Quantity", i);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -106,9 +106,7 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                         @Override
                         public void onResponse(JSONObject response) {
 
-                            i++;
-                            val = Integer.toString(i);
-                            holder.etQuantity.setText(val);
+                            holder.etQuantity.setText(String.valueOf(i));
                             Log.i("Cart", "Quantity changed of item " + holder.holderCartItemList.get(position).getId());
 
                         }
@@ -117,24 +115,30 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                         public void onErrorResponse(VolleyError error) {
 
                         }
-                    }));
+                    }){
+                                                      @Override
+                                                      public Map<String, String> getHeaders() throws AuthFailureError {
+                                                          Map<String, String> params = new HashMap<String, String>();
+                                                          params.put("Content-Type", "application/json");
+                                                          params.put("Authorization",c.getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                                                          return params;
+                                                      }
+
+                                                  }
+                    );
                 }
             }
         });
         holder.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
                 if (i != 0) {
                     i--;
-                    val = Integer.toString(i);
-                    holder.etQuantity.setText(val);
-                    notifyDataSetChanged();
                     String ur = "https://api.halanx.com/carts/items/" + holder.holderCartItemList.get(position).getId();
                     JSONObject obj = new JSONObject();
 
                     try {
-                        obj.put("Quantity", i + 1);
+                        obj.put("Quantity", i );
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -143,6 +147,8 @@ public class CartsAdapter extends RecyclerView.Adapter<CartsAdapter.TempViewHold
                     Volley.newRequestQueue(c).add(new JsonObjectRequest(Request.Method.PATCH, ur, obj, new com.android.volley.Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            holder.etQuantity.setText(String.valueOf(i));
+
                             int position = holder.getAdapterPosition();
                             Log.i("Cart", "Quantity changed of item " + holder.holderCartItemList.get(position).getId());
 

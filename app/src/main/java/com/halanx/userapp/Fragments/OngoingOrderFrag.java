@@ -40,8 +40,6 @@ public class OngoingOrderFrag extends Fragment {
     ProgressBar progressBar;
     LinearLayout llNoOrders;
     OrdersAdapter adapter;
-    Boolean flag;
-
 
     Retrofit.Builder builder;
     Retrofit retrofit;
@@ -88,10 +86,10 @@ public class OngoingOrderFrag extends Fragment {
                     onGoingOrderList = new ArrayList<>();
 
                     for (int i = allOrdersList.size()-1; i >=0 ; i--) {
+                        Boolean flag = true;
                         for(int j= 0;j<allOrdersList.get(i).getOrderItems().size();j++){
                         if (!allOrdersList.get(i).getOrderItems().get(j).getIsdeliver()) {
                             //Completed order = isDelivered is true
-                            flag=true;
                         }
                         else{
                             flag =false;
@@ -129,22 +127,6 @@ public class OngoingOrderFrag extends Fragment {
                 Toast.makeText(getActivity(), "Network Error", Toast.LENGTH_SHORT).show();
             }
         });
-
-//        Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, "http://ec2-34-208-181-152.us-west-2.compute.amazonaws.com/orders/user/9582184794",
-//                new com.android.volley.Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//                        Log.i("OrderBro",response);
-//
-//
-//                    }
-//                }, new com.android.volley.Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        }));
 
 
         return v;

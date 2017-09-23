@@ -183,7 +183,8 @@ public class AccountActivity extends AppCompatActivity {
                         putBoolean("Loginned", false).remove("MobileNumber")
                         .remove("UserInfo").apply();
 
-                startActivity(new Intent(AccountActivity.this, SigninActivity.class));
+                Intent intent = new Intent(AccountActivity.this, SigninActivity.class);
+                startActivity(intent);
                 finish();
             }
         });

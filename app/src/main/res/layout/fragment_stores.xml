@@ -22,6 +22,9 @@
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            app:queryHint="Search stores or restaurants"
+            app:defaultQueryHint="Search stores or restaurants"
+            android:queryHint="Search stores or restaurants"
             android:id="@+id/storesearch"/>
 
 

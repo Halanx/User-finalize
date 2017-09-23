@@ -60,6 +60,7 @@ public class Tracking extends AppCompatActivity {
             public void onResponse(JSONArray response) {
 
                 Log.d("Response", String.valueOf(response));
+
                 try {
                     if (response.length()>0) {
                         Log.d("Response", response.getString(0));
@@ -71,7 +72,7 @@ public class Tracking extends AppCompatActivity {
                     }
                     else{
 
-                        startActivity(new Intent(Tracking.this,track.class).putExtra("batch_done",false));
+                        startActivity(new Intent(Tracking.this,track.class).putExtra("batch_done",false).putExtra("delivered",false));
                         finish();
 
                     }
@@ -163,7 +164,16 @@ public class Tracking extends AppCompatActivity {
             holder.ivOrderStatus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(Tracking.this,track.class).putExtra("batch_done",true));
+                    try {
+                        if(orderResponse.getJSONObject(0).getBoolean("IsDelivered")) {
+                            startActivity(new Intent(Tracking.this, track.class).putExtra("batch_done", true).putExtra("delivered",true));
+                        }
+                        else{
+                            startActivity(new Intent(Tracking.this, track.class).putExtra("batch_done", true).putExtra("delivered",false));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     finish();
 
                 }

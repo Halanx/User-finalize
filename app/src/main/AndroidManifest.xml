@@ -112,7 +112,6 @@
         <activity
             android:name=".Activities.CartActivity"
             android:label="Cart"
-            android:parentActivityName=".Activities.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SavedCardsActivity"
@@ -147,7 +146,8 @@
         <activity
             android:name=".Activities.SubscriptionActivity"
             android:label="Subscription"
-            android:parentActivityName=".Activities.CartActivity" />
+            android:parentActivityName=".Activities.CartActivity"
+            android:allowTaskReparenting="true"/>
         <activity
             android:name=".Activities.SubscriptionDrawerActivity"
             android:label="Subscriptions"

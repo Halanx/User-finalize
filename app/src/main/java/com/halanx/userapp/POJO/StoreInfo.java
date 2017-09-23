@@ -4,6 +4,7 @@ package com.halanx.userapp.POJO;
  * Created by samarthgupta on 14/07/17.
  */
 
+import com.google.gson.JsonArray;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -121,7 +122,7 @@ public class StoreInfo {
     private String sundayClosingTime;
     @SerializedName("CategoriesAvailable")
     @Expose
-    private String available_categories;
+    private JsonArray available_categories;
     @SerializedName("Active")
     @Expose
     private Boolean active;
@@ -422,13 +423,11 @@ public class StoreInfo {
         this.storeCategory = storeCategory;
     }
 
-    public String getAvailable_categories() {
+    public JsonArray getAvailable_categories() {
         return available_categories;
     }
 
-    public void setAvailable_categories(String available_categories) {
-        this.available_categories = available_categories;
-    }
+
 
     public static Comparator<StoreInfo> storeComp = new Comparator<StoreInfo>() {
         @Override

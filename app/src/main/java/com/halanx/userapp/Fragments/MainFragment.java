@@ -86,7 +86,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     CategoryAdapter categoryAdapter;
     Boolean checked[];
     int selectedPosition=-1;
-
+    int selected=-1;
 
     SearchView svProducts;
     List<String> suggestions = new ArrayList<>();
@@ -123,7 +123,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         categories_Recycler.setLayoutManager(layoutManager);
         categories_Recycler.setAdapter(categoryAdapter);
         categories_Recycler.setHasFixedSize(true);
-        
+
 
         svProducts = (SearchView) view.findViewById(R.id.sv_products);
 
@@ -170,7 +170,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 list.setAdapter(null);
                 suggestions.clear();
 
-                String url = "http://api.halanx.com:9200/product/_search?q=ProductName:" + newText + "*";
+                String url = "https://api.halanx.com/products/search/" + newText + "/";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
                     @Override
@@ -217,11 +217,13 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                             public void onResponse(JSONObject response) {
                                                 Log.d("responsedata", String.valueOf(response));
                                                 try {
+                                                    categories.clear();
 
                                                     JSONArray array = new JSONArray(response.getString("CategoriesAvailable"));
                                                     for(int i = 0; i<array.length();i++){
                                                         categories.add(String.valueOf(array.get(i)));
                                                     }
+                                                    Log.d("catdata", String.valueOf(categories));
                                                     categoryAdapter = new CategoryAdapter(getActivity(),categories);
                                                     RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, false);
                                                     categories_Recycler.setLayoutManager(layoutManager1);
@@ -281,7 +283,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 })).setRetryPolicy(new RetryPolicy() {
                     @Override
                     public int getCurrentTimeout() {
-                        return 0;
+                        return 100000;
                     }
 
                     @Override
@@ -476,13 +478,15 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         this.product_category = product_category;
 
         try{
-            JSONArray obj = new JSONArray(this.product_category);
-            Log.d("product_data", String.valueOf(obj.get(2)));
+            JSONArray obj = new JSONArray(String.valueOf(this.product_category));
+         //   Log.d("product_data", String.valueOf(product_category.get(2)));
+            categories= new ArrayList<>();
             for(int i =0;i<obj.length();i++){
                 categories.add(String.valueOf(obj.get(i)));
             }
 
         }catch (Throwable t){
+            Log.d("productdata", String.valueOf(t));
 
         }
 
@@ -501,7 +505,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
             inflater = LayoutInflater.from(mContext);
             this.suggestions = suggestions;
-            }
+        }
 
         public class ViewHolder {
             TextView name;
@@ -568,6 +572,14 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         @Override
         public void onBindViewHolder(final CategoryViewHolder holder, final int position) {
 
+            Boolean flag = false;
+            if(position==0){
+                selected++;
+            }
+            else{
+                flag = false;
+            }
+            //holder.setIsRecyclable(false);
             if(selectedPosition==position) {
                 holder.category_name.setBackgroundColor(Color.parseColor("#c22828"));
 
@@ -576,19 +588,26 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             else{
                 holder.category_name.setBackgroundColor(Color.parseColor("#ffffff"));
 
-            holder.category_name.setTextColor(Color.parseColor("#000000"));
+                holder.category_name.setTextColor(Color.parseColor("#000000"));
             }
             holder.category_name.setText(categories.get(position));
+
+            if (selected==0){
+                holder.category_name.setBackgroundColor(Color.parseColor("#c22828"));
+
+                holder.category_name.setTextColor(Color.parseColor("#ffffff"));
+
+            }
+            selected++;
             holder.category_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
+                    selected++;
                     holder.category_name.getText();
+                    selectedPosition = position;
+                    notifyDataSetChanged();
 
-                    selectedPosition=position;
-                    notifyDataSetChanged();
-                    selectedPosition=position;
-                    notifyDataSetChanged();
 
                     Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));
                     callProductsStore.enqueue(new Callback<List<ProductInfo>>() {
@@ -621,6 +640,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                 }
                                 else {
                                     Log.d("category_name", "done");
+
                                     for (int i = 0; i < products.size(); i++) {
                                         if (products.get(i).getCategory().equals(String.valueOf(holder.category_name.getText())))
                                             product_with_specific_category.add(products.get(i));
@@ -641,7 +661,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                                 }
 
-                                 }
+                            }
 
                         }
 
@@ -673,6 +693,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
             public CategoryViewHolder(View itemView, Context context) {
                 super(itemView);
+
                 this.context = context;
                 category_name = (Button) itemView.findViewById(R.id.categories_name);
 

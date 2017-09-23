@@ -74,19 +74,68 @@
                         android:layout_height="match_parent"
                         android:weightSum="1">
 
-                        <Spinner
-                            android:id="@+id/sp_product_quantity"
-                            android:layout_width="107dp"
+                        <RelativeLayout
+                            android:id="@+id/restDecrement"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:background="@drawable/new_shape"
+                                android:padding="10dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:text="-"
+                                android:typeface="sans"
+                                android:textColor="#fafafa"
+                                android:textSize="20dp" />
+
+                        </RelativeLayout>
+
+
+                        <EditText
+                            android:id="@+id/restQuantity"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="30dp"
-                            android:layout_marginStart="20dp"
-                            android:entries="@array/Quantity"
-                            android:padding="5dp" />
+                            android:editable="false"
+                            android:typeface="sans"
+                            android:gravity="center_horizontal"
+                            android:hint="Quantity"
+                            android:text="1" />
+
+                        <RelativeLayout
+                            android:id="@+id/restIncrement"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:typeface="sans"
+                                android:layout_height="30dp"
+                                android:background="@drawable/new_shape"
+                                android:padding="10dp" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:typeface="sans"
+                                android:text="+"
+                                android:textColor="#fafafa"
+                                android:textSize="20dp" />
+                        </RelativeLayout>
 
                         <ImageView
                             android:id="@+id/bt_product_delete"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="10dp"
                             android:src="@drawable/fav_filled_48" />
 
                     </LinearLayout>

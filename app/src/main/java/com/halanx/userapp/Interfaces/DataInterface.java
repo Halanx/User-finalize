@@ -62,6 +62,10 @@ public interface DataInterface {
     @GET("/stores/verified")
     Call<List<StoreInfo>> getStoreInfo();
 
+    @GET("/stores/{storeID}/")
+    Call<List<StoreInfo>> getspecificstore(@Path("storeID") String storeID);
+
+
     @GET("/users/detail/")
     Call<UserInfo> getUserInfo( @Header("Authorization") String token);
 

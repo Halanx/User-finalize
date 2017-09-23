@@ -4,6 +4,7 @@ package com.halanx.userapp.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +22,11 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
 import com.halanx.userapp.Activities.HomeActivity;
-import com.halanx.userapp.Adapters.StoreSearchAdapter;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.StoreInfo;
 import com.halanx.userapp.R;
@@ -65,6 +67,7 @@ public class StoresFragment extends Fragment {
     JSONObject json;
     JSONArray array;
     String mob;
+    JSONArray storesearchdata;
 
     public StoresFragment() {
         // Required empty public constructor
@@ -82,7 +85,7 @@ public class StoresFragment extends Fragment {
         pbFood = (ProgressBar) v.findViewById(R.id.pb_food);
         pbGrocery = (ProgressBar) v.findViewById(R.id.pb_grocery);
         food_layout = (CardView) v.findViewById(R.id.food_layout);
-        
+
         svstore = (SearchView) v.findViewById(R.id.storesearch);
 
         grocery_text = (TextView) v.findViewById(R.id.grocery_text);
@@ -130,7 +133,7 @@ public class StoresFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 suggestions.clear();
 
-                String url = "http://api.halanx.com:9200/store/_search?q=StoreName:" + newText + "*";
+                String url = "https://api.halanx.com/stores/search/" + newText + "/";
                 Log.i("Search", url);
                 Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
                     @Override
@@ -173,7 +176,7 @@ public class StoresFragment extends Fragment {
 
 
                                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                                            rvList[1].setLayoutManager(layoutManager);
+                                        rvList[1].setLayoutManager(layoutManager);
 
                                         rvList[1].setAdapter(sadapter);
                                         rvList[1].setHasFixedSize(true);
@@ -255,7 +258,7 @@ public class StoresFragment extends Fragment {
 
 
                 List<StoreInfo> stores = response.body();
-                Log.d("store_info", String.valueOf(stores.get(0).getStoreCategory()));
+                Log.d("store_info", String.valueOf(stores.get(0).getAvailable_categories()));
                 List<StoreInfo> grocery = new ArrayList<>();
                 List<StoreInfo> food = new ArrayList<>();
                 for (int i = 0; i < stores.size(); i++) {
@@ -350,11 +353,13 @@ public class StoresFragment extends Fragment {
 
 
 //              Log.d("product_categories", storeList.get(pos).getAvailable_categories());
-                String product_category = storeList.get(pos).getAvailable_categories();
-                Log.d("product_categories", String.valueOf(product_category));
-
-
-
+                JsonArray product_category = storeList.get(pos).getAvailable_categories();
+                Log.d("datatype", String.valueOf(product_category));
+                List data = new ArrayList();
+                for (int i=0;i<product_category.size();i++){
+                    data.add(product_category.get(i));
+                }
+         //       Log.d("product_categories", String.valueOf(product_category.get(0).getAsString()));
 
                 HomeActivity.storeID = storeList.get(pos).getId();
                 HomeActivity.storeLogo = storeList.get(pos).getStoreLogo();
@@ -363,7 +368,7 @@ public class StoresFragment extends Fragment {
                 HomeActivity.storeCat = storeList.get(pos).getStoreCategory();
 
                 MainFragment fragment = new MainFragment();
-                fragment.passdata(itemCount,product_category);
+                fragment.passdata(itemCount, String.valueOf(data));
                 android.support.v4.app.FragmentTransaction fragmentTransaction =
                         getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frag_container, fragment);
@@ -378,4 +383,139 @@ public class StoresFragment extends Fragment {
         }
     }
 
+    public class StoreSearchAdapter extends RecyclerView.Adapter<StoreSearchAdapter.StoresViewHolder> {
+
+        JSONObject storeList;
+        Context context;
+        JSONObject data;
+        TextView itemCount;
+        String Image;
+        JSONArray product_category;
+        ArrayList<String> storedata;
+
+        public StoreSearchAdapter(JSONObject json, Context c) {
+            storeList = json;
+            Log.d("valueofjson", String.valueOf(storeList));
+            context = c;
+
+
+        }
+
+        @Override
+        public StoresViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_store_recycler, parent, false);
+            return new StoresViewHolder(v);
+        }
+
+
+        @Override
+        public void onBindViewHolder(final StoresViewHolder holder, int position) {
+
+
+            String url = null;
+            try {
+                url = "https://api.halanx.com/stores/" + storeList.getString("Id");
+
+                JSONObject obj = new JSONObject();
+
+                Volley.newRequestQueue(context).add(new JsonObjectRequest(Request.Method.GET, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        data = response;
+                        try {
+                            storesearchdata = data.getJSONArray("CategoriesAvailable");
+                            Log.d("array", String.valueOf(storesearchdata));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("storeapi_call", String.valueOf(data));
+
+                        try {
+                            Image = response.getString("StoreLogo");
+                            Log.d("logo",Image);
+                            Picasso.with(context).load(Image).into(holder.ivLogo);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+                Log.d("productsname",storeList.getString("StoreName"));
+                holder.tvName.setText(storeList.getString("StoreName"));
+                holder.tvAddress.setText(storeList.getString("StoreAddress"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 1;
+        }
+
+        public class StoresViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            ImageView ivLogo;
+            TextView tvName, tvAddress;
+
+            public StoresViewHolder(View itemView) {
+                super(itemView);
+                ivLogo = (ImageView) itemView.findViewById(R.id.iv_store_logo);
+                tvName = (TextView) itemView.findViewById(R.id.tv_store_name);
+                tvAddress = (TextView) itemView.findViewById(R.id.tv_store_address);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+
+                int pos = getAdapterPosition();
+                try {
+                    product_category = new JSONArray();
+                    product_category = data.getJSONArray("CategoriesAvailable");
+                    Log.d("product_categories", String.valueOf(product_category));
+
+                    storedata = new ArrayList<>();
+                    HomeActivity.storeID = Integer.parseInt(storeList.getString("Id"));
+                    HomeActivity.storeLogo = Image;
+                    HomeActivity.storeName = storeList.getString("StoreName");
+                    HomeActivity.storePosition = pos;
+                    HomeActivity.storeCat = storeList.getString("StoreCategory");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                MainFragment fragment = new MainFragment();
+                fragment.passdata(itemCount, String.valueOf(storesearchdata));
+                FragmentTransaction fragmentTransaction =
+                        ((HomeActivity)context).getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frag_container, fragment);
+                fragmentTransaction.commit();
+
+
+                //  getActivity().getSharedPreferences("Store", Context.MODE_PRIVATE).edit().putBoolean("isMap", false).apply();
+//                Log.d("position", String.valueOf(pos));
+
+
+            }
+        }
+    }
 }

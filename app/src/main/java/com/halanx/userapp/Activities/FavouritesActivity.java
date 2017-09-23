@@ -13,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +55,7 @@ public class FavouritesActivity extends AppCompatActivity {
     String mobileNumber;
     ProgressBar pbFav;
     int cartId;
+    private static int restQuantity[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +118,12 @@ public class FavouritesActivity extends AppCompatActivity {
 
         public FavsAdapter(List<ProductInfo> favPros) {
             this.favPros = favPros;
+            restQuantity = new int[favPros.size()];
+            for (int i = 0; i < favPros.size(); i++) {
+                restQuantity[i] = 1;
+            }
+
+
         }
 
         @Override
@@ -123,12 +132,31 @@ public class FavouritesActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(FavsHolder holder, int position) {
+        public void onBindViewHolder(final FavsHolder holder, final int position) {
 
             holder.favName.setText(favPros.get(position).getProductName());
             Picasso.with(FavouritesActivity.this).load(favPros.get(position).getProductImage()).into(holder.favImage);
             String price = "Rs. " + favPros.get(position).getPrice();
             holder.favPrice.setText(price);
+
+            holder.rvInc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (restQuantity[position] < 10) {
+                        restQuantity[position]++;
+                        holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+                    }
+                }
+            });
+            holder.rvDec.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (restQuantity[position] > 1) {
+                        restQuantity[position]--;
+                        holder.etRestQuan.setText(String.valueOf(restQuantity[position]));
+                    }
+                }
+            });
 
 
         }
@@ -144,6 +172,8 @@ public class FavouritesActivity extends AppCompatActivity {
             TextView favName, favPrice;
             Spinner favQuantity;
             Button btAddCart;
+            EditText etRestQuan;
+            RelativeLayout rvInc, rvDec;
 
             public FavsHolder(View itemView) {
                 super(itemView);
@@ -153,6 +183,9 @@ public class FavouritesActivity extends AppCompatActivity {
                 favPrice = (TextView) itemView.findViewById(R.id.tv_product_price);
                 favQuantity = (Spinner) itemView.findViewById(R.id.sp_product_quantity);
                 btAddCart = (Button) itemView.findViewById(R.id.bt_add_cart);
+                etRestQuan = (EditText) itemView.findViewById(R.id.restQuantity);
+                rvDec = (RelativeLayout) itemView.findViewById(R.id.restDecrement);
+                rvInc = (RelativeLayout) itemView.findViewById(R.id.restIncrement);
 
                 btnDelete.setOnClickListener(this);
                 btAddCart.setOnClickListener(this);
@@ -210,59 +243,62 @@ public class FavouritesActivity extends AppCompatActivity {
 
                     case R.id.bt_add_cart: {
 
+
                         Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    cartId = response.getInt("id");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                                                                @Override
+                                                                                public void onResponse(JSONObject response) {
+                                                                                    try {
+                                                                                        cartId = response.getInt("id");
+                                                                                        final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", "token1");
+                                                                                        Log.d("token", token);
+                                                                                        Log.d("token", String.valueOf(cartId));
+                                                                                        Log.d("token", String.valueOf(etRestQuan.getText()));
+                                                                                        Log.d("token", String.valueOf(favPros.get(pos).getId()));
 
-                            }
-                        }, new com.android.volley.Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                                                                                        CartItemPost item = new CartItemPost(cartId,Double.parseDouble(String.valueOf(etRestQuan.getText())), favPros.get(pos).getId(), null);
 
-                            }
-                        }){
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<String, String>();
-                                params.put("Content-Type", "application/json");
-                                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
-                                return params;
-                            }
+                                                                                        Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item, token);
+                                                                                        call.enqueue(new Callback<CartItemPost>() {
+                                                                                            @Override
+                                                                                            public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
 
-                        });
+                                                                                                btAddCart.setText("Added to cart");
+                                                                                                btAddCart.setTextColor(Color.parseColor("#fafafa"));
+                                                                                                btAddCart.setBackgroundColor(Color.parseColor("#b6413f"));
+                                                                                            }
 
-
-                        CartItemPost item = new CartItemPost(cartId,favQuantity.getSelectedItemPosition()+1.0, favPros.get(pos).getId(), null);
-                        Retrofit.Builder builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
-                                addConverterFactory(GsonConverterFactory.create());
-
-                        Retrofit retrofit = builder.build();
-                        DataInterface client = retrofit.create(DataInterface.class);
-                        String token = getApplicationContext().getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
-
-                        Call<CartItemPost> call = client.putCartItemOnServer(item,token);
-                        call.enqueue(new Callback<CartItemPost>() {
-                            @Override
-                            public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
+                                                                                            @Override
+                                                                                            public void onFailure(Call<CartItemPost> call, Throwable t) {
+                                                                                                Toast.makeText(getApplicationContext(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                                                                            }
 
 
-                                Toast.makeText(FavouritesActivity.this, "Added item " + favPros.get(pos).getProductName() + "to your cart!", Toast.LENGTH_SHORT).show();
-                                btAddCart.setText("Added to cart");
-                                btAddCart.setTextColor(Color.parseColor("#fafafa"));
-                                btAddCart.setBackgroundColor(Color.parseColor("#b6413f"));
+                                                                                        });
+                                                                                    } catch (JSONException e) {
+                                                                                        e.printStackTrace();
+                                                                                    }
 
-                            }
+                                                                                }
+                                                                            }, new com.android.volley.Response.ErrorListener() {
+                                                                                @Override
+                                                                                public void onErrorResponse(VolleyError error) {
 
-                            @Override
-                            public void onFailure(Call<CartItemPost> call, Throwable t) {
+                                                                                }
+                                                                            })
+                                                                            {
+                                                                                @Override
+                                                                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                                                                    Map<String, String> params = new HashMap<String, String>();
+                                                                                    params.put("Content-Type", "application/json");
+                                                                                    params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                                                                                    return params;
+                                                                                }
 
-                            }
-                        });
+                                                                            }
+                        );
+
+
+
                         break;
                     }
                 }

@@ -14,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.halanx.userapp.Activities.HomeActivity;
 import com.halanx.userapp.Activities.OrdersActivity;
 import com.halanx.userapp.Activities.RatingActivity;
+import com.halanx.userapp.Activities.Wallet;
 import com.halanx.userapp.R;
 import com.halanx.userapp.app.Config;
 import com.halanx.userapp.util.NotificationUtils;
@@ -94,16 +95,46 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
             String message = json.getString("type").trim();
-            String batch_id = json.getString("BatchId").trim();
-            String shopper_id = json.getString("ShopperId").trim();
-            Log.d("batch_id",message);
-            getSharedPreferences("BatchData",Context.MODE_PRIVATE).edit().putString("BatchID", batch_id).apply();
-            getSharedPreferences("BatchData",Context.MODE_PRIVATE).edit().putString("ShopperID", shopper_id).apply();
 
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+                    if (message.equals("InsufficientBalance1")) {
 
-                startActivity(new Intent(MyFirebaseMessagingService.this,RatingActivity.class));
+                    notification_mssg = "Insufficient balance in wallet. Please add money to continue delivery.";
+                    Intent resultIntenta = new Intent(this, Wallet.class);
+
+                    resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    piResulta = PendingIntent.getActivity(this,
+                            (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                } else if (message.equals("InsufficientBalance2")) {
+
+                    notification_mssg = "No upcoming delivery due to insufficient balance in wallet. Please add money to continue delivery";
+                    Intent resultIntenta = new Intent(this, Wallet.class);
+
+                    resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    piResulta = PendingIntent.getActivity(this,
+                            (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                }
+                    else if (message.equals("BatchDelivered")) {
+                        String batch_id = json.getString("BatchId").trim();
+                        String shopper_id = json.getString("ShopperId").trim();
+                        Log.d("batch_id", message);
+                        getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("BatchID", batch_id).apply();
+                        getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("ShopperID", shopper_id).apply();
+
+
+                        getSharedPreferences("OrderStatus", MODE_PRIVATE).edit().putBoolean("BatchAccept", false).apply();
+
+                        notification_mssg = "Your order is delivered. Please rate us for improvement of our service.";
+                        Intent resultIntenta = new Intent(this, RatingActivity.class);
+
+                        resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        piResulta = PendingIntent.getActivity(this,
+                                (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                    }
 
                 // app is in foreground, broadcast the push message
             } else {
@@ -115,32 +146,62 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         (int) Calendar.getInstance().getTimeInMillis(), resultIntent, 0);
 
                 Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addCategory(Intent.CATEGORY_HOME);
 
-                if(message.equals("BatchAccepted")) {
-                    getSharedPreferences("OrderStatus",MODE_PRIVATE).edit().putBoolean("BatchAccept",true).apply();
+                if (message.equals("BatchAccepted")) {
+                    String batch_id = json.getString("BatchId").trim();
+                    String shopper_id = json.getString("ShopperId").trim();
+                    Log.d("batch_id", message);
+                    getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("BatchID", batch_id).apply();
+                    getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("ShopperID", shopper_id).apply();
+
+                    getSharedPreferences("OrderStatus", MODE_PRIVATE).edit().putBoolean("BatchAccept", true).apply();
 
                     notification_mssg = "Your order on the way";
                     Intent resultIntenta = new Intent(this, OrdersActivity.class);
 
                     resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            );
+                    );
                     piResulta = PendingIntent.getActivity(this,
                             (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
-                }
-                if(message.equals("BatchDelivered")){
+                } else if (message.equals("BatchDelivered")) {
+                    String batch_id = json.getString("BatchId").trim();
+                    String shopper_id = json.getString("ShopperId").trim();
+                    Log.d("batch_id", message);
+                    getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("BatchID", batch_id).apply();
+                    getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("ShopperID", shopper_id).apply();
 
-                    getSharedPreferences("OrderStatus",MODE_PRIVATE).edit().putBoolean("BatchAccept",false).apply();
 
-                    notification_mssg  = "Your order is delivered. Please rate us for improvement of our service.";
+                    getSharedPreferences("OrderStatus", MODE_PRIVATE).edit().putBoolean("BatchAccept", false).apply();
+
+                    notification_mssg = "Your order is delivered. Please rate us for improvement of our service.";
                     Intent resultIntenta = new Intent(this, RatingActivity.class);
 
                     resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     piResulta = PendingIntent.getActivity(this,
                             (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                } else if (message.equals("InsufficientBalance1")) {
+
+                    notification_mssg = "Insufficient balance in wallet. Please add money to continue delivery.";
+                    Intent resultIntenta = new Intent(this, Wallet.class);
+
+                    resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    piResulta = PendingIntent.getActivity(this,
+                            (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                } else if (message.equals("InsufficientBalance2")) {
+
+                    notification_mssg = "No upcoming delivery due to insufficient balance in wallet. Please add money to continue delivery";
+                    Intent resultIntenta = new Intent(this, Wallet.class);
+
+                    resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    piResulta = PendingIntent.getActivity(this,
+                            (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
                 }
+            }
 
 // Assign big picture notification
 
@@ -174,7 +235,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //                    // image is present, show notification with image
 //                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, resultIntent);
 //                }
-            }
+
         } catch (Exception e) {
             Log.e(TAG, "Exception: " + e.getMessage());
         }

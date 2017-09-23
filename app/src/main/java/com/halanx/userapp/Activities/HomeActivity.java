@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
@@ -96,6 +97,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         barLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
 
 
 

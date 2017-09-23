@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -240,8 +241,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
                 delivery = true;
                 delivery_scheduled = false;
-                btDelAsap.setBackground(getDrawable(R.color.red));
-                btDelSchedule.setBackground(getDrawable(R.drawable.my_button_bg));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    btDelAsap.setBackground(getDrawable(R.color.red));
+                    btDelSchedule.setBackground(getDrawable(R.drawable.my_button_bg));
+                }
 
 
                 break;
@@ -249,8 +252,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_delivery_schedule:
 
                 delivery = true;
-                btDelAsap.setBackground(getDrawable(R.drawable.my_button_bg));
-                btDelSchedule.setBackground(getDrawable(R.color.red));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    btDelAsap.setBackground(getDrawable(R.drawable.my_button_bg));
+                    btDelSchedule.setBackground(getDrawable(R.color.red));
+                }
                 Intent intent = new Intent(CartActivity.this, ScheduleActivity.class);
 
                 startActivityForResult(intent, 1);

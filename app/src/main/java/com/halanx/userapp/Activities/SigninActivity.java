@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,7 +34,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.halanx.userapp.R;
 import com.katepratik.msg91api.MSG91;
@@ -44,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +61,7 @@ import static com.halanx.userapp.Activities.MapsActivity.MY_PERMISSIONS_REQUEST_
 
 
 public class SigninActivity extends AppCompatActivity {
-
+    ProgressBar progressBar1;
     private EditText inputMobile, inputPassword;
     private ProgressBar progressBar;
     private TextView btnRegister;
@@ -65,14 +70,15 @@ public class SigninActivity extends AppCompatActivity {
     TextView forgot_password;
     String random;
     MSG91 msg91 = new MSG91("156475AdUYanwCiKI35970f67d");
-
-
-
-    LoginButton fblogin;
+    String name, email;
+    String[] nameSplit;
+    String token_key = null;
+    static LoginButton fblogin;
     CallbackManager callbackManager;
     String mobile;
     String password;
     AccessToken accessToken;
+    String token;
     AlertDialog dial1 , dial2, dial3;
     String Imei = "null";
     String locale = "null";
@@ -98,6 +104,7 @@ public class SigninActivity extends AppCompatActivity {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,32 +124,6 @@ public class SigninActivity extends AppCompatActivity {
 
 
 
-        //dialogue box to show uppdate is there on plystore
-        if(SplashActivity.flag){
-            new AlertDialog.Builder(this)
-                    .setTitle("Update")
-                    .setMessage("Update your app to continue with all new features").setCancelable(false)
-                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.halanx.userapp&hl=en"));
-                            startActivity(intent);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .show();
-
-        }
-
-
-
-
 
 
         accessToken = AccessToken.getCurrentAccessToken();
@@ -154,6 +135,7 @@ public class SigninActivity extends AppCompatActivity {
         }
 
 
+        progressBar1  = (ProgressBar) findViewById(R.id.progress_bar);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -199,8 +181,171 @@ public class SigninActivity extends AppCompatActivity {
             }
         }
 
+//      //FACEBOOK SDK
 
-        //FACEBOOK SDK
+        fblogin = (LoginButton) findViewById(R.id.login_button);
+        fblogin.setReadPermissions(Arrays.asList(
+                "public_profile", "email", "user_birthday", "user_friends"));
+        callbackManager = CallbackManager.Factory.create();
+
+        fblogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(final LoginResult loginResult) {
+                Log.d("Facebook", "1");
+                progressBar1.setVisibility(View.VISIBLE);
+                fblogin.setVisibility(View.GONE);
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                Log.d("Facebook", "2");
+
+                                Log.v("LoginActivity", String.valueOf(loginResult.getAccessToken().getToken()));
+                                Log.d("fb_data", String.valueOf(object));
+
+                                try {// Application code
+
+                                    token = loginResult.getAccessToken().getToken();
+                                    Log.d("access_string",token);
+
+                                    name = object.getString("name");
+                                    Log.d("FB NAME", name);
+
+                                    email = object.getString("email");
+                                    Log.d("FB NAME", email);
+
+                                    nameSplit = name.trim().split("\\s+");
+                                    Log.d("updatedata", nameSplit[0] + "," + nameSplit[1]);
+
+                                    getSharedPreferences("fbdata", Context.MODE_PRIVATE).edit().
+                                            putBoolean("fbloginned", true).apply();
+                                    JSONObject json = new JSONObject();
+                                    try {
+                                        json.put("access_token", token);
+                                        Log.d("access_token", String.valueOf(json));
+                                    }
+                                    catch(Exception e){
+                                        Log.d("exception", String.valueOf(e));
+                                    }
+
+                                    String url ="https://api.halanx.com/rest-auth/facebook/";
+                                    try {
+                                        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new Response.Listener<JSONObject>() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                Log.d("responsedata", String.valueOf(response));
+
+                                                try {
+                                                    token_key  = response.getString("key");
+                                                    Log.d("token",token_key);
+                                                    getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).edit().putString("token", "token " + token_key).commit();
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "https://api.halanx.com/users/detail/", null, new Response.Listener<JSONObject>() {
+                                                    @Override
+                                                    public void onResponse(JSONObject response) {
+                                                        Log.d("response", String.valueOf(response));
+                                                        startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                                                        getSharedPreferences("status", Context.MODE_PRIVATE).edit().putBoolean("first_login", true).apply();
+
+                                                        finish();
+                                                        getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                                                putBoolean("Loginned", true).apply();
+                                                        progressBar1.setVisibility(View.GONE);
+                                                        fblogin.setVisibility(View.VISIBLE);
+
+
+                                                    }
+                                                }, new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        startActivity(new Intent(SigninActivity.this,RegisterActivity.class).putExtra("first_name",nameSplit[0]).putExtra("last_name",nameSplit[1]).putExtra("email",email));
+
+                                                    }
+                                                }){
+                                                    @Override
+                                                    public Map<String, String> getHeaders() throws AuthFailureError {
+                                                        Map<String, String> params = new HashMap<String, String>();
+                                                        params.put("Content-Type", "application/json");
+                                                        params.put("Authorization", "token " + token_key);
+                                                        return params;
+                                                    }
+
+                                                });
+
+                                            }
+                                        }, new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                Log.d("errordata", String.valueOf(error));
+                                                progressBar1.setVisibility(View.GONE);
+                                                fblogin.setVisibility(View.VISIBLE);
+
+                                            }
+                                        }){
+                                            @Override
+                                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                                Map<String, String> params = new HashMap<String, String>();
+                                                params.put("Content-Type", "application/json");
+                                                return params;
+                                            }});
+
+                                    }
+                                    catch(Exception e){
+                                        progressBar1.setVisibility(View.GONE);
+                                        fblogin.setVisibility(View.VISIBLE);
+
+
+                                    }
+
+
+
+
+                                   // 01/31/1980 format
+                                } catch (JSONException e) {
+                                    Log.d("Facebook", "4");
+                                    Log.d("catch", e.toString());
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        });
+
+                Bundle parameters = new Bundle();
+
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+
+            //    Toast.makeText(SigninActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+            }
+
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.v("LoginActivity", "cancel");
+                Log.d("Facebook", "5");
+                progressBar1.setVisibility(View.GONE);
+                fblogin.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.d("Facebook ex", exception + " " + exception.getCause());
+                Log.d("Facebook", "6");
+                progressBar1.setVisibility(View.GONE);
+                fblogin.setVisibility(View.VISIBLE);
+
+            }
+        });
 
 
         inputMobile = (EditText) findViewById(R.id.email);
@@ -271,10 +416,14 @@ public class SigninActivity extends AppCompatActivity {
                                                     putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
                                                     putBoolean("first_login", true).
                                                     putBoolean("Loginned", true).apply();
+
                                             getSharedPreferences("status", Context.MODE_PRIVATE).edit().
                                                     putBoolean("first_login", true).apply();
 
-                                        } catch (JSONException e) {
+
+
+                                        }
+                                        catch (JSONException e) {
                                             e.printStackTrace();
                                         }
 
@@ -539,6 +688,8 @@ public class SigninActivity extends AppCompatActivity {
             }
         });
 
+
+
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -549,5 +700,26 @@ public class SigninActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressBar1.setVisibility(View.GONE);
+        fblogin.setVisibility(View.VISIBLE);
+
+
+    }
 }

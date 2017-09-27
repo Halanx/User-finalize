@@ -84,6 +84,8 @@ public class HomeActivity extends AppCompatActivity
     List<CartItem> items;
     AppBarLayout barLayout;
 
+    AlertDialog.Builder alertdialog;
+
     public static int storeID;
     public static String storeName;
     public static String storeLogo;
@@ -97,6 +99,37 @@ public class HomeActivity extends AppCompatActivity
 
 
         barLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
+
+
+
+
+        //dialogue box to show uppdate is there on plystore
+        if(SplashActivity.flag){
+          alertdialog = new AlertDialog.Builder(this);
+                    alertdialog.setTitle("Update")
+                    .setMessage("Update your app to continue with all new features").setCancelable(false)
+                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.halanx.userapp&hl=en"));
+                            startActivity(intent);
+                            dialog.dismiss();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+
+        }
+
+
+
 
 
 
@@ -262,7 +295,7 @@ public class HomeActivity extends AppCompatActivity
                     .withMaterialShowcase()
                     .setTarget(target)
                     .setContentTitle("DELIVERY LOCATION")
-                    .setContentText("Change your Delivery Location and Search for Nearby stores by just a singe Tap ")
+                    .setContentText("Change your delivery location and search for nearby stores by just a singe Tap ")
                     .withHoloShowcase()
                     .setStyle(R.style.CustomShowcaseTheme3)
                     .build();
@@ -483,8 +516,13 @@ public class HomeActivity extends AppCompatActivity
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+    }
 }
+
 
 /*
 public void showNotifiction(View v ){

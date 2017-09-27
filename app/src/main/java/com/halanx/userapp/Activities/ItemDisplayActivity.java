@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class ItemDisplayActivity extends AppCompatActivity {
     Integer productID;
     TextView itemcount;
     int cartId;
+    ProgressBar add_cart;
 
     String productName, productFeatures, productImage;
     Double productPrice;
@@ -80,6 +82,7 @@ public class ItemDisplayActivity extends AppCompatActivity {
 
         itemcount = (TextView) findViewById(R.id.itemcount);
 
+        add_cart = (ProgressBar) findViewById(R.id.pb_addtocart);
         etQuantity = (EditText) findViewById(R.id.quantity);
         etQuantity.setText("1");
         plus = (TextView) findViewById(R.id.increment);
@@ -135,6 +138,8 @@ public class ItemDisplayActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (!already) {
 
+                    add_cart.setVisibility(View.VISIBLE);
+                    cart.setVisibility(View.GONE);
                     addCartItem();
 
                 } else {
@@ -220,11 +225,17 @@ public class ItemDisplayActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
 
+
+                            add_cart.setVisibility(View.GONE);
+                            cart.setVisibility(View.VISIBLE);
                             cart.setText("Added to cart");
                         }
 
                         @Override
                         public void onFailure(Call<CartItemPost> call, Throwable t) {
+
+                            add_cart.setVisibility(View.GONE);
+                            cart.setVisibility(View.VISIBLE);
                             Toast.makeText(getApplicationContext(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
                         }
 
@@ -232,12 +243,18 @@ public class ItemDisplayActivity extends AppCompatActivity {
                     });
                 } catch (JSONException e) {
                     e.printStackTrace();
+
+                    add_cart.setVisibility(View.GONE);
+                    cart.setVisibility(View.VISIBLE);
                 }
 
             }
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                add_cart.setVisibility(View.GONE);
+                cart.setVisibility(View.VISIBLE);
 
             }
         })

@@ -26,7 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.halanx.userapp.Interfaces.DataInterface;
+import com.facebook.login.LoginManager;
 import com.halanx.userapp.POJO.Resp;
 import com.halanx.userapp.R;
 import com.halanx.userapp.app.Config;
@@ -37,7 +37,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,15 +54,13 @@ RegisterActivity extends AppCompatActivity {
 
     //For taking response
     Resp resp;
+    TextView already_member;
 
     ProgressBar pb,pbresend;
     ProgressBar progressRegister;
     String mobileNumber;
     Button btnOtpSubmit;
-    Retrofit.Builder builderRegister, builder;
-    Retrofit retrofitRegister, retrofit;
-    DataInterface clientRegister, client;
-    String random;
+    Retrofit.Builder builder;
     MSG91 msg91 = new MSG91("156475AdUYanwCiKI35970f67d");
     String email, password, firstName, lastName, icode;
     EditText otp;
@@ -87,6 +84,16 @@ RegisterActivity extends AppCompatActivity {
         progressRegister = (ProgressBar) findViewById(R.id.progressBar_register);
         passworddata = (TextInputLayout) findViewById(R.id.edittextlayout);
 
+        already_member = (TextView) findViewById(R.id.textView10);
+
+        already_member.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RegisterActivity.this,SigninActivity.class));
+                finish();
+            }
+        });
+
 
         //GIVING NULL POINT EXCEPTION
         if (getSharedPreferences("fbdata", Context.MODE_PRIVATE).getBoolean("fbloginned", false)) {
@@ -96,24 +103,11 @@ RegisterActivity extends AppCompatActivity {
             inputEmail.setText(getIntent().getStringExtra("email"));
             passworddata.setVisibility(View.GONE);
 
-
 //            getAccess token by getintent.getStringExtra("access_token")
-
         }
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
         regId = pref.getString("regId", null);
-
-
-//        already_account = (LinearLayout) findViewById(R.id.already_account);
-//        already_account.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(RegisterActivity.this, SigninActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
 
 
         btnVerify.setOnClickListener(new View.OnClickListener() {
@@ -132,12 +126,7 @@ RegisterActivity extends AppCompatActivity {
 
                 if (getSharedPreferences("fbdata", Context.MODE_PRIVATE).getBoolean("fbloginned", false)) {
 
-
-                    if (mobileNumber.length() != 10) {
-                        Toast.makeText(getApplicationContext(), "Please enter a valid mobile number", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                } else {
+                   } else {
                     password = inputPassword.getText().toString().trim();
                     if (TextUtils.isEmpty(password)) {
                         Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
@@ -146,8 +135,14 @@ RegisterActivity extends AppCompatActivity {
 
 
                 }
-                //  CHECKING ALL EDIT TEXT FIELDS
-                if (TextUtils.isEmpty(email)) {
+                if (mobileNumber.length() != 10) {
+                    Toast.makeText(getApplicationContext(), "Please enter a valid mobile number", Toast.LENGTH_SHORT).show();
+                    btnVerify.setVisibility(View.VISIBLE);
+                    progressRegister.setVisibility(View.GONE);
+
+                    return;
+                }
+                else if (TextUtils.isEmpty(email)) {
                     btnVerify.setVisibility(View.VISIBLE);
                     progressRegister.setVisibility(View.GONE);
 
@@ -159,13 +154,14 @@ RegisterActivity extends AppCompatActivity {
 
                     Toast.makeText(RegisterActivity.this, "Please enter valid email address", Toast.LENGTH_SHORT).show();
                     return;
-                } else if (password.length() < 6) {
-                    btnVerify.setVisibility(View.VISIBLE);
-                    progressRegister.setVisibility(View.GONE);
-
-
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
-                    return;
+//                }
+//                else if (password.length() < 6) {
+//                    btnVerify.setVisibility(View.VISIBLE);
+//                    progressRegister.setVisibility(View.GONE);
+//
+//
+//                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+//                    return;
                 } else if (TextUtils.isEmpty(firstName) || TextUtils.isEmpty(lastName)) {
                     btnVerify.setVisibility(View.VISIBLE);
                     progressRegister.setVisibility(View.GONE);
@@ -189,9 +185,8 @@ RegisterActivity extends AppCompatActivity {
 
                 //Internet available
                 if (isNetworkAvailable(getApplicationContext())) {
-
-
-//                    random = sendOtp();
+                    btnVerify.setVisibility(View.VISIBLE);
+                    progressRegister.setVisibility(View.GONE);
 
                     dialog = new Dialog(RegisterActivity.this);
                     dialog.setContentView(R.layout.activity_verify);
@@ -233,6 +228,8 @@ RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
+                            progressRegister.setVisibility(View.GONE);
+
                             Log.d("data", String.valueOf(otp.getText()));
                             if(!String.valueOf(otp.getText()).equals("")) {
                                 btnOtpSubmit.setVisibility(View.GONE);
@@ -271,21 +268,12 @@ RegisterActivity extends AppCompatActivity {
                                 public void onErrorResponse(VolleyError error) {
                                     tvResendOtp.setVisibility(View.VISIBLE);
                                     pbresend.setVisibility(View.GONE);
+                                    progressRegister.setVisibility(View.GONE);
 
 
 
                                 }
                             }));
-
-
-//                            if (otp.getText().toString().equals(randomRes)) {
-//                                Toast.makeText(RegisterActivity.this, "User Verified", Toast.LENGTH_LONG).show();
-//                                dialog.dismiss();
-//                                registration();
-//                            } else {
-//                                Toast.makeText(RegisterActivity.this, "Incorrect OTP entered", Toast.LENGTH_LONG).show();
-//                                return;
-//                            }
 
                         }
                     });
@@ -312,8 +300,79 @@ RegisterActivity extends AppCompatActivity {
     public void registration(String text) {
 
         //Put cart on server after account is created
+        if (getSharedPreferences("fbdata", Context.MODE_PRIVATE).getBoolean("fbloginned", false)) {
 
-        final JSONObject jsonObject = new JSONObject();
+            JSONObject jsonObject = new JSONObject();
+            try{ jsonObject.put("PhoneNo", mobileNumber);
+                jsonObject.put("otp",Integer.parseInt(text));
+            }
+            catch(Exception e){
+            }
+            try {
+                Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/social/", jsonObject, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("response data", String.valueOf(response));
+                        try {
+                            getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                    putString("firstname", firstName).
+                                    putString("lastname", lastName).
+                                    putString("MobileNumber", mobileNumber).
+                                    putBoolean("first_login", true).
+                                    putBoolean("Loginned", true).apply();
+                            getSharedPreferences("status", Context.MODE_PRIVATE).edit().
+                                    putBoolean("first_login", true).apply();
+
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+
+                        btnOtpSubmit.setVisibility(View.VISIBLE);
+                        pb.setVisibility(View.GONE);
+                        startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
+                        finish();
+
+                        dialog.dismiss();
+                        btnOtpSubmit.setVisibility(View.VISIBLE);
+                        pb.setVisibility(View.GONE);
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("error", String.valueOf(error));
+                        Toast.makeText(getApplicationContext(), "User already exists", Toast.LENGTH_SHORT).show();
+
+                        dialog.dismiss();
+                        btnOtpSubmit.setVisibility(View.VISIBLE);
+                        pb.setVisibility(View.GONE);
+
+                    }
+                }){
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Content-Type", "application/json");
+                        params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
+                        return params;
+                    }
+
+                });
+
+            }
+            catch(Exception e){
+                Log.d("error", String.valueOf(e));
+
+
+            }
+
+
+        }
+        else{
+
+            final JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("username", "c" + mobileNumber);
             jsonObject.put("email", email);
@@ -363,7 +422,6 @@ RegisterActivity extends AppCompatActivity {
                                 Log.i("TAG", String.valueOf(response));
                                 Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
                                 startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-
                                 finish();
 
 
@@ -395,6 +453,12 @@ RegisterActivity extends AppCompatActivity {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        btnOtpSubmit.setVisibility(View.VISIBLE);
+                        pb.setVisibility(View.GONE);
+                        dialog.dismiss();
+
+                        Toast.makeText(getApplicationContext(), "User already exists", Toast.LENGTH_SHORT).show();
+
                     }
 
 
@@ -411,7 +475,9 @@ RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("error", String.valueOf(error));
+                    Toast.makeText(getApplicationContext(), "User already exists", Toast.LENGTH_SHORT).show();
 
+                    dialog.dismiss();
                     btnOtpSubmit.setVisibility(View.VISIBLE);
                     pb.setVisibility(View.GONE);
 
@@ -422,56 +488,10 @@ RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "User already exists", Toast.LENGTH_SHORT).show();
             btnOtpSubmit.setVisibility(View.VISIBLE);
             pb.setVisibility(View.GONE);
-
-
-
+            dialog.dismiss();
         }
-
+        }
     }
-
-
-//    private void putUserCart(CartsInfo cart) {
-//
-//        String token = getApplicationContext().getSharedPreferences("TokenKey", Context.MODE_PRIVATE).getString("token",null);
-//
-//        Call<CartsInfo> call = client.putUserCartOnServer(cart,token);
-//        call.enqueue(new Callback<CartsInfo>() {
-//            @Override
-//            public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
-//                Log.i("TAG", "Cart put on Django");
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CartsInfo> call, Throwable t) {
-//
-//            }
-//        });
-//    }
-
-    String sendOtp() {
-
-
-        Random r = new Random();
-        int randomOTP = r.nextInt(9999 - 1000) + 1000;
-        String random = Integer.toString(randomOTP);
-
-//        Toast.makeText(getApplicationContext(), random, Toast.LENGTH_SHORT).show();
-
-        msg91.getBalance("4");
-        msg91.composeMessage("HALANX", "Hi " + firstName + "! " + random + " is your One Time Password(OTP) for " +
-                "Halanx User App.");
-        msg91.to(mobileNumber);
-        msg91.setCountryCode("91");
-        msg91.setRoute("4");
-
-        msg91.send();
-        Log.d("doneabc", random);
-
-        return random;
-
-
-    }
-
 
     public boolean emailValidator(String email) {
         Pattern pattern;
@@ -482,13 +502,18 @@ RegisterActivity extends AppCompatActivity {
         return matcher.matches();
     }
 
-
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE));
 
         return connectivityManager.getActiveNetworkInfo() != null &&
                 connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        LoginManager.getInstance().logOut();
     }
 
 }

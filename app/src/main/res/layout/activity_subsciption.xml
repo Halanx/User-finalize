@@ -46,15 +46,14 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="#b6413f"
-                android:text="Subscribe"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:textColor="#ffffff" />
+            <!--<Button-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="#b6413f"-->
+                <!--android:text="Subscribe"-->
+                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"-->
+                <!--android:textColor="#ffffff" />-->
 
         </RelativeLayout>
 
@@ -500,7 +499,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        app:cardCornerRadius="20dp">
+        android:elevation="20dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="5dp">
 
         <Button
 
@@ -510,7 +511,6 @@
             android:layout_alignParentBottom="true"
             android:background="#b6413f"
             android:text="Continue"
-            android:layout_marginBottom="5sp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="#ffffff"
 
@@ -523,7 +523,6 @@
             android:layout_height="45dp"
             android:layout_alignParentBottom="true"
             android:background="#b6413f"
-            android:layout_marginBottom="5sp"
             android:text="Confirm Your details"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="#ffffff"
@@ -536,7 +535,6 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5sp"
             android:background="#b6413f"
             android:text="Checkout"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"

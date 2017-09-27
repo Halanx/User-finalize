@@ -475,7 +475,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onClick(View view) {
 
-                        if ((line1.getText().equals(" ") || line2.getText().equals(" ") || line3.getText().equals(" "))) {
+                        if ((String.valueOf(line1.getText()).equals(null) || String.valueOf(line2.getText()).equals(null) || String.valueOf(line3.getText()).equals(null))) {
 
                             Toast.makeText(getApplicationContext(), "Enter Your Address", Toast.LENGTH_SHORT).show();
 

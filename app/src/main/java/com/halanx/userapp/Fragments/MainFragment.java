@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,6 +34,7 @@ import com.halanx.userapp.Activities.HomeActivity;
 import com.halanx.userapp.Adapters.ProductAdapter;
 import com.halanx.userapp.Adapters.ProductSearchAdapter;
 import com.halanx.userapp.Interfaces.DataInterface;
+import com.halanx.userapp.POJO.CartItem;
 import com.halanx.userapp.POJO.ProductInfo;
 import com.halanx.userapp.POJO.StoreInfo;
 import com.halanx.userapp.R;
@@ -87,6 +87,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     Boolean checked[];
     int selectedPosition=-1;
     int selected=-1;
+    TextView searchtext;
 
     SearchView svProducts;
     List<String> suggestions = new ArrayList<>();
@@ -116,6 +117,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         brandName = (TextView) view.findViewById(R.id.brandName);
         brandLogo = (ImageView) view.findViewById(R.id.logo);
 
+        searchtext = (TextView) view.findViewById(R.id.searchtext);
 
         categories_Recycler = (RecyclerView) view.findViewById(R.id.categories_recycler);
         categoryAdapter = new CategoryAdapter(getActivity(),categories);
@@ -133,11 +135,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 svProducts.setIconified(false);
             }
         });
-//        final EditText searchPlate = (EditText) svProducts.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-//        searchPlate.setHint("Search Products");
-//        View searchPlateView = svProducts.findViewById(android.support.v7.appcompat.R.id.search_plate);
-
-//        searchPlateView.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
         svProducts.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -156,16 +153,14 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         svProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-
-
+                searchtext.setVisibility(View.GONE);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 suggestions.clear();
-
+                searchtext.setVisibility(View.GONE);
                 list.setVisibility(View.VISIBLE);
                 list.setAdapter(null);
                 suggestions.clear();
@@ -200,14 +195,13 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                             list.clearTextFilter();
                             searchadapter = new ListViewAdapter(getActivity().getApplicationContext(), suggestions);
                             // Binds the Adapter to the ListView
-                            list.setAdapter(searchadapter);
 
+                            list.setAdapter(searchadapter);
                             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     Log.d("selected_position", suggestions.get(i));
-
-
+                                    svProducts.setQuery(suggestions.get(i),true);
                                     list.setVisibility(View.GONE);
                                     try {
                                         array = json.getJSONObject("hits").getJSONArray("hits");
@@ -307,12 +301,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         main = (LinearLayout) view.findViewById(R.id.main);
         HomeActivity.backPress = 0;
 
-//        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Store", Context.MODE_PRIVATE);
-//        Picasso.with(getActivity()).load(sharedPreferences.getString("storeLogo", null)).into(brandLogo);
-//        brandName.setText(sharedPreferences.getString("storeName", null));
-//        storeID = sharedPreferences.getInt("storeID", 0);
-//        storePosition = sharedPreferences.getInt("storePosition", 0);
-
         Picasso.with(getActivity()).load(HomeActivity.storeLogo).into(brandLogo);
         brandName.setText(HomeActivity.storeName);
 
@@ -320,15 +308,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                 addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.build();
-
-//        if (getActivity().getSharedPreferences("Store", Context.MODE_PRIVATE).getBoolean("isMap", false)) {
-//            main.setVisibility(View.GONE);
-//            stores.setVisibility(View.VISIBLE);
-//
-//        } else {
-//            main.setVisibility(View.VISIBLE);
-//            stores.setVisibility(View.GONE);
-//        }
 
         client = retrofit.create(DataInterface.class);
         storeSpinner.setOnItemSelectedListener(this);
@@ -343,7 +322,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                 food = new ArrayList<StoreInfo>();
                 grocery = new ArrayList<StoreInfo>();
+
                 //Separate stores according to category
+
                 if (storesList.size() != 0) {
                     for (int i = 0; i < storesList.size(); i++) {
                         if (storesList.get(i).getStoreCategory().equals("Food")) {
@@ -368,10 +349,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                         }
                     }
 
-                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, names);
-                    spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                    storeSpinner.setAdapter(spinnerAdapter);
-                    storeSpinner.setSelection(HomeActivity.storePosition);
+//                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, names);
+//                    spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+//                    storeSpinner.setAdapter(spinnerAdapter);
+//                    storeSpinner.setSelection(HomeActivity.storePosition);
                     getProductsFromStore(HomeActivity.storeID, HomeActivity.storeCat);
 
                 } else if (HomeActivity.storeCat.equals("Grocery")) {
@@ -383,11 +364,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                             }
                         }
                     }
-
-                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, names);
-                    spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                    storeSpinner.setAdapter(spinnerAdapter);
-                    storeSpinner.setSelection(HomeActivity.storePosition);
+//
+//                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, names);
+//                    spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+//                    storeSpinner.setAdapter(spinnerAdapter);
+//                    storeSpinner.setSelection(HomeActivity.storePosition);
                     getProductsFromStore(HomeActivity.storeID, HomeActivity.storeCat);
 
                 }
@@ -459,13 +440,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             storeSpinner.setSelection(i);
         }
 
-
-//        getActivity().getSharedPreferences("Store", Context.MODE_PRIVATE).edit().
-//                putInt("storeID", storesList.get(i).getId()).
-//                putString("storeLogo", storesList.get(i).getStoreLogo()).
-//                putString("storeName", storesList.get(i).getStoreName()).
-//                putInt("storePosition", i).apply();
-    }
+ }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
@@ -479,7 +454,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
         try{
             JSONArray obj = new JSONArray(String.valueOf(this.product_category));
-         //   Log.d("product_data", String.valueOf(product_category.get(2)));
+            //   Log.d("product_data", String.valueOf(product_category.get(2)));
             categories= new ArrayList<>();
             for(int i =0;i<obj.length();i++){
                 categories.add(String.valueOf(obj.get(i)));
@@ -698,9 +673,40 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 category_name = (Button) itemView.findViewById(R.id.categories_name);
 
             }
-
-
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        final String token = getActivity().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
+        Log.d("token",token);
+
+        Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                .getUserCartItems(token);
+        callItems.enqueue(new Callback<List<CartItem>>() {
+            @Override
+            public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                List<CartItem> items = response.body();
+
+
+                Log.d("items", String.valueOf(items));
+
+                if (items != null && items.size() > 0) {
+                    //Accesss views?
+                    Log.d("itemcount", String.valueOf(items.size()));
+                    HomeActivity.cartItems.setVisibility(View.VISIBLE);
+                    HomeActivity.itemCount.setText(String.valueOf(items.size()));
+
+                }
+                else
+                {
+                }
+            }
+            @Override
+            public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+            }
+        });
     }
 }

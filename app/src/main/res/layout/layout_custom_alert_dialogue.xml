@@ -19,11 +19,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/et1_dialogue"
+        android:textColorHint="@color/colorPrimary"
         android:hint="House Number &amp; Details"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorPrimary"
         android:id="@+id/et2_dialogue"
         android:hint="Area"/>
 
@@ -31,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/et3_dialogue"
+        android:textColorHint="@color/colorPrimary"
         android:hint="City"/>
 
     <LinearLayout
@@ -44,7 +47,7 @@
             android:id="@+id/btCancel_dialogue"
             android:textColor="#fafafa"
             android:textStyle="bold"
-            android:background="#b6413f"
+            android:background="@color/dark_red"
             android:layout_margin="5dp"
             android:text="Cancel"
             android:layout_weight="1"/>
@@ -53,7 +56,7 @@
             android:layout_height="wrap_content"
             android:textColor="#fafafa"
             android:textStyle="bold"
-            android:background="#b6413f"
+            android:background="@color/dark_red"
             android:id="@+id/btProceed_dialogue"
             android:layout_margin="5dp"
             android:text="Proceed"

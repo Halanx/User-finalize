@@ -71,28 +71,21 @@
             android:textSize="18sp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="10dp"
             android:layout_gravity="center">
         <TextView
             android:id="@+id/textView5"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:autoLink="phone"
             android:typeface="sans"
             android:gravity="center"
-            android:visibility="gone"
-            android:text="Call: "
+            android:text="Call: +91 11 27890252"
             android:textSize="18sp" />
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/call"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/call"/>
         </LinearLayout>
 
 

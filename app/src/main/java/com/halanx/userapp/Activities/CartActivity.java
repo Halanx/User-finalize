@@ -178,6 +178,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     recyclerView = (RecyclerView) findViewById(R.id.cart_recycler_view);
                     adapterTemp = new CartsAdapter(activeItems, getApplicationContext());
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+
                     recyclerView.setAdapter(adapterTemp);
                     recyclerView.setLayoutManager(layoutManager);
 
@@ -285,7 +286,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(View view) {
 
-                        if ((line1.getText().equals(" ") || line2.getText().equals(" ") || line3.getText().equals(" "))) {
+                        if ((String.valueOf(line1.getText()).equals(null) || String.valueOf(line2.getText()).equals(null) || String.valueOf(line3.getText()).equals(null))) {
 
                             Toast.makeText(getApplicationContext(), "Enter Your Address", Toast.LENGTH_SHORT).show();
 
@@ -393,6 +394,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         subtotal = cart.getSubtotal().toString();
                         total = cart.getTotal().toString();
                         taxes = cart.getTaxes().toString();
+                        Log.d("subtotal",cart.getTaxes().toString());
 
                         String del = cart.getDeliveryCharges().toString();
                         tvSubtotal.setText(subtotal);
@@ -443,6 +445,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(new Intent(CartActivity.this,SubscriptionActivity.class));
         return true;
     }
+
 }
 
 

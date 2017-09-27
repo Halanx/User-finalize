@@ -361,6 +361,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         }
     }
-
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
 }

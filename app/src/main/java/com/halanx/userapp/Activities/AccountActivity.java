@@ -4,10 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.login.LoginManager;
 import com.google.gson.GsonBuilder;
 import com.halanx.userapp.POJO.UserInfo;
 import com.halanx.userapp.R;
@@ -41,6 +42,9 @@ public class AccountActivity extends AppCompatActivity {
 
     String addressDetails;
 
+
+
+
     Button edit;
     Dialog dialog;
 
@@ -57,8 +61,7 @@ public class AccountActivity extends AppCompatActivity {
         edit = (Button) findViewById(R.id.edittext);
 
         signout = (TextView) findViewById(R.id.signout);
-
-
+        
         String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
         UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
 
@@ -177,45 +180,17 @@ public class AccountActivity extends AppCompatActivity {
 
 
         signout.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                        putBoolean("Loginned", false).remove("MobileNumber")
-                        .remove("UserInfo").apply();
+                        putBoolean("Loginned", false).apply();
 
-                Intent intent = new Intent(AccountActivity.this, SigninActivity.class);
-                startActivity(intent);
-                finish();
+                startActivity(new Intent(AccountActivity.this, SigninActivity.class));
+                LoginManager.getInstance().logOut();
+                finishAndRemoveTask();
+
             }
         });
-
-
-
-
-    }
-    public class RobotoTextView extends android.support.v7.widget.AppCompatTextView {
-
-        public RobotoTextView(Context context, AttributeSet attrs, int defStyle) {
-            super(context, attrs, defStyle);
-            init();
-        }
-
-        public RobotoTextView(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            init();
-        }
-
-        public RobotoTextView(Context context) {
-            super(context);
-            init();
-        }
-
-        private void init() {
-            if (!isInEditMode()) {
-                Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
-                setTypeface(tf);
-            }
-        }
-
     }
 }

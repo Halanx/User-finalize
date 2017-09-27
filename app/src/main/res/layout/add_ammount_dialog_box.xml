@@ -34,7 +34,7 @@
             android:id="@+id/btCancel_dialogue"
             android:textColor="#fafafa"
             android:textStyle="bold"
-            android:background="#b6413f"
+            android:background="@color/dark_red"
             android:layout_margin="5dp"
             android:text="Cancel"
             android:layout_weight="1"/>
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:textColor="#fafafa"
             android:textStyle="bold"
-            android:background="#b6413f"
+            android:background="@color/dark_red"
             android:id="@+id/btProceed_dialogue"
             android:layout_margin="5dp"
             android:text="Pay"

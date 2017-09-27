@@ -58,6 +58,7 @@ public class StoresFragment extends Fragment {
     CardView food_layout,grocery_layout;
     SearchView svstore;
 
+    TextView searchtext;
     List<String> product_category;
 
     ListView list;
@@ -68,6 +69,7 @@ public class StoresFragment extends Fragment {
     JSONArray array;
     String mob;
     JSONArray storesearchdata;
+    View v_top;
 
     public StoresFragment() {
         // Required empty public constructor
@@ -88,15 +90,17 @@ public class StoresFragment extends Fragment {
 
         svstore = (SearchView) v.findViewById(R.id.storesearch);
 
+        searchtext = (TextView) v.findViewById(R.id.searchtext);
         grocery_text = (TextView) v.findViewById(R.id.grocery_text);
         list = (ListView) v.findViewById(R.id.listview);
 
-
-
+        v_top =(View) v.findViewById(R.id.v_top);
         svstore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                svstore.setIconified(false);
+                svstore.setIconifiedByDefault(false);
+                searchtext.setVisibility(View.GONE);
+
             }
         });
 //        final EditText searchPlate = (EditText) svstore.findViewById(android.support.v7.appcompat.R.id.search_src_text);
@@ -111,10 +115,12 @@ public class StoresFragment extends Fragment {
                 if (b) {
                     if (list.getVisibility() == View.GONE) {
                         list.setVisibility(View.VISIBLE);
+                        searchtext.setVisibility(View.GONE);
                     }
 
                 } else {
                     list.setVisibility(View.GONE);
+                    searchtext.setVisibility(View.GONE);
                 }
             }
         });
@@ -159,6 +165,7 @@ public class StoresFragment extends Fragment {
 
                             grocery_text.setVisibility(View.GONE);
                             food_layout.setVisibility(View.GONE);
+                            v_top.setVisibility(View.GONE);
                             //  ListAdapter
                             searchadapter = new MainFragment.ListViewAdapter(getActivity().getApplicationContext(), suggestions);
                             // Binds the Adapter to the ListView
@@ -168,6 +175,8 @@ public class StoresFragment extends Fragment {
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     Log.d("selected_position", String.valueOf(i));
+                                    svstore.setQuery(suggestions.get(i),true);
+
                                     list.setVisibility(View.GONE);
                                     try {
                                         array = json.getJSONObject("hits").getJSONArray("hits");

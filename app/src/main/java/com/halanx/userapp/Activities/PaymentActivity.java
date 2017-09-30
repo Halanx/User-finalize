@@ -222,6 +222,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             pd.dismiss();
 
                             startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             finish();
 
                         }
@@ -252,6 +253,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         public void onResponse(JSONObject response) {
                             Log.d("ammount added",total);
                             startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             finish();
 
 
@@ -741,6 +743,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                             Log.d("ammount added",total);
                             startActivity(new Intent(PaymentActivity.this,HomeActivity.class));
+                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             finish();
                         }
                     },new com.android.volley.Response.ErrorListener(){

@@ -63,6 +63,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
                 startActivity(new Intent(SplashActivity.this,SigninActivity.class));
+                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 finish();
             }
         },2000);

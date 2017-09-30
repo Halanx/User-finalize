@@ -60,7 +60,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     TextView btAddLocate;
     Boolean delivery_scheduled = false, delivery_address = false;
     ImageView ivMap;
-
+    AlertDialog alert;
     ProgressBar progressBar;
 
     Retrofit.Builder builder;
@@ -183,6 +183,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     recyclerView.setLayoutManager(layoutManager);
 
                 } else {
+                    if(!CartActivity.this.isFinishing())
+                    {
+
                     progressBar.setVisibility(View.INVISIBLE);
                     alertBuilder = new AlertDialog.Builder(CartActivity.this);
                     alertBuilder.setMessage("You have no items in your carts!");
@@ -197,9 +200,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             });
 
 
-                    AlertDialog alert = alertBuilder.create();
+                    alert = alertBuilder.create();
                     alert.show();
 
+                        }
                 }
 
 
@@ -446,6 +450,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }
 
 

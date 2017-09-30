@@ -63,7 +63,7 @@ public class SubscriptionInfo {
     @SerializedName("Longitude")
     @Expose
     private Double longitude;
-    @SerializedName("Address")
+    @SerializedName("DeliveryAddress")
     @Expose
     private String address;
     @SerializedName("Item")

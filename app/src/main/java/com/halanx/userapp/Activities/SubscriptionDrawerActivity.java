@@ -43,7 +43,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
 
-public class SubscriptionDrawerActivity extends AppCompatActivity {
+public class  SubscriptionDrawerActivity extends AppCompatActivity {
 
 //    RecyclerView sub_recycler;
 
@@ -114,6 +114,23 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                         rvSubs.setLayoutManager(new LinearLayoutManager(SubscriptionDrawerActivity.this));
                         rvSubs.setHasFixedSize(true);
                     } else {
+                        if (!SubscriptionDrawerActivity.this.isFinishing()) {
+
+                            new AlertDialog.Builder(SubscriptionDrawerActivity.this).setTitle("No subscriptions").
+                                    setMessage("You have not subscribed to any items").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    finish();
+                                }
+                            }).create().show();
+                        }
+                    }
+
+
+                } else {
+                    if (!SubscriptionDrawerActivity.this.isFinishing()) {
+
                         new AlertDialog.Builder(SubscriptionDrawerActivity.this).setTitle("No subscriptions").
                                 setMessage("You have not subscribed to any items").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
@@ -121,19 +138,8 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                                 dialogInterface.dismiss();
                                 finish();
                             }
-                        }).create().show();
+                        }).setCancelable(false).create().show();
                     }
-
-
-                } else {
-                    new AlertDialog.Builder(SubscriptionDrawerActivity.this).setTitle("No subscriptions").
-                            setMessage("You have not subscribed to any items").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            finish();
-                        }
-                    }).setCancelable(false).create().show();
                 }
             }
 
@@ -297,6 +303,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
             holder.tvQuan.setText(subscriptionInfoList.get(position).getQuantityPerDay().toString());
             holder.tvPrice.setText(subscriptionInfoList.get(position).getCostPerDay().toString());
             holder.tvProName.setText(subscriptionInfoList.get(position).getItem().getProductName());
+            holder.time.setText(subscriptionInfoList.get(position).getStartTime().toString());
         }
 
         private String getEveryString(SubscriptionInfoGet subscriptionInfo) {
@@ -340,7 +347,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
 
         public class SubsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-            TextView tvStartDate, tvEvery, tvDelLeft, tvProName, tvQuan, tvPrice, tvUnsubs;
+            TextView tvStartDate, tvEvery, tvDelLeft, tvProName, tvQuan, tvPrice, tvUnsubs,time;
 
             public SubsHolder(View itemView) {
                 super(itemView);
@@ -351,6 +358,7 @@ public class SubscriptionDrawerActivity extends AppCompatActivity {
                 tvQuan = (TextView) itemView.findViewById(R.id.tv_subs_quantity);
                 tvPrice = (TextView) itemView.findViewById(R.id.tv_subs_price);
                 tvUnsubs = (TextView) itemView.findViewById(R.id.tv_unsubs);
+                time = (TextView) itemView.findViewById(R.id.time);
                 tvUnsubs.setOnClickListener(this);
             }
 

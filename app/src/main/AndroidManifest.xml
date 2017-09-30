@@ -47,7 +47,7 @@
         <activity
             android:name=".Activities.HomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".Activities.ItemDisplayActivity"
             android:screenOrientation="portrait" />
@@ -145,15 +145,17 @@
 
         <activity
             android:name=".Activities.SubscriptionActivity"
+            android:allowTaskReparenting="true"
             android:label="Subscription"
-            android:parentActivityName=".Activities.CartActivity"
-            android:allowTaskReparenting="true"/>
+            android:parentActivityName=".Activities.CartActivity" />
         <activity
             android:name=".Activities.SubscriptionDrawerActivity"
             android:label="Subscriptions"
             android:parentActivityName=".Activities.HomeActivity" />
-        <activity android:name=".Activities.track"
-            android:label="Order Status"></activity>
+        <activity
+            android:name=".Activities.track"
+            android:label="Order Status" />
+        <activity android:name=".Activities.Intro"></activity>
     </application>
 
 </manifest><!--

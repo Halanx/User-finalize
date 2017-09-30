@@ -209,6 +209,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                                 .setSmallIcon(R.drawable.logochange)
                                 .setContentTitle("Halanx")
+                                .setStyle(new NotificationCompat.BigTextStyle().bigText(notification_mssg))
                                 .setContentText(notification_mssg)
                                 .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
                                 .setContentIntent(piResulta)

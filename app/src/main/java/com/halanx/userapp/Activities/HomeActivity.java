@@ -114,6 +114,7 @@ public class HomeActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.halanx.userapp&hl=en"));
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             dialog.dismiss();
                             finish();
                         }
@@ -203,6 +204,7 @@ public class HomeActivity extends AppCompatActivity
 
         //IF NO INTERNET
         if (!isNetworkAvailable()) {
+            if (!HomeActivity.this.isFinishing()){
             new AlertDialog.Builder(this)
                     .setTitle("No internet connection")
                     .setMessage("You are not connected to the internet").setCancelable(false)
@@ -214,7 +216,9 @@ public class HomeActivity extends AppCompatActivity
 
                     })
                     .show();
+            }
         }
+
 
         if (getSharedPreferences("Login", Context.MODE_PRIVATE).getString("MobileNumber", null) != null) {
             String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
@@ -342,10 +346,12 @@ public class HomeActivity extends AppCompatActivity
 
             //ADD ACCOUNT PAGE HERE
             startActivity(new Intent(HomeActivity.this, AccountActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         } else if (id == R.id.nav_order) {
 
             startActivity(new Intent(HomeActivity.this, OrdersActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
 //        } else if (id == R.id.nav_payment) {
@@ -354,25 +360,31 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_favourites) {
             startActivity(new Intent(HomeActivity.this, FavouritesActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
         } else if (id == R.id.nav_pts) {
             startActivity(new Intent(HomeActivity.this, Wallet.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
         } else if (id == R.id.nav_ref) {
             startActivity(new Intent(HomeActivity.this, ReferEarnActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         } else if (id == R.id.nav_shopper) {
             startActivity(new Intent(HomeActivity.this, BecomeShopperActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         } else if (id == R.id.nav_help) {
             startActivity(new Intent(HomeActivity.this, HelpActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         }
         else if (id == R.id.subscription) {
 
             startActivity(new Intent(HomeActivity.this, SubscriptionDrawerActivity.class));
+            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         }
 
@@ -391,6 +403,7 @@ public class HomeActivity extends AppCompatActivity
             case R.id.imageButton_cart:
 
                 startActivity(new Intent(HomeActivity.this, CartActivity.class));
+                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
                 break;
 
@@ -400,6 +413,7 @@ public class HomeActivity extends AppCompatActivity
 
             case R.id.imageButton_location:
                 startActivity(new Intent(HomeActivity.this, MapsActivity.class));
+                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 break;
 
 

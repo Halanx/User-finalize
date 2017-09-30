@@ -613,12 +613,14 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
             case R.id.start_date_selection:
 
                 startActivityForResult(new Intent(SubscriptionActivity.this, ScheduleActivity.class), 1);
+                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 break;
 
 
             case R.id.bt_address_locate:
 
                 Intent intentMap = new Intent(SubscriptionActivity.this, MapsActivity.class);
+                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 //                intentMap.putExtra("fromCart", true);
                 startActivity(intentMap);
 
@@ -655,6 +657,7 @@ public class SubscriptionActivity extends AppCompatActivity implements View.OnCl
                         intent.putExtra("total_cost",String.valueOf(total));
                         Log.d("total", String.valueOf(total));
                         startActivity(intent);
+                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                         finish();
 
                     }

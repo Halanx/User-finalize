@@ -47,10 +47,8 @@ import com.katepratik.msg91api.MSG91;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.halanx.userapp.Activities.MapsActivity.MY_PERMISSIONS_REQUEST_LOCATION;
@@ -70,7 +68,7 @@ public class SigninActivity extends AppCompatActivity {
     TextView forgot_password;
     String random;
     MSG91 msg91 = new MSG91("156475AdUYanwCiKI35970f67d");
-    String name, email;
+    String name, email = null;
     String[] nameSplit;
     String token_key = null;
     static LoginButton fblogin;
@@ -80,27 +78,7 @@ public class SigninActivity extends AppCompatActivity {
     AccessToken accessToken;
     String token;
     AlertDialog dial1 , dial2, dial3;
-    String Imei = "null";
-    String locale = "null";
-    String regId = "null";
-    String latitude = "null";
-    String longitude = "null";
-    String ip = "null";
-    String macAddress = "null";
-    String network_type = "null";
     String androidOS = "null";
-    String phone_make = "null";
-    String phone_model = "null";
-    String sdkVersion = "null";
-    String ram ="null";
-    String   storage_space  = "null";
-    List<String> accounts = new ArrayList<>();
-    String installed_apps = "null";
-    String mcc2 = "null";
-    String mcc = "null";
-    String mnc = "null";
-    String mnc2 = "null";
-    String processor_vendor = "null";
 
 
 
@@ -140,18 +118,21 @@ public class SigninActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                dial2 = new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(SigninActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        }).create();
-                dial2.show();
+                if (!SigninActivity.this.isFinishing()) {
+
+                    dial2 = new AlertDialog.Builder(this)
+                            .setTitle("Location Permission Needed")
+                            .setMessage("This app needs the Location permission, please accept to use location functionality")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ActivityCompat.requestPermissions(SigninActivity.this,
+                                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                            MY_PERMISSIONS_REQUEST_LOCATION);
+                                }
+                            }).create();
+                    dial2.show();
+                }
 
             } else {
                 ActivityCompat.requestPermissions(this,
@@ -165,19 +146,22 @@ public class SigninActivity extends AppCompatActivity {
         Boolean loginStatus = sharedPreferences.getBoolean("Loginned", false);
 
         if (loginStatus) {
-            if (dial1 != null) {
-                dial1.dismiss();
-            }
-            if (dial2 != null) {
-                dial2.dismiss();
-            }
+            if (!SigninActivity.this.isFinishing()) {
 
-            if (sharedPreferences.getBoolean("first_login", false)) {
-                startActivity(new Intent(SigninActivity.this, HomeActivity.class));
-                finish();
-            } else {
-                startActivity(new Intent(SigninActivity.this, MapsActivity.class));
-                finish();
+                if (dial1 != null) {
+                    dial1.dismiss();
+                }
+                if (dial2 != null) {
+                    dial2.dismiss();
+                }
+
+                if (sharedPreferences.getBoolean("first_login", false)) {
+                    startActivity(new Intent(SigninActivity.this, HomeActivity.class));
+                    finish();
+                } else {
+                    startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                    finish();
+                }
             }
         }
 
@@ -185,7 +169,7 @@ public class SigninActivity extends AppCompatActivity {
 
         fblogin = (LoginButton) findViewById(R.id.login_button);
         fblogin.setReadPermissions(Arrays.asList(
-                "public_profile", "email", "user_birthday", "user_friends"));
+                "public_profile"));
         callbackManager = CallbackManager.Factory.create();
 
         fblogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -212,8 +196,13 @@ public class SigninActivity extends AppCompatActivity {
                                     name = object.getString("name");
                                     Log.d("FB NAME", name);
 
-                                    email = object.getString("email");
-                                    Log.d("FB NAME", email);
+                                    try {
+                                        email = object.getString("email");
+                                        Log.d("FB NAME", email);
+                                    }
+                                    catch(Exception e){
+                                        Log.d("exception", String.valueOf(e));
+                                    }
 
                                     nameSplit = name.trim().split("\\s+");
                                     Log.d("updatedata", nameSplit[0] + "," + nameSplit[1]);
@@ -249,6 +238,7 @@ public class SigninActivity extends AppCompatActivity {
                                                     public void onResponse(JSONObject response) {
                                                         Log.d("response", String.valueOf(response));
                                                         startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                                                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                                                         getSharedPreferences("status", Context.MODE_PRIVATE).edit().putBoolean("first_login", true).apply();
 
                                                         finish();
@@ -263,6 +253,7 @@ public class SigninActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
                                                         startActivity(new Intent(SigninActivity.this,RegisterActivity.class).putExtra("first_name",nameSplit[0]).putExtra("last_name",nameSplit[1]).putExtra("email",email));
+                                                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
                                                     }
                                                 }){
@@ -316,7 +307,7 @@ public class SigninActivity extends AppCompatActivity {
 
                 Bundle parameters = new Bundle();
 
-                parameters.putString("fields", "id,name,email,gender,birthday");
+                parameters.putString("fields", "id,name,email");
                 request.setParameters(parameters);
                 request.executeAsync();
 
@@ -376,7 +367,6 @@ public class SigninActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Enter password", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     btnLogin.setVisibility(View.VISIBLE);
-
                     return;
                 }
 
@@ -431,6 +421,8 @@ public class SigninActivity extends AppCompatActivity {
                                         Log.i("TAG", String.valueOf(response));
                                         Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
                                         startActivity(new Intent(SigninActivity.this, MapsActivity.class));
+                                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+
                                         progressBar.setVisibility(View.INVISIBLE);
 //
                                         finish();
@@ -696,6 +688,7 @@ public class SigninActivity extends AppCompatActivity {
                 getSharedPreferences("fbdata", Context.MODE_PRIVATE).edit().
                         putBoolean("fbloginned", false).apply();
                 startActivity(new Intent(SigninActivity.this, RegisterActivity.class));
+                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
             }
         });

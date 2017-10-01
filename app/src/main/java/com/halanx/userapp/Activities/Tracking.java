@@ -74,7 +74,6 @@ public class Tracking extends AppCompatActivity {
 
                         startActivity(new Intent(Tracking.this,track.class).putExtra("batch_done",false).putExtra("delivered",false));
                         finish();
-                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
                     }
                 } catch (JSONException e) {
@@ -149,7 +148,6 @@ public class Tracking extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", mobile, null));
-                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                         if (ActivityCompat.checkSelfPermission(view.getContext(), Manifest.permission.CALL_PHONE) !=
                                 PackageManager.PERMISSION_GRANTED) {
 
@@ -169,11 +167,9 @@ public class Tracking extends AppCompatActivity {
                     try {
                         if(orderResponse.getJSONObject(0).getBoolean("IsDelivered")) {
                             startActivity(new Intent(Tracking.this, track.class).putExtra("batch_done", true).putExtra("delivered",true));
-                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                         }
                         else{
                             startActivity(new Intent(Tracking.this, track.class).putExtra("batch_done", true).putExtra("delivered",false));
-                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

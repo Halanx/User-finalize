@@ -39,9 +39,7 @@ public class SplashActivity extends AppCompatActivity {
                         flag = true;
                         Log.d("done","doneabc");
                     }
-
-
-                } catch (PackageManager.NameNotFoundException e) {
+                }catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -50,23 +48,17 @@ public class SplashActivity extends AppCompatActivity {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
             }
         }));
-
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-
-
-
                 startActivity(new Intent(SplashActivity.this,SigninActivity.class));
-                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 finish();
             }
-        },2000);
+        },100);
 
 
 

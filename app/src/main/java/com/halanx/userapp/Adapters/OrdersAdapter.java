@@ -49,37 +49,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
 
         String orderTotal = Double.toString(info.get(position).getTotal());
 
-
-//        String shopperMobile = Long.toString(info.get(position).getShopperPhoneNo());
-
         final String orderId = info.get(position).getId().toString();
         holder.orderNo.setText(orderId);
         holder.orderTotal.setText(orderTotal);
 
-        //      List<String> productNames = new ArrayList<>();
         List<CartItem> cartItems = info.get(position).getOrderItems();
-
-//        for (int i = 0; i < cartItems.size(); i++) {
-//            productNames.add(Integer.toString(i + 1) + ". " + cartItems.get(i).getItem().getProductName());
-//        }
-
         ProductRecycler rvAdapter = new ProductRecycler(cartItems);
         holder.rvProducts.setAdapter(rvAdapter);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(c);
         holder.rvProducts.setLayoutManager(manager);
-
-        //     holder.orders.setOrientation(LinearLayout.VERTICAL);
-
-//        for (int i = 0; i < cartItems.size(); i++) {
-//
-//
-//            TextView tv = new TextView(c);
-//            tv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//            tv.setText(productNames.get(i));
-//            tv.setTextSize(20);
-//            tv.setClickable(true);
-//            holder.orders.addView(tv);
-//        }
 
         if (isCompleted) {
             holder.llIOnGoing.setVisibility(View.GONE);
@@ -95,8 +73,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
             public void onClick(View view) {
 
                 int pos = holder.getAdapterPosition();
-//                    info.get(pos).getOrderItems()
-
 
                 c.startActivity(new Intent(c, Tracking.class).putExtra("orderId",orderId));
                 Log.i("CLICK", "CLICK");

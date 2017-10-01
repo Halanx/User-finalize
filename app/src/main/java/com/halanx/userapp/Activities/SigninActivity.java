@@ -68,7 +68,7 @@ public class SigninActivity extends AppCompatActivity {
     TextView forgot_password;
     String random;
     MSG91 msg91 = new MSG91("156475AdUYanwCiKI35970f67d");
-    String name, email = null;
+    String name, email = " ";
     String[] nameSplit;
     String token_key = null;
     static LoginButton fblogin;
@@ -99,11 +99,6 @@ public class SigninActivity extends AppCompatActivity {
         }
         Log.d("phone_data", androidOS);
 
-
-
-
-
-
         accessToken = AccessToken.getCurrentAccessToken();
 
         forgot_password = (TextView) findViewById(R.id.forgot_password);
@@ -111,7 +106,6 @@ public class SigninActivity extends AppCompatActivity {
         int MyVersion = Build.VERSION.SDK_INT;
         if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
         }
-
 
         progressBar1  = (ProgressBar) findViewById(R.id.progress_bar);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -169,15 +163,28 @@ public class SigninActivity extends AppCompatActivity {
 
         fblogin = (LoginButton) findViewById(R.id.login_button);
         fblogin.setReadPermissions(Arrays.asList(
-                "public_profile"));
+                "public_profile", "email"));
         callbackManager = CallbackManager.Factory.create();
 
         fblogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(final LoginResult loginResult) {
                 Log.d("Facebook", "1");
-                progressBar1.setVisibility(View.VISIBLE);
-                fblogin.setVisibility(View.GONE);
+                if (!SigninActivity.this.isFinishing()) {
+
+                    dial3 = new AlertDialog.Builder(SigninActivity.this)
+                            .setTitle("Loading")
+                            .setMessage("Please wait!")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ActivityCompat.requestPermissions(SigninActivity.this,
+                                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                            MY_PERMISSIONS_REQUEST_LOCATION);
+                                }
+                            }).create();
+                    dial3.show();
+                }
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -188,7 +195,12 @@ public class SigninActivity extends AppCompatActivity {
                                 Log.v("LoginActivity", String.valueOf(loginResult.getAccessToken().getToken()));
                                 Log.d("fb_data", String.valueOf(object));
 
-                                try {// Application code
+                                try {
+                                    // Application code
+
+                                    progressBar1.setVisibility(View.VISIBLE);
+                                    fblogin.setVisibility(View.GONE);
+
 
                                     token = loginResult.getAccessToken().getToken();
                                     Log.d("access_string",token);
@@ -196,26 +208,18 @@ public class SigninActivity extends AppCompatActivity {
                                     name = object.getString("name");
                                     Log.d("FB NAME", name);
 
-                                    try {
-                                        email = object.getString("email");
-                                        Log.d("FB NAME", email);
-                                    }
-                                    catch(Exception e){
-                                        Log.d("exception", String.valueOf(e));
-                                    }
-
                                     nameSplit = name.trim().split("\\s+");
                                     Log.d("updatedata", nameSplit[0] + "," + nameSplit[1]);
 
                                     getSharedPreferences("fbdata", Context.MODE_PRIVATE).edit().
                                             putBoolean("fbloginned", true).apply();
                                     JSONObject json = new JSONObject();
+
                                     try {
                                         json.put("access_token", token);
                                         Log.d("access_token", String.valueOf(json));
-                                    }
-                                    catch(Exception e){
-                                        Log.d("exception", String.valueOf(e));
+                                    } catch(Exception e){
+                                        Log.d("exception", String.valueOf(e)+"1");
                                     }
 
                                     String url ="https://api.halanx.com/rest-auth/facebook/";
@@ -224,7 +228,6 @@ public class SigninActivity extends AppCompatActivity {
                                             @Override
                                             public void onResponse(JSONObject response) {
                                                 Log.d("responsedata", String.valueOf(response));
-
                                                 try {
                                                     token_key  = response.getString("key");
                                                     Log.d("token",token_key);
@@ -238,23 +241,21 @@ public class SigninActivity extends AppCompatActivity {
                                                     public void onResponse(JSONObject response) {
                                                         Log.d("response", String.valueOf(response));
                                                         startActivity(new Intent(SigninActivity.this, MapsActivity.class));
-                                                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                                                         getSharedPreferences("status", Context.MODE_PRIVATE).edit().putBoolean("first_login", true).apply();
-
                                                         finish();
+
                                                         getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
                                                                 putBoolean("Loginned", true).apply();
                                                         progressBar1.setVisibility(View.GONE);
                                                         fblogin.setVisibility(View.VISIBLE);
-
-
+                                                        dial3.dismiss();
                                                     }
                                                 }, new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        startActivity(new Intent(SigninActivity.this,RegisterActivity.class).putExtra("first_name",nameSplit[0]).putExtra("last_name",nameSplit[1]).putExtra("email",email));
-                                                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+                                                        dial3.dismiss();
 
+                                                        startActivity(new Intent(SigninActivity.this,RegisterActivity.class).putExtra("first_name",nameSplit[0]).putExtra("last_name",nameSplit[1]));
                                                     }
                                                 }){
                                                     @Override
@@ -271,9 +272,9 @@ public class SigninActivity extends AppCompatActivity {
                                         }, new Response.ErrorListener() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
-                                                Log.d("errordata", String.valueOf(error));
                                                 progressBar1.setVisibility(View.GONE);
                                                 fblogin.setVisibility(View.VISIBLE);
+                                                dial3.dismiss();
 
                                             }
                                         }){
@@ -290,6 +291,7 @@ public class SigninActivity extends AppCompatActivity {
                                         fblogin.setVisibility(View.VISIBLE);
 
 
+
                                     }
 
 
@@ -298,21 +300,19 @@ public class SigninActivity extends AppCompatActivity {
                                    // 01/31/1980 format
                                 } catch (JSONException e) {
                                     Log.d("Facebook", "4");
+
                                     Log.d("catch", e.toString());
                                     e.printStackTrace();
+                                    dial3.dismiss();
                                 }
                             }
 
                         });
 
                 Bundle parameters = new Bundle();
-
-                parameters.putString("fields", "id,name,email");
+                parameters.putString("fields", "id,name");
                 request.setParameters(parameters);
                 request.executeAsync();
-
-
-            //    Toast.makeText(SigninActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -332,6 +332,8 @@ public class SigninActivity extends AppCompatActivity {
                 // App code
                 Log.d("Facebook ex", exception + " " + exception.getCause());
                 Log.d("Facebook", "6");
+
+
                 progressBar1.setVisibility(View.GONE);
                 fblogin.setVisibility(View.VISIBLE);
 
@@ -406,11 +408,7 @@ public class SigninActivity extends AppCompatActivity {
                                                     putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
                                                     putBoolean("first_login", true).
                                                     putBoolean("Loginned", true).apply();
-
-                                            getSharedPreferences("status", Context.MODE_PRIVATE).edit().
-                                                    putBoolean("first_login", true).apply();
-
-
+                                                    getSharedPreferences("status", Context.MODE_PRIVATE).edit().putBoolean("first_login", true).apply();
 
                                         }
                                         catch (JSONException e) {

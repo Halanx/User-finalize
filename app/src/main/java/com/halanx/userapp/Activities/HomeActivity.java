@@ -114,7 +114,6 @@ public class HomeActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.halanx.userapp&hl=en"));
                             startActivity(intent);
-                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             dialog.dismiss();
                             finish();
                         }
@@ -346,12 +345,10 @@ public class HomeActivity extends AppCompatActivity
 
             //ADD ACCOUNT PAGE HERE
             startActivity(new Intent(HomeActivity.this, AccountActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         } else if (id == R.id.nav_order) {
 
             startActivity(new Intent(HomeActivity.this, OrdersActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
 //        } else if (id == R.id.nav_payment) {
@@ -360,31 +357,25 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_favourites) {
             startActivity(new Intent(HomeActivity.this, FavouritesActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
         } else if (id == R.id.nav_pts) {
             startActivity(new Intent(HomeActivity.this, Wallet.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
         } else if (id == R.id.nav_ref) {
             startActivity(new Intent(HomeActivity.this, ReferEarnActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         } else if (id == R.id.nav_shopper) {
             startActivity(new Intent(HomeActivity.this, BecomeShopperActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         } else if (id == R.id.nav_help) {
             startActivity(new Intent(HomeActivity.this, HelpActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         }
         else if (id == R.id.subscription) {
 
             startActivity(new Intent(HomeActivity.this, SubscriptionDrawerActivity.class));
-            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
         }
 
@@ -403,17 +394,11 @@ public class HomeActivity extends AppCompatActivity
             case R.id.imageButton_cart:
 
                 startActivity(new Intent(HomeActivity.this, CartActivity.class));
-                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
                 break;
 
-//            case R.id.mapstart:
-//                startActivity(new Intent(HomeActivity.this, MapsActivity.class));
-//                break;
-
             case R.id.imageButton_location:
                 startActivity(new Intent(HomeActivity.this, MapsActivity.class));
-                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 break;
 
 
@@ -536,21 +521,3 @@ public class HomeActivity extends AppCompatActivity
 
     }
 }
-
-
-/*
-public void showNotifiction(View v ){
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-    builder.setSmallIcon(R.drawable.logo);
-    builder.setContentTitle("HALANX");
-    builder.setContentText("DATA FOR NOTIFICATION");
-    Intent intent = new Intent(this,CLASS_AFTER_NOTIFICATION);
-    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-    stackBuilder.addParentStack(CLASS_AFTER_NOTIFICATION);
-    stackBuilder.addNextIntent(intent);
-    PendingIntent pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-    builder.setContentIntent(pendingIntent);
-    NotificationManager NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    NM.notify(0,builder.build());
-}
-*/

@@ -90,7 +90,6 @@ RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(RegisterActivity.this,SigninActivity.class));
-                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 finish();
             }
         });
@@ -101,7 +100,7 @@ RegisterActivity extends AppCompatActivity {
 
             inputFname.setText(getIntent().getStringExtra("first_name"));
             inputLname.setText(getIntent().getStringExtra("last_name"));
-            inputEmail.setText(getIntent().getStringExtra("email"));
+     //       inputEmail.setText(getIntent().getStringExtra("email"));
             passworddata.setVisibility(View.GONE);
 
 //            getAccess token by getintent.getStringExtra("access_token")
@@ -311,6 +310,7 @@ RegisterActivity extends AppCompatActivity {
             }
             try {
                 Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, "https://api.halanx.com/users/social/", jsonObject, new Response.Listener<JSONObject>() {
+
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("response data", String.valueOf(response));
@@ -324,7 +324,6 @@ RegisterActivity extends AppCompatActivity {
                             getSharedPreferences("status", Context.MODE_PRIVATE).edit().
                                     putBoolean("first_login", true).apply();
 
-
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
@@ -332,7 +331,6 @@ RegisterActivity extends AppCompatActivity {
                         btnOtpSubmit.setVisibility(View.VISIBLE);
                         pb.setVisibility(View.GONE);
                         startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-                        overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                         finish();
 
                         dialog.dismiss();
@@ -424,7 +422,6 @@ RegisterActivity extends AppCompatActivity {
                                 Log.i("TAG", String.valueOf(response));
                                 Log.i("TAG", "Info" + getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null));
                                 startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-                                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                                 finish();
 
 
@@ -470,7 +467,6 @@ RegisterActivity extends AppCompatActivity {
 
 
                     startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
-                    overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                     progressRegister.setVisibility(View.GONE);
                     finish();
 

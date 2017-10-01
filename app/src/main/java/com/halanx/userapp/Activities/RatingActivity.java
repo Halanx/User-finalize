@@ -102,7 +102,6 @@ public class RatingActivity extends AppCompatActivity {
                         public void onResponse(JSONObject response) {
                             Log.i("Rating_data", "Done");
                             startActivity(new Intent(RatingActivity.this,HomeActivity.class));
-                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             Toast.makeText(RatingActivity.this, "Thank you for your feedback", Toast.LENGTH_SHORT).show();
                             finish();
                         }

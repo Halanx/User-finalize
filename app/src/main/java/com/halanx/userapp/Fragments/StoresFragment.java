@@ -397,6 +397,7 @@ public class StoresFragment extends Fragment {
         JSONObject storeList;
         Context context;
         JSONObject data;
+
         TextView itemCount;
         String Image;
         JSONArray product_category;

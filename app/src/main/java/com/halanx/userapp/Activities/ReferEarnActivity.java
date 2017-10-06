@@ -57,7 +57,7 @@ public class ReferEarnActivity extends AppCompatActivity {
         String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
         UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
 
-        referal.setText(user.getMyreferalCode());
+  //      referal.setText(user.getMyreferalCode());
 
 
         JSONObject jsonObject = new JSONObject();

@@ -428,7 +428,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             try {
 
                 //TODO Below url is just for testing purpose, merchant needs to replace this with their server side hash generation url
-                URL url = new URL("http://ec2-34-208-169-55.us-west-2.compute.amazonaws.com/payment/payment.php");       //replace this
+                URL url = new URL("http://ec2-35-154-159-227.ap-south-1.compute.amazonaws.com/payment/payment.php");       //replace this
 
                 // get the payuConfig first
                 String postParam = postParams[0];

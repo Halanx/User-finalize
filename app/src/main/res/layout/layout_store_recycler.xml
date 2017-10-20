@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:background="@drawable/right_line"
+    android:padding="5dp"
+    android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:id="@+id/iv_store_logo"
+                android:src="@drawable/logochange"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="Store name"
+                android:textColor="#616161"
+                android:typeface="sans"
+                android:id="@+id/tv_store_name"
+                android:layout_margin="5dp"
+                android:lines="1"
+                android:gravity="center"/>
+            <TextView
+                android:typeface="sans"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_store_address"
+                android:layout_marginBottom="5dp"
+                android:textColor="#919191"
+                android:text="Store Address"
+                android:gravity="center"
+                android:lines="1"/>
+
+
+</LinearLayout>

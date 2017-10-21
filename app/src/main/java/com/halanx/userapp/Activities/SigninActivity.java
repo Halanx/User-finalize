@@ -248,12 +248,26 @@ public class SigninActivity extends AppCompatActivity {
                                                   //     getSharedPreferences("status", Context.MODE_PRIVATE).edit().putBoolean("first_login", true).apply();
                                                         finish();
 
-                                                        getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
-                                                                putBoolean("Loginned", true).apply();
-                                                        progressBar1.setVisibility(View.GONE);
-                                                        fblogin.setVisibility(View.VISIBLE);
-                                                        dial3.dismiss();
+
+                                                        try {
+                                                            Log.d("response", response.getJSONObject("user").getString("first_name"));
+
+
+                                                            getSharedPreferences("Login", Context.MODE_PRIVATE).edit().
+                                                                    putString("firstname", response.getJSONObject("user").getString("first_name")).
+                                                                    putString("email", response.getJSONObject("user").getString("email")).
+                                                                    putString("lastname", response.getJSONObject("user").getString("last_name")).
+                                                                    putString("UserInfo", String.valueOf(response)).putString("MobileNumber", mobile).
+                                                                    putBoolean("Loginned", true).apply();
+                                                            progressBar1.setVisibility(View.GONE);
+                                                            fblogin.setVisibility(View.VISIBLE);
+                                                            dial3.dismiss();
+                                                        }
+                                                        catch (Exception e){
+                                                            Log.d("exception",e.toString());
+                                                        }
                                                     }
+
                                                 }, new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {

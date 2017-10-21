@@ -161,7 +161,8 @@ public class HomeActivity extends AppCompatActivity
                 try {
                     user_id = response.getInt("id");
                     first_name = response.getJSONObject("user").getString("first_name");
-                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().putString("MobileNumber",response.getString("PhoneNo").trim());
+                    Log.d("mobilenumber",response.getString("PhoneNo"));
+                    getSharedPreferences("Login", Context.MODE_PRIVATE).edit().putString("MobileNumber",response.getString("PhoneNo").trim()).apply();
 
 
                     if (response.getString("Address")!="null"){
@@ -308,6 +309,7 @@ public class HomeActivity extends AppCompatActivity
         userImage = (ImageView) view.findViewById(R.id.userimage);
         String userInfo = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("UserInfo", null);
         UserInfo user = new GsonBuilder().create().fromJson(userInfo, UserInfo.class);
+
         nametv.setText("Hi " + getApplicationContext().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("firstname", null) + " !");
 
         Call<UserInfo> userCall = new Retrofit.Builder().baseUrl(djangoBaseUrl).addConverterFactory(GsonConverterFactory.

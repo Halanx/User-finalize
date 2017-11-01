@@ -24,6 +24,8 @@ import com.halanx.userapp.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,8 +81,6 @@ public class Wallet extends AppCompatActivity {
                 try {
                     json.put("ReferralCode",String.valueOf(promotionCode.getText()).trim());
                     Log.d("patchingdone",String.valueOf(promotionCode.getText()).trim());
-
-
 
                 Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.PATCH, uri, json, new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
@@ -166,8 +166,8 @@ public class Wallet extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    wallet_balance.setText(String.valueOf(response.get("AccountBalance")));
-                    bonus_balance.setText(String.valueOf(response.get("PromotionalBalance")));
+                    wallet_balance.setText(String.valueOf(BigDecimal.valueOf(response.getDouble("AccountBalance")).setScale(2, RoundingMode.HALF_UP).doubleValue()));
+                    bonus_balance.setText(String.valueOf(BigDecimal.valueOf(response.getDouble("PromotionalBalance")).setScale(2,RoundingMode.HALF_UP).doubleValue()));
                     if(!(String.valueOf(bonus_balance.getText()).trim().equals("0.0"))){
                         haveReferal.setText("Code Already Applied!");
                         haveReferal.setClickable(false);

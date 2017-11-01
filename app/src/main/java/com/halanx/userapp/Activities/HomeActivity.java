@@ -40,6 +40,7 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
+import com.halanx.userapp.Fragments.MainFragment;
 import com.halanx.userapp.Fragments.StoresFragment;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.CartItem;
@@ -93,7 +94,7 @@ public class HomeActivity extends AppCompatActivity
     static Boolean isaddress = false;
     static String address = " ";
     String token;
-
+    static double promotionalbalance;
 
     static String first_name;
     private static final String TAG = HomeActivity.class.getSimpleName();
@@ -103,7 +104,6 @@ public class HomeActivity extends AppCompatActivity
 
     List<CartItem> items;
     AppBarLayout barLayout;
-
     AlertDialog.Builder alertdialog;
 
     public static int storeID;
@@ -111,6 +111,7 @@ public class HomeActivity extends AppCompatActivity
     public static String storeLogo;
     public static int storePosition;
     public static String storeCat;
+    public static int position = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +164,7 @@ public class HomeActivity extends AppCompatActivity
                     first_name = response.getJSONObject("user").getString("first_name");
                     Log.d("mobilenumber",response.getString("PhoneNo"));
                     getSharedPreferences("Login", Context.MODE_PRIVATE).edit().putString("MobileNumber",response.getString("PhoneNo").trim()).apply();
-
+                    promotionalbalance = response.getDouble("PromotionalBalance");
 
                     if (response.getString("Address")!="null"){
                         isaddress = true;
@@ -188,20 +189,23 @@ public class HomeActivity extends AppCompatActivity
                 Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, djangoBaseUrl + "carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        try {
-                            cartId = response.getInt("id");
-                        } catch (JSONException e) {
+                        Log.d("response123", String.valueOf(response));
+                        try
+                        {
+                            cartId = response.getJSONObject("data").getInt("id");
+                        }
+                        catch (JSONException e) {
                             e.printStackTrace();
                         }
                         if(group_id!="null") {
-                            if (cartId == Integer.parseInt(group_id)) {
+                            if (cartId == Integer.parseInt(group_id))
+                            {
                                 role = "admin";
-                            } else {
+                            }
+                            else {
                                 role = "member";
                             }
                         }
-
-
                     }
                 }, new com.android.volley.Response.ErrorListener() {
                     @Override
@@ -259,12 +263,26 @@ public class HomeActivity extends AppCompatActivity
         cartItems = (RelativeLayout) findViewById(R.id.cartitems);
         itemCount = (TextView) findViewById(R.id.itemcount);
 
-        StoresFragment frg = new StoresFragment();
-        frg.passData(getApplicationContext(), itemCount);
-        android.support.v4.app.FragmentTransaction fragmentTransaction =
-                getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frag_container, frg);
-        fragmentTransaction.commit();
+        if (position==1||position==3) {
+
+            StoresFragment frg = new StoresFragment();
+            frg.passData(getApplicationContext(), itemCount);
+            android.support.v4.app.FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frag_container, frg);
+            fragmentTransaction.commit();
+
+        }
+        else if(position==2){
+            MainFragment frg = new MainFragment();
+            frg.passdata(itemCount, String.valueOf(StoresFragment.storesearchdata));
+            android.support.v4.app.FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frag_container, frg);
+            fragmentTransaction.commit();
+
+        }
+
 
         Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
                 .getUserCartItems(token);
@@ -318,6 +336,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                 UserInfo info = response.body();
+                Log.d("usercart1",String.valueOf(info.getgroupcart()));
                 cartid = info.getgroupcart();
                 Log.d("usercart1",String.valueOf(info.getgroupcart()));
 
@@ -407,6 +426,8 @@ public class HomeActivity extends AppCompatActivity
                     .withHoloShowcase()
                     .setStyle(R.style.CustomShowcaseTheme3)
                     .build();
+            sv.setButtonText("OK");
+
 
 
         }
@@ -422,15 +443,16 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(backPress==0){
+            if(position==1){
                 backPress++;
                 StoresFragment frg = new StoresFragment();
                 android.support.v4.app.FragmentTransaction fragmentTransaction =
                         getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frag_container, frg);
                 fragmentTransaction.commit();
+                position=3;
             }
-            else if(backPress==1){
+            else if(position==3){
                 super.onBackPressed();
                 finish();
             }
@@ -674,11 +696,11 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("GcmId", "Done");
+
             }
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
             }
         }){
             @Override
@@ -686,7 +708,6 @@ public class HomeActivity extends AppCompatActivity
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("Content-Type", "application/json");
                 Log.d("token",finalToken);
-
                 params.put("Authorization", finalToken);
                 return params;
             }

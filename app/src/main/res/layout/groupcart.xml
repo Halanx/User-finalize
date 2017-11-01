@@ -99,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="Create group order. Share your group ID with your friends, and let them add items, and then checkout once everyone is done "
+        android:text="Create group order.Get ₹ 20 H-Cash for each new friends on halanx."
         android:gravity="center_vertical"
         android:textSize="20dp"
         android:fontFamily="sans"

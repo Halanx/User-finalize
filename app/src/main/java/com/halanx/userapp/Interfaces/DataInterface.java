@@ -55,7 +55,6 @@ public interface DataInterface {
     Call<GroupItemPost> putGroupItemOnServer(@Body GroupItemPost cartItem, @Header("Authorization") String token);
 
 
-
     //Get cart details for order total etc
     @GET("/carts/detail/")
     Call<CartsInfo> getCartDetails(@Header("Authorization") String token);

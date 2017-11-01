@@ -534,7 +534,7 @@ public class SigninActivity extends AppCompatActivity {
                     final TextView tvResendOtp = (TextView) dialog.findViewById(R.id.resend);
 
                     final EditText otp = (EditText) dialog.findViewById(R.id.enterOTP);
-                    Button btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
+                    final Button btnOtpSubmit = (Button) dialog.findViewById(R.id.btnOTPsubmit);
                     TextView tvNumber = (TextView) dialog.findViewById(R.id.dialogue_number);
                     final ProgressBar pb = (ProgressBar) dialog.findViewById(R.id.pb);
                     final ProgressBar pbresend = (ProgressBar) dialog.findViewById(R.id.pbresend);
@@ -544,6 +544,9 @@ public class SigninActivity extends AppCompatActivity {
                     btnOtpSubmit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
+                            btnOtpSubmit.setVisibility(View.GONE);
+                            pb.setVisibility(View.VISIBLE);
 
                             String url = djangoBaseUrl +"users/loginotp/";
                             JSONObject json = new JSONObject();
@@ -592,7 +595,7 @@ public class SigninActivity extends AppCompatActivity {
                                                     Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, url, json, new com.android.volley.Response.Listener<JSONObject>() {
                                                         @Override
                                                         public void onResponse(JSONObject response) {
-                                                            Toast.makeText(getApplicationContext(), "Password change", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(getApplicationContext(), "Password successfully changed", Toast.LENGTH_SHORT).show();
                                                             dialog1.dismiss();
 
                                                         }
@@ -623,6 +626,8 @@ public class SigninActivity extends AppCompatActivity {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     Log.d("error", String.valueOf(error));
+                                    pb.setVisibility(View.GONE);
+                                    btnOtpSubmit.setVisibility(View.VISIBLE);
                                 }
                             }));
                         }

@@ -19,11 +19,13 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,8 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,6 +93,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     RelativeLayout group_layout;
     LinearLayout admin,member;
 
+    Switch onOffSwitch;
     AlertDialog dial3;
 
     String group_id;
@@ -103,7 +108,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     Boolean isgroupcart=false;
     String first_name;
+    TextView emptydata;
+    TextView xcash;
 
+    LinearLayout admin_empty;
+    TextView member_empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +123,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.build();
         client = retrofit.create(DataInterface.class);
+        onOffSwitch = (Switch) findViewById(R.id.xcash_onoff);
 
         ivMap = (ImageView) findViewById(R.id.iv_map);
         btDelAsap = (Button) findViewById(R.id.bt_delivery_asap);
@@ -121,6 +131,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         btAddDetails = (Button) findViewById(R.id.bt_address_details);
         btAddLocate = (TextView) findViewById(R.id.bt_address_locate);
         pb_orderdetails = (ProgressBar) findViewById(R.id.progressbarorderdetails);
+
+        admin_empty = (LinearLayout) findViewById(R.id.empty_cart_admin);
+        member_empty = (TextView) findViewById(R.id.empty_cart_member);
+
 
         btnDelivery = (Button) findViewById(R.id.details);
         order_detail_layout = (LinearLayout) findViewById(R.id.orderdetaillayout);
@@ -140,6 +154,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         final_detail = (LinearLayout) findViewById(R.id.confirm_detail);
 
         tax = (TextView) findViewById(R.id.tax);
+        xcash = (TextView) findViewById(R.id.xcash);
+
 
         btDelAsap.setOnClickListener(this);
         btDelSchedule.setOnClickListener(this);
@@ -199,7 +215,95 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-        final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
+        onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Log.d("status", String.valueOf(!b));
+
+                String url = djangoBaseUrl + "carts/detail/";
+                JSONObject obj = new JSONObject();
+                try {
+                    obj.put("ApplyCashback", b);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Volley.newRequestQueue(CartActivity.this).add(new JsonObjectRequest(Request.Method.PATCH, url, obj, new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+
+
+                        try {
+                            subtotal = String.valueOf(Float.parseFloat(String.valueOf(jsonObject.getJSONObject("data").getDouble("Total"))));
+
+                        Float getxcash = Float.parseFloat(String.valueOf(jsonObject.getDouble("xcash")));
+//                        Log.d("subtotal",String.valueOf(cart.getData().getTotal()));
+//                        Log.d("subtotal",String.valueOf(cart.getXcash()));
+
+
+                        if ((jsonObject.getJSONObject("data").getDouble("TotalWithExtras")-jsonObject.getDouble("xcash"))>0) {
+                            total = String.valueOf(Float.parseFloat(String.valueOf(jsonObject.getJSONObject("data").getDouble("TotalWithExtras")-jsonObject.getDouble("xcash"))));
+                        }
+                        else{
+                            total = "0.0";
+                        }
+                        taxes = String.valueOf(Float.parseFloat(String.valueOf(jsonObject.getJSONObject("data").getDouble("Taxes"))));
+                     //   Log.d("subtotal",cart.getData().getTaxes().toString());
+
+                        String del = String.valueOf(Float.parseFloat(String.valueOf(jsonObject.getJSONObject("data").getDouble("EstimatedDeliveryCharges"))));
+
+
+                        tvSubtotal.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(subtotal)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        tax.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(taxes)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        tvTotal.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(total)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        tvDelivery.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(del)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        xcash.setText("-"+String.valueOf(String.valueOf(BigDecimal.valueOf(Double.parseDouble(String.valueOf(getxcash))).setScale(3, RoundingMode.HALF_UP).doubleValue())));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Content-Type", "application/json");
+                        params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                        return params;
+                    }
+
+                });
+                final String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+                    Log.d("token",token);
+                    Call<CartsInfo> callCart = client.getCartDetails(token);
+                    callCart.enqueue(new Callback<CartsInfo>() {
+                        @Override
+                        public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
+                            CartsInfo cart = response.body();
+                            Log.d("response1", String.valueOf(cart));
+
+                            Log.d("subtotal",String.valueOf(cart.getData().getId()));
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<CartsInfo> call, Throwable t) {
+                            Log.d("errror", String.valueOf(t));
+
+                        }
+                    });
+            }
+
+        });
+
+
+    final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token","token1");
         Log.d("token",token);
         String url = djangoBaseUrl+"users/detail/";
         Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
@@ -207,6 +311,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             public void onResponse(JSONObject response) {
                 try {
                     Log.d("response",response.getString("GroupCart"));
+                    Log.d("responseabc", String.valueOf(response));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -230,7 +335,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
                                         if (!items.get(i).getRemovedFromCart()) {
                                             activeItems.add(items.get(i));
-
                                         }
                                     }
 
@@ -296,7 +400,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
          */
                                 sharingIntent.setType("text/plain");
                                 String shareBody ="Hey, "+ HomeActivity.first_name+" here. I have invited you for group order with group ID:"+
-                                        groupid.getText().toString()+" on Halanx. Please add items to cart, and I will pay on ur behalf.\n" +
+                                        groupid.getText().toString()+" on Halanx. Please add items to cart, and I will pay on ur behalf, and get ₹ 20 H-Cash\n" +
                                         "Download app: "+ "https://play.google.com/store/apps/details?id=com.halanx.userapp ";
 
                                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Halanx : Grocery and Food delivery");
@@ -311,88 +415,79 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         call.enqueue(new Callback<List<CartItem>>() {
                             @Override
                             public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
-                                Log.d("Response", String.valueOf(response));
 
-                                List<CartItem> items = response.body();
-                                role = HomeActivity.role;
-                                Log.d("role",HomeActivity.role);
+                                Log.d("Response", String.valueOf(response.message()));
+try {
+    List<CartItem> items = response.body();
+    Log.d("data", String.valueOf(items));
+    role = HomeActivity.role;
+    Log.d("role", HomeActivity.role);
+    if (role.equals("admin")) {
+        if (!items.isEmpty()) {
 
-                                if(role.equals("admin")) {
+            activeItems = new ArrayList<>();
+            for (int i = 0; i < items.size(); i++) {
 
-                                    if (!items.isEmpty()) {
+                if (!items.get(i).getRemovedFromCart()) {
+                    activeItems.add(items.get(i));
+                }
+            }
+            //Displaying carts
+            Log.d("TAG", "If");
+            progressBar.setVisibility(View.INVISIBLE);
+            recyclerView = (RecyclerView) findViewById(R.id.cart_recycler_view);
+            adapterTemp = new CartsAdapter(activeItems, getApplicationContext(), true);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setAdapter(adapterTemp);
+            recyclerView.setLayoutManager(layoutManager);
 
-                                        activeItems = new ArrayList<>();
-                                        for (int i = 0; i < items.size(); i++) {
+        }
+        else
+            {
+                progressBar.setVisibility(View.INVISIBLE);
+                admin_empty.setVisibility(View.VISIBLE);
+                btnDelivery.setVisibility(View.GONE);
+        }
+    } else if (role.equals("member")) {
+        if (!items.isEmpty()) {
+        Log.d("myself", "If");
+        activeItems = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getAddedBy() != null)
+                if ((!items.get(i).getRemovedFromCart()) && (items.get(i).getAddedBy().getId() == HomeActivity.user_id)) {
+                    activeItems.add(items.get(i));
+                }
+        }
 
-                                            if (!items.get(i).getRemovedFromCart()) {
-                                                activeItems.add(items.get(i));
+        btnDelivery.setVisibility(View.GONE);
+        //Displaying carts
+        Log.d("TAG", "If");
+        progressBar.setVisibility(View.INVISIBLE);
+        recyclerView = (RecyclerView) findViewById(R.id.cart_recycler_view);
+        adapterTemp = new CartsAdapter(activeItems, getApplicationContext(), true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
 
-                                            }
-                                        }
-
-                                        //Displaying carts
-                                        Log.d("TAG", "If");
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        recyclerView = (RecyclerView) findViewById(R.id.cart_recycler_view);
-                                        adapterTemp = new CartsAdapter(activeItems, getApplicationContext(), true);
-                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-
-                                        recyclerView.setAdapter(adapterTemp);
-                                        recyclerView.setLayoutManager(layoutManager);
-                                    }
-                                    else
-                                    {
-                                        progressBar.setVisibility(View.INVISIBLE);
-
-                                    }
-                                }
-                                else if(role.equals("member")){
-
-                                    Log.d("myself", "If");
-
-                                    activeItems = new ArrayList<>();
-                                    for (int i = 0; i < items.size(); i++) {
-                                        if(items.get(i).getAddedBy()!=null)
-                                            if ((!items.get(i).getRemovedFromCart())&&(items.get(i).getAddedBy().getId()==HomeActivity.user_id)) {
-                                                activeItems.add(items.get(i));
-
-                                            }
-                                    }
-
-                                    btnDelivery.setVisibility(View.GONE);
-                                    //Displaying carts
-                                    Log.d("TAG", "If");
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    recyclerView = (RecyclerView) findViewById(R.id.cart_recycler_view);
-                                    adapterTemp = new CartsAdapter(activeItems, getApplicationContext(), true);
-                                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-
-                                    recyclerView.setAdapter(adapterTemp);
-                                    recyclerView.setLayoutManager(layoutManager);
-
-                                }
-                                else if(items.isEmpty()) {
-                                    if (!CartActivity.this.isFinishing()) {
-
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        alertBuilder = new AlertDialog.Builder(CartActivity.this);
-                                        alertBuilder.setMessage("You have no items in your carts!");
-                                        alertBuilder.setCancelable(false);
-
-                                        alertBuilder.setPositiveButton(
-                                                "Go back",
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int id) {
-                                                        finish();
-                                                    }
-                                                });
-
-
-                                        alert = alertBuilder.create();
-                                        alert.show();
-
-                                    }
-                                }
+        recyclerView.setAdapter(adapterTemp);
+        recyclerView.setLayoutManager(layoutManager);
+        }
+        else
+        {
+            progressBar.setVisibility(View.INVISIBLE);
+            member_empty.setVisibility(View.VISIBLE);
+            btnDelivery.setVisibility(View.GONE);
+        }
+    } else if (items.isEmpty()) {
+        if (!CartActivity.this.isFinishing()) {
+            progressBar.setVisibility(View.INVISIBLE);
+            if (role.equals("admin")) {
+                admin_empty.setVisibility(View.VISIBLE);
+            }else if (role.equals("member")) {
+            }
+            }
+    }
+}catch (Exception e){
+    Log.e("error",e.toString());
+}
                             }
                             @Override
                             public void onFailure(Call<List<CartItem>> call, Throwable t) {
@@ -722,46 +817,54 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
 
-                String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
+                final String token = getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null);
                 Log.d("token",token);
                 Call<CartsInfo> callCart = client.getCartDetails(token);
                 callCart.enqueue(new Callback<CartsInfo>() {
                     @Override
                     public void onResponse(Call<CartsInfo> call, Response<CartsInfo> response) {
                         CartsInfo cart = response.body();
+                        Log.d("response1", String.valueOf(cart));
 
-                        Log.d("subtotal",cart.getSubtotal().toString());
-                        subtotal = cart.getSubtotal().toString();
-                        total = cart.getTotal().toString();
-                        taxes = cart.getTaxes().toString();
-                        Log.d("subtotal",cart.getTaxes().toString());
+                        onOffSwitch.setChecked(cart.getData().getXcash_onoff());
 
-                        String del = cart.getDeliveryCharges().toString();
-                        tvSubtotal.setText(subtotal);
-                        tax.setText(taxes);
-                        tvTotal.setText(total);
-                        tvDelivery.setText(del);
+                        Log.d("subtotal",String.valueOf(cart.getXcash()));
+                        subtotal = String.valueOf(Float.parseFloat(String.valueOf(cart.getData().getSubtotal())));
+                        Float getxcash = Float.parseFloat(cart.getXcash().toString());
+                        Log.d("subtotal",String.valueOf(cart.getData().getTotal()));
+                        Log.d("subtotal",String.valueOf(cart.getXcash()));
 
+
+
+                        if ((cart.getData().getTotal()-getxcash)>0) {
+                            total = String.valueOf(Float.parseFloat(String.valueOf(cart.getData().getTotal()-getxcash)));
+                        }
+                        else{
+                            total = "0.0";
+                        }
+                        taxes = String.valueOf(Float.parseFloat(cart.getData().getTaxes().toString()));
+                        Log.d("subtotal",cart.getData().getTaxes().toString());
+
+
+                        String del = String.valueOf(Float.parseFloat(cart.getData().getDeliveryCharges().toString()));
+                        tvSubtotal.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(subtotal)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        tax.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(taxes)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        tvTotal.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(total)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        tvDelivery.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(del)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
+                        xcash.setText("-"+String.valueOf(String.valueOf(BigDecimal.valueOf(Double.parseDouble(String.valueOf(getxcash))).setScale(3, RoundingMode.HALF_UP).doubleValue())));
                         pb_orderdetails.setVisibility(View.GONE);
                         order_detail_layout.setVisibility(View.VISIBLE);
-
                     }
 
                     @Override
                     public void onFailure(Call<CartsInfo> call, Throwable t) {
                         Log.d("errror", String.valueOf(t));
-
                     }
                 });
-
-
-
-
                 Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
                 Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
 
                 if (final_detail.getVisibility() == View.GONE) {
-
                     final_detail.startAnimation(slideUp);
                     final_detail.setVisibility(View.VISIBLE);
                     detailslayout.setVisibility(View.GONE);
@@ -790,6 +893,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+
+
+
 }
 
 

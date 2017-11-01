@@ -68,7 +68,7 @@ public class StoresFragment extends Fragment {
     JSONObject json;
     JSONArray array;
     String mob;
-    JSONArray storesearchdata;
+    public static JSONArray storesearchdata;
     View v_top;
 
     public StoresFragment() {
@@ -104,6 +104,7 @@ public class StoresFragment extends Fragment {
 
             }
         });
+        HomeActivity.position=1;
 //        final EditText searchPlate = (EditText) svstore.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 //        searchPlate.setHint("Search Products");
 //        View searchPlateView = svstore.findViewById(android.support.v7.appcompat.R.id.search_plate);
@@ -118,6 +119,7 @@ public class StoresFragment extends Fragment {
                         list.setVisibility(View.VISIBLE);
                         searchtext.setVisibility(View.GONE);
                     }
+
 
                 } else {
                     list.setVisibility(View.GONE);
@@ -255,7 +257,7 @@ public class StoresFragment extends Fragment {
 
 
 
-        HomeActivity.backPress = 1;
+        HomeActivity.position = 3;
 
         pbFood.setVisibility(View.VISIBLE);
         pbGrocery.setVisibility(View.VISIBLE);

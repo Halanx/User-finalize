@@ -3,39 +3,12 @@
 
     <item
         is-multidex="true"
-        jar="/Users/Nishant/.android/build-cache/38e18afc05b23b5752e21d11efe02c085107de70/output/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="02b7a61928ee1437d94beb1e1139253b0650ef4d">
-        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_e1c208b0a4d547252798592759a6efb30da53cc1/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/Nishant/.android/build-cache/867187099cc0a99bc8f281449ae2da9a1f7bfcab/output/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="4d54bca94a9d57520efa2934a9eb57a4cae3f889">
-        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_44f3f3476617920a2064bfb29a0f565c1d04a738/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="a2dc05b4bd461247d46bb5f0f9f9d0e9e8bcca8e">
+        sha1="22d733c7cf00bbe219618721f22b0547a872cb4e">
         <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_4bd94487a4353fa89aed7f9d4f5717e63000fb3f/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/Nishant/.android/build-cache/3b9c7ac59456c92c496971a8b5b466f7de7174a1/output/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="b7c43c8ddfc4ae2091a33f2882927bb4e3e2fee2">
-        <dex dex="/Users/Nishant/Desktop/Halanx-User-Done/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_3cf89f1a15591319c5338aadeb8bcd5f60d7a905/classes.dex" />
     </item>
     <item
         is-multidex="true"

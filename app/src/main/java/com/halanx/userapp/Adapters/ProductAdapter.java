@@ -202,7 +202,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                cartId = response.getInt("id");
+                                cartId = response.getJSONObject("data").getInt("id");
 
 
                                 final String token = c.getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", "token1");
@@ -403,9 +403,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 Intent intent = new Intent(c, ItemDisplayActivity.class);
                 intent.putExtra("Name", products.get(position).getProductName());
                 intent.putExtra("Price", products.get(position).getPrice());
-                intent.putExtra("Features", products.get(position).getFeatures());
+                intent.putExtra("Features", String.valueOf(products.get(position).getFeatures()));
                 intent.putExtra("Image", products.get(position).getProductImage());
                 intent.putExtra("ID", products.get(position).getId());
+
                 c.startActivity(intent);
             }
         });

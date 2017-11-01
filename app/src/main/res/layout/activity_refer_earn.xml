@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:typeface="sans"
         android:layout_margin="15dp"
-        android:text="Get cashback and points when your friend purchases the first time."
+        android:text="Get ₹ 25 H-Cash when your friend purchases the first time."
         android:gravity="center"
         android:textSize="25sp"/>
 

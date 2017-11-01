@@ -95,6 +95,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
             String message = json.getString("type").trim();
+            String amount  = json.getString("amount").trim();
 
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
@@ -134,6 +135,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         piResulta = PendingIntent.getActivity(this,
                                 (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                    }
+                    else if(message.equals("CB")){
+
+                        notification_mssg = "You have received ₹ "+amount+" H-Cash";
+                        Intent resultIntenta = new Intent(this, HomeActivity.class);
+
+                        resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        piResulta = PendingIntent.getActivity(this,
+                                (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+
                     }
 
                 // app is in foreground, broadcast the push message
@@ -201,6 +213,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     piResulta = PendingIntent.getActivity(this,
                             (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
                 }
+                else if(message.equals("CB")){
+
+                    notification_mssg = "You have received ₹ "+amount+" H-Cash";
+                    Intent resultIntenta = new Intent(this, HomeActivity.class);
+                    resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    piResulta = PendingIntent.getActivity(this,
+                            (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+
+
+                }
+
             }
 
 // Assign big picture notification

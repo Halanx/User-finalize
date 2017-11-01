@@ -1,0 +1,119 @@
+package com.halanx.userapp.POJO;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class byData {
+
+    //check
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("Total")
+    @Expose
+    private Double subtotal;
+    @SerializedName("TotalWithExtras")
+    @Expose
+    private Double total;
+    @SerializedName("UserPhone")
+    @Expose
+    private Double userPhone;
+    @SerializedName("EstimatedDeliveryCharges")
+    @Expose
+    private Double deliveryCharges;
+    @SerializedName("timestamp")
+    @Expose
+    private String timestamp;
+    @SerializedName("Active")
+    @Expose
+    private Boolean active;
+    @SerializedName("Username")
+    @Expose
+    private Integer username;
+    @SerializedName("Taxes")
+    @Expose
+    private Double taxes;
+
+    @SerializedName("ApplyCashback")
+    @Expose
+    private Boolean xcash_onoff;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    public Double getSubtotal() {
+        return subtotal;
+    }
+
+
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public Double getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(Double userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public Double getDeliveryCharges() {
+        return deliveryCharges;
+    }
+
+    public void setDeliveryCharges(Double deliveryCharges) {
+        this.deliveryCharges = deliveryCharges;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Integer getUsername() {
+        return username;
+    }
+
+    public void setUsername(Integer username) {
+        this.username = username;
+    }
+
+    public Double getTaxes() {
+        return taxes;
+    }
+
+    public void setTaxes(Double taxes) {
+        this.taxes = taxes;
+    }
+
+    public Boolean getXcash_onoff() {
+        return xcash_onoff;
+    }
+
+}

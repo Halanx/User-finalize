@@ -17,6 +17,8 @@ import com.halanx.userapp.POJO.CartItem;
 import com.halanx.userapp.POJO.OrderInfo;
 import com.halanx.userapp.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +49,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.CompletedO
     public void onBindViewHolder(final CompletedOrdersHolder holder, int position) {
 
 
-        String orderTotal = Double.toString(info.get(position).getTotal());
+        String orderTotal = String.valueOf(Float.parseFloat(String.valueOf(info.get(position).getTotal())));
 
         final String orderId = info.get(position).getId().toString();
         holder.orderNo.setText(orderId);
-        holder.orderTotal.setText(orderTotal);
+        holder.orderTotal.setText(String.valueOf(BigDecimal.valueOf(Double.parseDouble(orderTotal)).setScale(3, RoundingMode.HALF_UP).doubleValue()));
 
         List<CartItem> cartItems = info.get(position).getOrderItems();
         ProductRecycler rvAdapter = new ProductRecycler(cartItems);

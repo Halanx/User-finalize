@@ -1,5 +1,6 @@
 package com.halanx.userapp.Activities;
 
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -167,31 +169,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
                     String trans_id = null;
 
-//                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, djangoBaseUrl +"carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
-//                        @Override
-//                        public void onResponse(JSONObject response) {
-//                            try {
-//                                cartId = response.getInt("id");
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                        }
-//                    }, new com.android.volley.Response.ErrorListener() {
-//                        @Override
-//                        public void onErrorResponse(VolleyError error) {
-//
-//                        }
-//                    }){
-//                        @Override
-//                        public Map<String, String> getHeaders() throws AuthFailureError {
-//                            Map<String, String> params = new HashMap<String, String>();
-//                            params.put("Content-Type", "application/json");
-//                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
-//                            return params;
-//                        }
-//
-//                    });
 
                     if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
                         order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id,Double.parseDouble(total),true);
@@ -220,12 +197,24 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
 //                        Toast.makeText(PaymentActivity.this, "Order Placed", Toast.LENGTH_SHORT).show();
 
-                            pd.setTitle("Order placed!");
-                            pd.setMessage("You can review your order in orders.");
                             pd.dismiss();
+                            final Dialog dialog = new Dialog(PaymentActivity.this);
+                            dialog.setContentView(R.layout.dialog_order);
+                            dialog.show();
 
-                            startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
-                            finish();
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialog.dismiss();
+                                    startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                                    finish();
+                                }
+                            },2000);
+
+
+
+
 
                         }
 

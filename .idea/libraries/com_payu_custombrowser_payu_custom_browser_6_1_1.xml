@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="com.payu.custombrowser:payu-custom-browser-6.1.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/caches/transforms-1/files-1.1/payu-custom-browser-6.1.1.aar/467b2d237c3ca07b8693c87e15c381b5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/caches/transforms-1/files-1.1/payu-custom-browser-6.1.1.aar/467b2d237c3ca07b8693c87e15c381b5/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/caches/modules-2/files-2.1/com.payu.custombrowser/payu-custom-browser/6.1.1/2026bb4bb7a3ec5339d5a8607207e2db1eacebc/payu-custom-browser-6.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

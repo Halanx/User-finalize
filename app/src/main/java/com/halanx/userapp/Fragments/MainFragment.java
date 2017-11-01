@@ -127,6 +127,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         categories_Recycler.setHasFixedSize(true);
 
 
+        HomeActivity.position=1;
         svProducts = (SearchView) view.findViewById(R.id.sv_products);
 
         svProducts.setOnClickListener(new View.OnClickListener() {

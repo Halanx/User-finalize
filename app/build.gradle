@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.halanx.userapp"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 104
-        versionName "5.7"
+        versionCode 118
+        versionName "7.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -34,6 +34,7 @@ repositories {
         url "https://jitpack.io"
     }
     mavenCentral()
+    google()
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

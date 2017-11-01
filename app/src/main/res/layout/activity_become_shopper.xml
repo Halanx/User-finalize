@@ -86,11 +86,12 @@
           android:layout_height="wrap_content"
           android:padding="10dp"
           android:text="Download Now"
-          android:background="#b6413f"
+          android:background="@color/dark_red"
           android:typeface="sans"
           android:textColor="#fafafa"
           android:textStyle="bold"
           android:gravity="center"
+          android:id="@+id/download"
           android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"/>
 
 

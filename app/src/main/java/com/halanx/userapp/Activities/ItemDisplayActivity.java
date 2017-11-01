@@ -1,6 +1,7 @@
 package com.halanx.userapp.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.halanx.userapp.Interfaces.DataInterface;
 import com.halanx.userapp.POJO.CartItem;
 import com.halanx.userapp.POJO.CartItemPost;
+import com.halanx.userapp.POJO.GroupItemPost;
 import com.halanx.userapp.POJO.UserInfo;
 import com.halanx.userapp.R;
 import com.squareup.picasso.Picasso;
@@ -39,6 +42,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.halanx.userapp.Activities.HomeActivity.itemCount;
+import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
 import static com.halanx.userapp.GlobalAccess.testUrl;
 
 
@@ -66,7 +70,10 @@ public class ItemDisplayActivity extends AppCompatActivity {
     DataInterface client;
     Boolean group_member;
     String groupid;
+    View desline;
 
+    TextView description;
+    LinearLayout desc_layout;
 
 
 
@@ -79,7 +86,7 @@ public class ItemDisplayActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
         mobileNumber = sharedPreferences.getString("MobileNumber", null);
 
-        builder = new Retrofit.Builder().baseUrl(testUrl).
+        builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
                 addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.build();
 
@@ -91,15 +98,15 @@ public class ItemDisplayActivity extends AppCompatActivity {
         call.enqueue(new Callback<com.halanx.userapp.POJO.UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                Log.d("groupcart",String.valueOf(response.body().getgroupcart()));
 
-                if (String.valueOf(response.body().getgroupcart()).equals(null)){
+                if (String.valueOf(response.body().getgroupcart()).equals("null")){
                     group_member =false;
                 }
                 else{
                     group_member = true;
                     groupid = response.body().getgroupcart();
                 }
-
 
             }
 
@@ -131,9 +138,14 @@ public class ItemDisplayActivity extends AppCompatActivity {
         cart = (Button) findViewById(R.id.bt_add_to_cart);
         iv_fav = (ImageView) findViewById(R.id.imgFav);
 
+        description = (TextView) findViewById(R.id.description);
+        HomeActivity.position=2;
+
+        desc_layout= (LinearLayout) findViewById(R.id.desc_layout);
         iv_productImage = (ImageView) findViewById(R.id.product_image);
         tv_productName = (TextView) findViewById(R.id.item_name);
         tv_productPrice = (TextView) findViewById(R.id.item_price);
+        desline = findViewById(R.id.description_line);
 
         if (!(productImage.isEmpty())) {
             Picasso.with(getApplicationContext()).load(productImage).into(iv_productImage);
@@ -141,6 +153,12 @@ public class ItemDisplayActivity extends AppCompatActivity {
             Picasso.with(getApplicationContext()).load(R.drawable.fav_48).into(iv_productImage);
         }
 
+        Log.d("datafeature",String.valueOf(productFeatures));
+        if (!String.valueOf(productFeatures).isEmpty()){
+            description.setText(productFeatures);
+            desline.setVisibility(View.VISIBLE);
+            desc_layout.setVisibility(View.VISIBLE);
+        }
         tv_productName.setText(productName);
         String price = "₹ " + Double.toString(productPrice);
         tv_productPrice.setText(price);
@@ -229,7 +247,6 @@ public class ItemDisplayActivity extends AppCompatActivity {
                 if (option.equals("1")) {
                 } else {
                 }
-
             }
         }, new com.android.volley.Response.ErrorListener() {
             @Override
@@ -251,14 +268,15 @@ public class ItemDisplayActivity extends AppCompatActivity {
 
     void addCartItem() {
 
-
+        Log.d("groupmember", String.valueOf(group_member));
         if (!group_member) {
+            Log.d("enter","enter");
 
             Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "" + testUrl + "/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        cartId = response.getInt("id");
+                        cartId = response.getJSONObject("data").getInt("id");
 
 
                         final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", "token1");
@@ -308,8 +326,6 @@ public class ItemDisplayActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -332,5 +348,67 @@ public class ItemDisplayActivity extends AppCompatActivity {
             });
 
         }
+        else{
+
+            // GROUP CART
+
+            final String token = getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", "token1");
+            Log.d("token", token);
+            Log.d("dataitems", String.valueOf(val)+","+productID);
+            GroupItemPost item = new GroupItemPost(Double.parseDouble(val), productID, null);
+
+
+            Call<GroupItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putGroupItemOnServer(item, token);
+            call.enqueue(new Callback<GroupItemPost>() {
+                @Override
+                public void onResponse(Call<GroupItemPost> call, Response<GroupItemPost> response) {
+
+                    Log.d("done", String.valueOf(groupid));
+
+                    add_cart.setVisibility(View.GONE);
+                    cart.setVisibility(View.VISIBLE);
+                    cart.setText("Added to cart");
+
+                    Call<List<CartItem>> callItems = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class)
+                            .getUserCartItems(token);
+                    callItems.enqueue(new Callback<List<CartItem>>() {
+                        @Override
+                        public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                            List<CartItem> items = response.body();
+
+
+                            Log.d("items", String.valueOf(items));
+
+                            if (items != null && items.size() > 0) {
+                                //Accesss views?
+                                Log.d("itemcount", String.valueOf(items.size()));
+                                HomeActivity.cartItems.setVisibility(View.VISIBLE);
+                                itemCount.setText(String.valueOf(items.size()));
+
+                            } else {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<CartItem>> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<GroupItemPost> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(ItemDisplayActivity.this, HomeActivity.class));
+        HomeActivity.position =2;
     }
 }

@@ -6,9 +6,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context="com.halanx.userapp.Activities.RegisterActivity">
 
-<LinearLayout
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/logochange"/>
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -17,8 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginRight="15dp">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -178,8 +184,6 @@
             <!--android:textStyle="bold"-->
             <!--android:visibility="gone" />-->
 
-
-
        <!--<TextView-->
         <!--android:id="@+id/textView9"-->
         <!--android:layout_width="wrap_content"-->
@@ -209,10 +213,10 @@
 
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:typeface="sans"
+        android:gravity="center"
         android:layout_marginTop="25dp"
         android:text="* Terms And Conditions Apply" />
 

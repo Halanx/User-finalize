@@ -7,12 +7,11 @@ android {
         applicationId "com.halanx.userapp"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 118
-        versionName "7.1"
+        versionCode 131
+        versionName "8.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -25,7 +24,6 @@ android {
     productFlavors {
     }
 }
-
 repositories {
     maven {
         url "https://raw.github.com/PayU/paytouch-android/mvn-repo/"
@@ -51,6 +49,7 @@ dependencies {
     compile project(':sdkui')
     //  compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'devs.mulham.horizontalcalendar:horizontalcalendar:1.1.7'
+   
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'
     compile 'com.facebook.android:facebook-android-sdk: 4.14.0'
@@ -68,6 +67,10 @@ dependencies {
     compile 'com.github.alamkanak:android-week-view:1.2.6'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
     compile 'com.android.volley:volley:1.0.0'
+    compile ('io.socket:socket.io-client:0.8.3') {
+        exclude group: 'org.json', module: 'json'
+    }
+
     compile 'com.github.kanytu:android-parallax-recyclerview:v1.7'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'

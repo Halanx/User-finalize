@@ -136,7 +136,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
             holder.favName.setText(favPros.get(position).getProductName());
             Picasso.with(FavouritesActivity.this).load(favPros.get(position).getProductImage()).into(holder.favImage);
-            String price = "Rs. " + favPros.get(position).getPrice();
+            String price = "₹ " + favPros.get(position).getPrice();
             holder.favPrice.setText(price);
 
             holder.rvInc.setOnClickListener(new View.OnClickListener() {

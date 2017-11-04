@@ -53,10 +53,14 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,6 +100,8 @@ public class HomeActivity extends AppCompatActivity
     String token;
     static double promotionalbalance;
 
+    io.socket.client.Socket socket;
+
     static String first_name;
     private static final String TAG = HomeActivity.class.getSimpleName();
     private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -113,10 +119,86 @@ public class HomeActivity extends AppCompatActivity
     public static String storeCat;
     public static int position = 1;
 
+   //   { try { mSocket = IO.socket("Socket.IO Chat Example"); } catch (URISyntaxException e) {} } @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); mSocket.connect(); }
+
+    private io.socket.client.Socket mSocket;;
+
+
+    {
+        try {
+            mSocket = IO.socket("https://api.halanx.com/node/sockets/test/");
+        } catch (URISyntaxException e) {
+            Log.d("error",e.toString());
+        }
+    }
+    private io.socket.emitter.Emitter.Listener onNewMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+
+                    Log.d("socketmessage", String.valueOf(data));
+                    String username;
+                    String message;
+                    try {
+                        username = data.getString("username");
+                        message = data.getString("message");
+                    } catch (JSONException e) {
+                        return;
+                    }
+
+                    // add the message to view
+                    Log.d("socketmessage",message+"     "+username);
+                }
+            });
+        }
+    };
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      //  mSocket.on("new message", onNewMessage);
+      //  mSocket.connect();
+
         setContentView(R.layout.activity_home);
+
+
+        try {
+            socket = IO.socket("https://api.halanx.com/node/sockets/test/");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                socket.emit("foo", "hi");
+                Log.d("messages","data");
+                socket.disconnect();
+            }
+
+        }).on("event", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.d("messages","data");
+            }
+
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {}
+
+        });
+        socket.connect();
+        Log.d("connectionstatus", String.valueOf(socket.connected()))
+
+
 
         barLayout = (AppBarLayout) findViewById(R.id.app_bar);
 
@@ -434,7 +516,50 @@ public class HomeActivity extends AppCompatActivity
         getSharedPreferences("status", Context.MODE_PRIVATE).edit().
                 putBoolean("first_login", false).apply();
 
+
+        ////////////////  SOCKET IO CONNECTION  ////////////////////
+
+
+
+//        Client socket = new Client("https://api.halanx.com/node/sockets/test/", 80);
+//        // port kon sa haai ? ab kr call kr error h call me
+//        socket.setClientCallback(new Client.ClientCallback () {
+//            @Override
+//            public void onMessage(String message) {
+//
+//            }
+//
+//            @Override
+//            public void onConnect(java.net.Socket socket) {
+//
+//                Log.d("connect","connected");
+//
+//            }
+//            // run kr ?? wait
+//            // error aaya hua h
+//
+//            @Override
+//            public void onDisconnect(java.net.Socket socket, String message) {
+//
+//                Log.d("disconnect",message);
+//            }
+//
+//            @Override
+//            public void onConnectError(java.net.Socket socket, String message) {
+//
+//                Log.d("error",message);
+//            }
+//        });
+//
+//        socket.connect();
+
+
+
+
+        Log.d("connection", String.valueOf(mSocket.connected()));
     }
+
+
 
 
     @Override

@@ -36,9 +36,7 @@
                     android:id="@+id/sv_products"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:focusableInTouchMode="true"
-                    app:floatingSearch_searchHint="Search..."
-                    app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
+                    app:floatingSearch_searchHint="Search..."/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -183,6 +181,17 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No results found"
+                android:textSize="25dp"
+                android:fontFamily="sans"
+                android:gravity="center"
+                android:visibility="gone"
+                android:id="@+id/noresult"
+                />
 
         </RelativeLayout>
             </LinearLayout>

@@ -95,10 +95,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
             String message = json.getString("type").trim();
-            String amount  = json.getString("amount").trim();
+            try {
+            }
+            catch(Exception e){
+                Log.e("error",e.toString());
+            }
 
+            if (message.equals("BatchAccepted")) {
+                String batch_id = json.getString("BatchId").trim();
+                String shopper_id = json.getString("ShopperId").trim();
+                Log.d("batch_id", message);
+                getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("BatchID", batch_id).apply();
+                getSharedPreferences("BatchData", Context.MODE_PRIVATE).edit().putString("ShopperID", shopper_id).apply();
 
-            if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+                getSharedPreferences("OrderStatus", MODE_PRIVATE).edit().putBoolean("BatchAccept", true).apply();
+
+                notification_mssg = "Your order on the way";
+                Intent resultIntenta = new Intent(this, OrdersActivity.class);
+
+                resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                );
+                piResulta = PendingIntent.getActivity(this,
+                        (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+            }
+            else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                     if (message.equals("InsufficientBalance1")) {
 
                     notification_mssg = "Insufficient balance in wallet. Please add money to continue delivery.";
@@ -137,6 +157,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
                     }
                     else if(message.equals("CB")){
+                        String amount = json.getString("amount").trim();
+
 
                         notification_mssg = "You have received ₹ "+amount+" H-Cash";
                         Intent resultIntenta = new Intent(this, HomeActivity.class);
@@ -214,6 +236,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
                 }
                 else if(message.equals("CB")){
+
+                    String amount = json.getString("amount").trim();
 
                     notification_mssg = "You have received ₹ "+amount+" H-Cash";
                     Intent resultIntenta = new Intent(this, HomeActivity.class);

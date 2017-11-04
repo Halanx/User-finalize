@@ -11,9 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,11 +43,10 @@
                     android:text=""></TextView>
 
 
-
                 <LinearLayout
                     android:id="@+id/linearLayout1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="179dp"
                     android:background="@drawable/round_rect_shape"
                     android:orientation="vertical"
                     android:weightSum="3">
@@ -72,8 +68,6 @@
                     <!--android:background="#00000000"-->
                     <!-->-->
                     <!--</EditText>-->
-
-
 
 
                     <!--</LinearLayout>-->
@@ -102,20 +96,19 @@
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_weight="5"
-
                             android:textColorHint="#9e9e9e">
+
                             <android.support.design.widget.TextInputEditText
                                 android:id="@+id/edit_text_card_number"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:maxLength="19"
-                                android:inputType="number"
                                 android:background="#00000000"
                                 android:digits="01234 56789"
+                                android:hint="@string/card_number_format"
+                                android:inputType="number"
+                                android:maxLength="19"
                                 android:textColorHint="#ff0000"
-                                android:textSize="15sp"
-                                android:hint="@string/card_number_format">
-                            </android.support.design.widget.TextInputEditText>
+                                android:textSize="13dp"></android.support.design.widget.TextInputEditText>
                         </android.support.design.widget.TextInputLayout>
 
                         <ImageView
@@ -124,7 +117,7 @@
                             android:layout_height="25dp"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
-                            android:src="@drawable/icon_card"/>
+                            android:src="@drawable/icon_card" />
                         <!--android:scaleType="fitCenter"/>-->
                         <!--android:adjustViewBounds="true"-->
                         <!--/>-->
@@ -137,15 +130,14 @@
                         android:background="#9C9C9C" />
 
 
-
                     <LinearLayout
                         android:id="@+id/layout_expiry_cvv"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:layout_margin="10dp"
                         android:layout_weight="1"
-                        android:weightSum="5"
-                        android:layout_margin="15dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="5">
 
                         <LinearLayout
                             android:id="@+id/layout_expiry_date"
@@ -155,53 +147,53 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:layout_height="match_parent"
-                                android:gravity="center"
                                 android:layout_width="wrap_content"
-                                android:textColor="#302F2F"
-                                android:textSize="15sp"
+                                android:layout_height="match_parent"
                                 android:layout_marginRight="10dp"
-                                android:text="@string/expires">
+                                android:gravity="center"
+                                android:text="@string/expires"
+                                android:textColor="#302F2F"
+                                android:textSize="15sp">
 
                             </TextView>
+
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="60dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="2"
                                 android:layout_gravity="center"
+                                android:layout_weight="2"
                                 android:textColorHint="#9e9e9e">
+
                                 <android.support.design.widget.TextInputEditText
                                     android:id="@+id/edit_text_expiry_month"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:inputType="number"
-                                    android:maxLength="2"
                                     android:layout_gravity=""
                                     android:background="#00000000"
-                                    android:textSize="15sp"
-                                    android:hint="@string/month_format"
                                     android:focusableInTouchMode="false"
-                                    >
-                                </android.support.design.widget.TextInputEditText>
+                                    android:hint="@string/month_format"
+                                    android:inputType="number"
+                                    android:maxLength="2"
+                                    android:textSize="15sp"></android.support.design.widget.TextInputEditText>
                             </android.support.design.widget.TextInputLayout>
 
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="60dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="2"
                                 android:layout_gravity="center"
+                                android:layout_weight="2"
                                 android:textColorHint="#9e9e9e">
+
                                 <android.support.design.widget.TextInputEditText
                                     android:id="@+id/edit_text_expiry_year"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:focusableInTouchMode="false"
+                                    android:hint="@string/year_format"
                                     android:inputType="number"
                                     android:maxLength="4"
-                                    android:background="#00000000"
-                                    android:textSize="15sp"
-                                    android:hint="@string/year_format"
-                                    android:focusableInTouchMode="false"
-                                    >
+                                    android:textSize="15sp">
 
                                 </android.support.design.widget.TextInputEditText>
 
@@ -211,57 +203,57 @@
                         </LinearLayout>
 
                         <View
-                            android:layout_marginRight="10dp"
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="#9C9C9C"
-                            />
+                            android:layout_marginRight="10dp"
+                            android:background="#9C9C9C" />
 
                         <LinearLayout
-                            android:gravity="center"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="2"
-                            android:weightSum="2"
-                            android:orientation="horizontal">
-
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
 
 
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
 
-                                app:passwordToggleEnabled="false"
-                                android:layout_weight="1">
+                                android:layout_weight="1"
+                                app:passwordToggleEnabled="false">
+
                                 <android.support.design.widget.TextInputEditText
                                     android:id="@+id/edit_text_card_cvv"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
+                                    android:layout_marginLeft="15dp"
+                                    android:background="#00000000"
+                                    android:hint="@string/cvv"
                                     android:inputType="numberPassword"
                                     android:maxLength="3"
-                                    android:textSize="15dp"
                                     android:textColorHint="#ff0000"
-                                    android:background="#00000000"
-                                    android:layout_marginLeft="15dp"
-                                    android:hint="@string/cvv" />
+                                    android:textSize="15dp" />
                             </android.support.design.widget.TextInputLayout>
 
 
                             <ImageView
+                                android:id="@+id/image_cvv"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
-                                android:src="@drawable/lock"
-                                android:scaleType="centerInside"
                                 android:layout_gravity="center|right"
-                                android:alpha="0.5"
-                                android:visibility="gone"
                                 android:adjustViewBounds="true"
-                                android:id="@+id/image_cvv" />
+                                android:alpha="0.5"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/lock"
+                                android:visibility="gone" />
 
                         </LinearLayout>
 
 
                     </LinearLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
@@ -270,29 +262,29 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:layout_gravity="center"
                         android:layout_margin="15dp"
                         android:layout_weight="1"
+
                         android:orientation="horizontal">
 
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
+
                             <android.support.design.widget.TextInputEditText
                                 android:id="@+id/edit_text_name_on_card"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:inputType="textPersonName"
-
-                                android:textColorHint="#ff0000"
-                                android:textSize="15sp"
-                                android:hint="@string/name_on_card"
                                 android:background="#00000000"
-                                >
+                                android:hint="@string/name_on_card"
+                                android:inputType="textPersonName"
+                                android:textColorHint="#ff0000"
+                                android:textSize="15sp">
+
                             </android.support.design.widget.TextInputEditText>
 
                         </android.support.design.widget.TextInputLayout>
-
-
 
 
                     </LinearLayout>

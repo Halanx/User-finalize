@@ -88,6 +88,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     int selectedPosition=-1;
     int selected=-1;
     TextView searchtext;
+    TextView noresult;
 
     SearchView svProducts;
     List<String> suggestions = new ArrayList<>();
@@ -126,6 +127,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         categories_Recycler.setAdapter(categoryAdapter);
         categories_Recycler.setHasFixedSize(true);
 
+        noresult = (TextView) view.findViewById(R.id.noresult);
 
         HomeActivity.position=1;
         svProducts = (SearchView) view.findViewById(R.id.sv_products);
@@ -134,6 +136,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             @Override
             public void onClick(View view) {
                 svProducts.setIconified(false);
+                svProducts.setFocusable(true);
+                svProducts.setIconifiedByDefault(false);
+                searchtext.setVisibility(View.GONE);
+
             }
         });
         svProducts.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
@@ -154,148 +160,181 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         svProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 searchtext.setVisibility(View.GONE);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                suggestions.clear();
-                searchtext.setVisibility(View.GONE);
-                list.setVisibility(View.VISIBLE);
-                list.setAdapter(null);
-                suggestions.clear();
 
-                String url = djangoBaseUrl +"products/search/" + newText + "/";
-                Log.i("Search", url);
-                Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        Log.i("Search", s);
-                        json = null;
-                        try {
-                            json = new JSONObject(s);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                Log.d("newtext",String.valueOf(newText.length()));
+                if (newText.length() != 0) {
+                    suggestions.clear();
+                    searchtext.setVisibility(View.GONE);
+                    list.setVisibility(View.VISIBLE);
+                    list.setAdapter(null);
+                    suggestions.clear();
 
-                        try {
-
-                            suggestions.clear();
-                            array = json.getJSONObject("hits").getJSONArray("hits");
-                            for (int i = 0; i < array.length(); i++) {
-                                String proName = array.getJSONObject(i).getJSONObject("_source").getString("ProductName");
-                                suggestions.add(proName);
+                    String url = djangoBaseUrl + "products/search/" + newText + "/";
+                    Log.i("Search", url);
+                    Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String s) {
+                            Log.i("Search", s);
+                            json = null;
+                            try {
+                                json = new JSONObject(s);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
 
-                            Log.d("suggestions", String.valueOf(suggestions));
-                            list.setAdapter(null);
-                            list.clearChoices();
-                            //  ListAdapter
-                            list.clearTextFilter();
-                            searchadapter = new ListViewAdapter(getActivity().getApplicationContext(), suggestions);
-                            // Binds the Adapter to the ListView
+                            try {
 
-                            list.setAdapter(searchadapter);
-                            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Log.d("selected_position", suggestions.get(i));
-                                    svProducts.setQuery(suggestions.get(i),true);
-                                    list.setVisibility(View.GONE);
-
-                                    try {
-                                        array = json.getJSONObject("hits").getJSONArray("hits");
-                                        final JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
-                                        Volley.newRequestQueue(getActivity()).add(new JsonObjectRequest(Request.Method.GET, djangoBaseUrl +"stores/" + jsonObject.getString("StoreId"), null, new com.android.volley.Response.Listener<JSONObject>() {
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                Log.d("responsedata", String.valueOf(response));
-                                                try {
-                                                    categories.clear();
-
-                                                    JSONArray array = new JSONArray(response.getString("CategoriesAvailable"));
-                                                    for(int i = 0; i<array.length();i++){
-                                                        categories.add(String.valueOf(array.get(i)));
-                                                    }
-                                                    Log.d("catdata", String.valueOf(categories));
-                                                    categoryAdapter = new CategoryAdapter(getActivity(),categories);
-                                                    RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, false);
-                                                    categories_Recycler.setLayoutManager(layoutManager1);
-                                                    categories_Recycler.setAdapter(categoryAdapter);
-                                                    categories_Recycler.setHasFixedSize(true);
-
-
-                                                    Picasso.with(getActivity()).load(response.getString("StoreLogo")).into(brandLogo);
-                                                    brandName.setText(response.getString("StoreName"));
-
-                                                    sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
-                                                    if (response.getString("StoreCategory").equals("Grocery")) {
-                                                        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-                                                        recyclerView.setLayoutManager(layoutManager);
-
-                                                    } else { RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                                                        recyclerView.setLayoutManager(layoutManager);
-                                                    }
-
-                                                    recyclerView.setAdapter(sadapter);
-                                                    recyclerView.setHasFixedSize(true);
-
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-
-
-                                            }
-                                        }, new com.android.volley.Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-
-                                            }
-                                        }));
-                                        Log.d("category", String.valueOf(jsonObject));
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
+                                suggestions.clear();
+                                array = json.getJSONObject("hits").getJSONArray("hits");
+                                for (int i = 0; i < array.length(); i++) {
+                                    String proName = array.getJSONObject(i).getJSONObject("_source").getString("ProductName");
+                                    suggestions.add(proName);
                                 }
-                            });
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                                Log.d("suggestions", String.valueOf(suggestions));
+                                list.setAdapter(null);
+                                list.clearChoices();
+                                //  ListAdapter
+                                list.clearTextFilter();
+                                searchadapter = new ListViewAdapter(getActivity().getApplicationContext(), suggestions);
+                                // Binds the Adapter to the ListView
+
+                                if (suggestions.size() == 0) {
+                                    noresult.setVisibility(View.VISIBLE);
+                                    brandLogo.setVisibility(View.GONE);
+                                    brandName.setVisibility(View.GONE);
+                                    recyclerView.setVisibility(View.GONE);
+                                    categories_Recycler.setVisibility(View.GONE);
+
+                                } else {
+                                    noresult.setVisibility(View.GONE);
+                                    brandLogo.setVisibility(View.VISIBLE);
+                                    brandName.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    categories_Recycler.setVisibility(View.VISIBLE);
+                                }
+
+                                list.setAdapter(searchadapter);
+                                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        Log.d("selected_position", suggestions.get(i));
+                                        svProducts.setQuery(suggestions.get(i), true);
+                                        list.setVisibility(View.GONE);
+
+                                        noresult.setVisibility(View.GONE);
+                                        brandLogo.setVisibility(View.VISIBLE);
+                                        brandName.setVisibility(View.VISIBLE);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        categories_Recycler.setVisibility(View.VISIBLE);
+                                        try {
+                                            array = json.getJSONObject("hits").getJSONArray("hits");
+                                            final JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
+                                            Volley.newRequestQueue(getActivity()).add(new JsonObjectRequest(Request.Method.GET, djangoBaseUrl + "stores/" + jsonObject.getString("StoreId"), null, new com.android.volley.Response.Listener<JSONObject>() {
+                                                @Override
+                                                public void onResponse(JSONObject response) {
+                                                    Log.d("responsedata", String.valueOf(response));
+                                                    try {
+                                                        categories.clear();
+
+                                                        JSONArray array = new JSONArray(response.getString("CategoriesAvailable"));
+                                                        for (int i = 0; i < array.length(); i++) {
+                                                            categories.add(String.valueOf(array.get(i)));
+                                                        }
+                                                        Log.d("catdata", String.valueOf(categories));
+                                                        categoryAdapter = new CategoryAdapter(getActivity(), categories);
+                                                        RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                                                        categories_Recycler.setLayoutManager(layoutManager1);
+                                                        categories_Recycler.setAdapter(categoryAdapter);
+                                                        categories_Recycler.setHasFixedSize(true);
+
+
+                                                        Picasso.with(getActivity()).load(response.getString("StoreLogo")).into(brandLogo);
+                                                        brandName.setText(response.getString("StoreName"));
+
+                                                        sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
+                                                        if (response.getString("StoreCategory").equals("Grocery")) {
+                                                            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                                            recyclerView.setLayoutManager(layoutManager);
+
+                                                        } else {
+                                                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                                            recyclerView.setLayoutManager(layoutManager);
+                                                        }
+
+                                                        recyclerView.setAdapter(sadapter);
+                                                        recyclerView.setHasFixedSize(true);
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+
+                                                }
+                                            }, new com.android.volley.Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+
+                                                }
+                                            }));
+                                            Log.d("category", String.valueOf(jsonObject));
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                });
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    }, new com.android.volley.Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.i("Search", volleyError.toString());
+                        }
+                    })).setRetryPolicy(new RetryPolicy() {
+                        @Override
+                        public int getCurrentTimeout() {
+                            return 100000;
                         }
 
+                        @Override
+                        public int getCurrentRetryCount() {
+                            return 0;
+                        }
 
-                    }
-                }, new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.i("Search", volleyError.toString());
-                    }
-                })).setRetryPolicy(new RetryPolicy() {
-                    @Override
-                    public int getCurrentTimeout() {
-                        return 100000;
-                    }
+                        @Override
+                        public void retry(VolleyError volleyError) throws VolleyError {
 
-                    @Override
-                    public int getCurrentRetryCount() {
-                        return 0;
-                    }
-
-                    @Override
-                    public void retry(VolleyError volleyError) throws VolleyError {
-
-                    }
-                });
-                Log.i("Search", suggestions.toString());
+                        }
+                    });
+                    Log.i("Search", suggestions.toString());
 
 
+                }else {
+                    noresult.setVisibility(View.GONE);
+                    brandLogo.setVisibility(View.VISIBLE);
+                    brandName.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    categories_Recycler.setVisibility(View.VISIBLE);
+                }
                 return false;
+
             }
         });
+
 
 
         List<String> suggestions = new ArrayList<>();
@@ -525,7 +564,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_layout, parent, false);
             CategoryViewHolder holder = new CategoryAdapter.CategoryViewHolder(view, context);
             return holder;
-
         }
 
         @Override
@@ -538,6 +576,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             else{
                 flag = false;
             }
+
             //holder.setIsRecyclable(false);
             if(selectedPosition==position) {
                 holder.category_name.setBackgroundColor(Color.parseColor("#f00004"));
@@ -551,38 +590,61 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             }
             holder.category_name.setText(categories.get(position));
 
-            if (selected==0){
+            if (selected==0)
+            {
                 holder.category_name.setBackgroundColor(Color.parseColor("#f00004"));
-
                 holder.category_name.setTextColor(Color.parseColor("#ffffff"));
-
             }
             selected++;
+            holder.setIsRecyclable(false);
             holder.category_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    pbProducts.setVisibility(View.VISIBLE);
                     selected++;
                     holder.category_name.getText();
                     selectedPosition = position;
                     notifyDataSetChanged();
 
-
                     Call<List<ProductInfo>> callProductsStore = client.getProductsFromStore(Integer.toString(HomeActivity.storeID));
                     callProductsStore.enqueue(new Callback<List<ProductInfo>>() {
+
                         @Override
                         public void onResponse(Call<List<ProductInfo>> call, Response<List<ProductInfo>> response) {
+                            pbProducts.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
                             pbProducts.setVisibility(View.GONE);
                             if (response.body() != null) {
                                 List<ProductInfo> products = response.body();
                                 List<ProductInfo> product_with_specific_category = new ArrayList<ProductInfo>();
                                 Log.d("category_name", String.valueOf(holder.category_name.getText()));
-
-                                if(String.valueOf(holder.category_name.getText()).equals("All")){
-                                    Log.d("category_name", "done");
-                                    if (response.body() != null) {
+                                if (response.body() != null) {
+                                    if (String.valueOf(holder.category_name.getText()).equals("All")) {
+                                        Log.d("category_name", "done");
                                         List<ProductInfo> productsa = response.body();
                                         adapter = new ProductAdapter(productsa, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, null);
+                                        if (HomeActivity.storeCat.equals("Food")) {
+                                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                            recyclerView.setLayoutManager(layoutManager);
+                                        } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                                            recyclerView.setLayoutManager(layoutManager);
+                                        }
+                                        recyclerView.setAdapter(adapter);
+                                        recyclerView.setHasFixedSize(true);
+                                    }
+                                    else {
+                                        Log.d("category_name", String.valueOf(holder.category_name.getText()));
+                                        Log.d("productsize", String.valueOf(products.size()));
+
+                                        for (int i = 0; i < products.size(); i++) {
+                                            if (products.get(i).getCategory().equals(String.valueOf(holder.category_name.getText())))
+                                                product_with_specific_category.add(products.get(i));
+
+                                        }
+                                        adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, String.valueOf(holder.category_name.getText()));
 
                                         if (HomeActivity.storeCat.equals("Food")) {
                                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -594,30 +656,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
                                         recyclerView.setAdapter(adapter);
                                         recyclerView.setHasFixedSize(true);
-                                    }
-
-                                }
-                                else {
-                                    Log.d("category_name", "done");
-
-                                    for (int i = 0; i < products.size(); i++) {
-                                        if (products.get(i).getCategory().equals(String.valueOf(holder.category_name.getText())))
-                                            product_with_specific_category.add(products.get(i));
 
                                     }
-                                    adapter = new ProductAdapter(product_with_specific_category, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount, String.valueOf(holder.category_name.getText()));
-
-                                    if (HomeActivity.storeCat.equals("Food")) {
-                                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                                        recyclerView.setLayoutManager(layoutManager);
-                                    } else if (HomeActivity.storeCat.equals("Grocery")) {
-                                        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-                                        recyclerView.setLayoutManager(layoutManager);
-                                    }
-
-                                    recyclerView.setAdapter(adapter);
-                                    recyclerView.setHasFixedSize(true);
-
                                 }
 
                             }

@@ -11,12 +11,14 @@
         android:layout_width="50dp"
         android:layout_height="20dp"
         android:text="1."
+        android:textColor="#313131"
         android:id="@+id/number"/>
     <TextView
         android:id="@+id/search_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search Item 1"
+        android:textColor="#313131"
         android:typeface="sans"
         />
 </LinearLayout>

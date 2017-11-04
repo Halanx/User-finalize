@@ -200,6 +200,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             pd.dismiss();
                             final Dialog dialog = new Dialog(PaymentActivity.this);
                             dialog.setContentView(R.layout.dialog_order);
+                            dialog.setCancelable(false);
                             dialog.show();
 
 
@@ -283,7 +284,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         merchantKey = "f1tDUh";
         int environment = PayuConstants.PRODUCTION_ENV;
         String email = getApplicationContext().getSharedPreferences("Login", Context.MODE_PRIVATE).getString("email",null);
-        String amount = total;
+        String amount = total.trim();
 
 //        merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
 //        String amount = ((EditText) findViewById(R.id.editTextAmount)).getText().toString();
@@ -593,17 +594,28 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             if (data != null) {
+                JSONObject jsonArray = null;
+                try {
+                    jsonArray = new JSONObject(data.getStringExtra("payu_response"));
+                } catch (JSONException e) {
+                    Log.d("error ",e.toString());
+                }
 
-                //If its an order for items
-                if (isOrder) {
 
-                    /**
-                     * Here, data.getStringExtra("payu_response") ---> Implicit response sent by PayU
-                     * data.getStringExtra("result") ---> Response received from merchant's Surl/Furl
-                     *
-                     * PayU sends the same response to merchant server and in app. In response check the value of key "status"
-                     * for identifying status of transaction. There are two possible status like, success or failure
-                     * */
+                try {
+                    Log.d("status ",jsonArray.getString("status").toString());
+
+
+                if (jsonArray.getString("status").toString().equals("success")) {
+                    if (isOrder) {
+
+                        /**
+                         * Here, data.getStringExtra("payu_response") ---> Implicit response sent by PayU
+                         * data.getStringExtra("result") ---> Response received from merchant's Surl/Furl
+                         *
+                         * PayU sends the same response to merchant server and in app. In response check the value of key "status"
+                         * for identifying status of transaction. There are two possible status like, success or failure
+                         * */
 //                new AlertDialog.Builder(this)
 //                        .setCancelable(false)
 //                        .setMessage("Payu's Data : " + data.getStringExtra("payu_response") + "\n\n\n Merchant's Data: " + data.getStringExtra("result"))
@@ -613,79 +625,79 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //                            }
 //                        }).show();
 
-                    String id = data.getStringExtra("payu_response");
+                        String id = data.getStringExtra("payu_response");
 
-                    JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
-                    Log.d("json_data", String.valueOf(obj));
+                        JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
+                        Log.d("json_data", String.valueOf(obj));
 
-                    String trans_id = String.valueOf(obj.get("txnid"));
+                        String trans_id = String.valueOf(obj.get("txnid"));
 
-                    //id -
-                    //txnid -
-
-
-                    SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-                    long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
-
-                    SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
-                    float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
-                    float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
-                    Log.d("latitudea", "" + latitude);
-                    Log.d("longitude", "" + longitude);
-
-                    if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
-
-                        order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id,Double.parseDouble(total),false);
-                        Log.d("done", "done");
-                    } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
-                        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-
-                        order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude, trans_id,Double.parseDouble(total),false);
-                    }
+                        //id -
+                        //txnid -
 
 
-                    Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
+                        SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+                        long userMobile = Long.parseLong(sharedPreferences.getString("MobileNumber", null));
+
+                        SharedPreferences sharedPref = getSharedPreferences("location", Context.MODE_PRIVATE);
+                        float latitude = sharedPref.getFloat("latitudeDelivery", 0);// LATITUDE
+                        float longitude = sharedPref.getFloat("longitudeDelivery", 0);// LONGITUDE
+                        Log.d("latitudea", "" + latitude);
+                        Log.d("longitude", "" + longitude);
+
+                        if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
+
+                            order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id, Double.parseDouble(total), false);
+                            Log.d("done", "done");
+                        } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
+                            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                            String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+
+                            order = new OrderInfo(userMobile, addressDetails, date, time, null, true, null, latitude, longitude, trans_id, Double.parseDouble(total), false);
+                        }
 
 
-                    pd = new ProgressDialog(PaymentActivity.this);
-                    pd.setTitle("Please wait");
-                    pd.setMessage("Posting your order");
-                    pd.setCancelable(false);
-                    pd.show();
+                        Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
 
-                    Call<OrderInfo> callOrder = client.postUserOrder(getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null),order);
-                    callOrder.enqueue(new Callback<OrderInfo>() {
-                        @Override
-                        public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
+
+                        pd = new ProgressDialog(PaymentActivity.this);
+                        pd.setTitle("Please wait");
+                        pd.setMessage("Posting your order");
+                        pd.setCancelable(false);
+                        pd.show();
+
+                        Call<OrderInfo> callOrder = client.postUserOrder(getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null), order);
+                        callOrder.enqueue(new Callback<OrderInfo>() {
+                            @Override
+                            public void onResponse(Call<OrderInfo> call, Response<OrderInfo> response) {
 //                        Toast.makeText(PaymentActivity.this, "Order Placed", Toast.LENGTH_SHORT).show();
 
 
-                            Intent resultIntenta = new Intent(PaymentActivity.this, HomeActivity.class);
+                                Intent resultIntenta = new Intent(PaymentActivity.this, HomeActivity.class);
 
-                            resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            PendingIntent piResulta = PendingIntent.getActivity(getApplicationContext(),
-                                    (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
+                                resultIntenta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                PendingIntent piResulta = PendingIntent.getActivity(getApplicationContext(),
+                                        (int) Calendar.getInstance().getTimeInMillis(), resultIntenta, 0);
 
 
 // Assign big picture notification
 
-                            NotificationCompat.Builder builder =
-                                    (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
-                                            .setSmallIcon(R.drawable.logochange)
-                                            .setContentTitle("Halanx")
-                                            .setContentText("Thank You. You successfully paid Rs. " + total + " for your order to Halanx")
-                                            .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
-                                            .setContentIntent(piResulta)
-                                            .setAutoCancel(true);
+                                NotificationCompat.Builder builder =
+                                        (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
+                                                .setSmallIcon(R.drawable.logochange)
+                                                .setContentTitle("Halanx")
+                                                .setContentText("Thank You. You successfully paid ₹ " + total + " for your order to Halanx")
+                                                .setSound(RingtoneManager.getValidRingtoneUri(getApplicationContext()))
+                                                .setContentIntent(piResulta)
+                                                .setAutoCancel(true);
 //set intents and pending intents to call activity on click of "show activity" action button of notification
 
 // Gets an instance of the NotificationManager service
-                            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 
 //to post your notification to the notification bar
-                            notificationManager.notify(0, builder.build());
+                                notificationManager.notify(0, builder.build());
 
 
 //                Intent resultIntent = new Intent(getApplicationContext(), HomeActivity.class);
@@ -700,72 +712,76 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //                }
 
 
-                            pd.setTitle("Order placed!");
-                            pd.setMessage("You can review your order in orders.");
-                            pd.dismiss();
+                                pd.setTitle("Order placed!");
+                                pd.setMessage("You can review your order in orders.");
+                                pd.dismiss();
 
-                            startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
-                            finish();
+                                startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
+                                finish();
 
-                        }
-
-                        @Override
-                        public void onFailure(Call<OrderInfo> call, Throwable t) {
-
-                            Toast.makeText(PaymentActivity.this, "Network error", Toast.LENGTH_SHORT).show();
-                            pd.dismiss();
-
-                        }
-                    });
-
-                }
-                else{
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("Value",Double.parseDouble(total));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, djangoBaseUrl +"users/addbalance/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-
-                            Log.d("ammount added",total);
-                            startActivity(new Intent(PaymentActivity.this,HomeActivity.class));
-
-
-                            //Post each item selected
-                            for (int i = 0; i < SubscriptionActivity.activeItems.size(); i++) {
-                                Log.i("Crap", "IN");
-                                if (SubscriptionActivity.isItemChecked.get(i)) {
-
-                                    //Send position of item checked
-                                    postSubscription(i);
-                                }
                             }
 
+                            @Override
+                            public void onFailure(Call<OrderInfo> call, Throwable t) {
 
-                            finish();
+                                Toast.makeText(PaymentActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+                                pd.dismiss();
+
+                            }
+                        });
+
+                    } else {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("Value", Double.parseDouble(total));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    },new com.android.volley.Response.ErrorListener(){
+                        Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.POST, djangoBaseUrl + "users/addbalance/", jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
 
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
+                                Log.d("ammount added", total);
+                                startActivity(new Intent(PaymentActivity.this, HomeActivity.class));
 
-                        }
-                    }){
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("Content-Type", "application/json");
-                            params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey",Context.MODE_PRIVATE).getString("token",null));
-                            return params;
-                        }
 
-                    });
+                                //Post each item selected
+                                for (int i = 0; i < SubscriptionActivity.activeItems.size(); i++) {
+                                    Log.i("Crap", "IN");
+                                    if (SubscriptionActivity.isItemChecked.get(i)) {
+
+                                        //Send position of item checked
+                                        postSubscription(i);
+                                    }
+                                }
+
+
+                                finish();
+                            }
+                        }, new com.android.volley.Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> params = new HashMap<String, String>();
+                                params.put("Content-Type", "application/json");
+                                params.put("Authorization", getApplicationContext().getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", null));
+                                return params;
+                            }
+
+                        });
+                    }
+
+                } else {
+                    Toast.makeText(this, "Payment cancelled", Toast.LENGTH_LONG).show();
                 }
-            } else {
-                Toast.makeText(this, "Payment cancelled", Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                };
             }
         }
     }

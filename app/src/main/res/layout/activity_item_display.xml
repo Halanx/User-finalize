@@ -184,8 +184,8 @@
                     android:textColor="#919191"
                     android:textSize="15dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_gravity=""
                     android:text="Description"
+                    android:fontFamily="sans"
                     android:layout_marginTop="10dp"
 
                     />
@@ -204,8 +204,8 @@
                 android:id="@+id/description"
                 android:textColor="#616161"
                 android:textSize="20dp"
+                android:fontFamily="sans"
                 android:layout_marginLeft="10dp"
-                android:layout_gravity=""
                 android:layout_marginTop="20dp"
                 />
             </LinearLayout>

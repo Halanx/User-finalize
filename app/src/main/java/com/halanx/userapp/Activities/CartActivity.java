@@ -654,8 +654,6 @@ try {
 
                 }
 
-
-
                 proceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -718,8 +716,6 @@ try {
                                                         }
 
                                                     });
-
-
                                                 }
                                             })
                                             .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

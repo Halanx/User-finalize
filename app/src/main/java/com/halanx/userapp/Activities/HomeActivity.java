@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.socket.client.IO;
-import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -167,36 +166,36 @@ public class HomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_home);
 
-
-        try {
-            socket = IO.socket("https://api.halanx.com/node/sockets/test/");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-
-            @Override
-            public void call(Object... args) {
-                socket.emit("foo", "hi");
-                Log.d("messages","data");
-                socket.disconnect();
-            }
-
-        }).on("event", new Emitter.Listener() {
-
-            @Override
-            public void call(Object... args) {
-                Log.d("messages","data");
-            }
-
-        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-
-            @Override
-            public void call(Object... args) {}
-
-        });
-        socket.connect();
-        Log.d("connectionstatus", String.valueOf(socket.connected()))
+//
+//        try {
+//            socket = IO.socket("https://api.halanx.com/node/sockets/test/");
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+//
+//            @Override
+//            public void call(Object... args) {
+//                socket.emit("foo", "hi");
+//                Log.d("messages","data");
+//                socket.disconnect();
+//            }
+//
+//        }).on("event", new Emitter.Listener() {
+//
+//            @Override
+//            public void call(Object... args) {
+//                Log.d("messages","data");
+//            }
+//
+//        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+//
+//            @Override
+//            public void call(Object... args) {}
+//
+//        });
+//        socket.connect();
+//        Log.d("connectionstatus", String.valueOf(socket.connected()));
 
 
 

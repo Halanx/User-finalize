@@ -35,6 +35,7 @@
             android:layout_height="match_parent"
             android:layout_margin="50dp"
             android:elevation="40dp"
+            android:background="@color/white"
             app:cardCornerRadius="20dp">
 
             <LinearLayout

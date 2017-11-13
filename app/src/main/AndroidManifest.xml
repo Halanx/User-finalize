@@ -22,7 +22,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
@@ -31,6 +30,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light"
         tools:replace="android:icon,android:label,android:theme">
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDJmeEm-ZMoT-pkKiPkJ8DeHIoYGFAWh-Q" />
@@ -159,7 +159,9 @@
         <activity
             android:name=".Activities.track"
             android:label="Order Status" />
-        <activity android:name=".Activities.Intro"></activity>
+        <activity android:name=".Activities.Intro" />
+
+        <activity android:name=".Activities.MainActivity"></activity>
     </application>
 
 </manifest><!--

@@ -66,6 +66,8 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
     String groupid;
     Boolean group_member;
     int proId;
+    String storecat;
+    String features;
 
 
 
@@ -73,6 +75,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
         this.products = products;
         Log.d("jsonobject", String.valueOf(products));
         this.c = c;
+        this.storecat = storeCat;
 
         this.mobileNumber = mobileNumber;
         this.itemCount = itemCount;
@@ -132,7 +135,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
 
 
 
-            if (products.getString("StoreId").equals("1")) {
+            if (storecat.equals("Grocery")) {
                 holder.cvProducts.setVisibility(View.VISIBLE);
                 holder.cvRest.setVisibility(View.GONE);
 
@@ -149,6 +152,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                         try {
                             data = specific_detail.getString("ProductImage");
                             Picasso.with(c).load(data).into(holder.productImage);
+                            features = specific_detail.getString("Features");
                             Log.d("data",data);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -161,11 +165,12 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                 }));
                 try {
                     holder.productName.setText(products.getString("ProductName"));
+                    holder.productPrice.setText("₹ " + String.valueOf(products.get("Price")));
+
                     if (products.getString("Features") != null) {
                         holder.description.setVisibility(View.VISIBLE);
                         holder.description.setText(products.getString("Features"));
                     }
-                    holder.productPrice.setText("₹ " + String.valueOf(products.get("Price")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -214,7 +219,7 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                cartId = response.getInt("id");
+                                cartId = response.getJSONObject("data").getInt("id");
 
 
                                 final String token = c.getSharedPreferences("Tokenkey", Context.MODE_PRIVATE).getString("token", "token1");
@@ -387,12 +392,11 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
                     Log.d(("item_data"), String.valueOf(products));
                     intent.putExtra("Name", products.getString("ProductName"));
                     intent.putExtra("Price", products.getDouble("Price"));
-                    if (products.getString("Features") != null) {
-                        intent.putExtra("Features", products.getString("Features"));
-
+                    if (features != null) {
+                        intent.putExtra("Features", features);
                     }
-                    intent.putExtra("Image", data);
 
+                    intent.putExtra("Image", data);
                     intent.putExtra("ID", products.getInt("Id"));
                     c.startActivity(intent);
                 } catch (JSONException e) {

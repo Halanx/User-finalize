@@ -420,7 +420,6 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("usercart1",String.valueOf(info.getgroupcart()));
                 cartid = info.getgroupcart();
                 Log.d("usercart1",String.valueOf(info.getgroupcart()));
-
             }
 
             @Override
@@ -428,7 +427,6 @@ public class HomeActivity extends AppCompatActivity
                 Log.i("Err",t.toString());
             }
         });
-
 
         //IF NO INTERNET
         if (!isNetworkAvailable()) {
@@ -515,47 +513,6 @@ public class HomeActivity extends AppCompatActivity
         getSharedPreferences("status", Context.MODE_PRIVATE).edit().
                 putBoolean("first_login", false).apply();
 
-
-        ////////////////  SOCKET IO CONNECTION  ////////////////////
-
-
-
-//        Client socket = new Client("https://api.halanx.com/node/sockets/test/", 80);
-//        // port kon sa haai ? ab kr call kr error h call me
-//        socket.setClientCallback(new Client.ClientCallback () {
-//            @Override
-//            public void onMessage(String message) {
-//
-//            }
-//
-//            @Override
-//            public void onConnect(java.net.Socket socket) {
-//
-//                Log.d("connect","connected");
-//
-//            }
-//            // run kr ?? wait
-//            // error aaya hua h
-//
-//            @Override
-//            public void onDisconnect(java.net.Socket socket, String message) {
-//
-//                Log.d("disconnect",message);
-//            }
-//
-//            @Override
-//            public void onConnectError(java.net.Socket socket, String message) {
-//
-//                Log.d("error",message);
-//            }
-//        });
-//
-//        socket.connect();
-
-
-
-
-        Log.d("connection", String.valueOf(mSocket.connected()));
     }
 
 
@@ -921,6 +878,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        dialAddMoney.dismiss();
     }
 
 

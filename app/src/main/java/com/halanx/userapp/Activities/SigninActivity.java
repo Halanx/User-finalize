@@ -617,6 +617,8 @@ public class SigninActivity extends AppCompatActivity {
                                                     });
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
+                                                    Toast.makeText(getApplicationContext(), "Please register first", Toast.LENGTH_SHORT).show();
+
                                                 }
                                             }
                                         });
@@ -628,6 +630,9 @@ public class SigninActivity extends AppCompatActivity {
                                     Log.d("error", String.valueOf(error));
                                     pb.setVisibility(View.GONE);
                                     btnOtpSubmit.setVisibility(View.VISIBLE);
+                                    Toast.makeText(getApplicationContext(), "Please register first", Toast.LENGTH_SHORT).show();
+
+
                                 }
                             }));
                         }
@@ -658,6 +663,8 @@ public class SigninActivity extends AppCompatActivity {
                                 public void onErrorResponse(VolleyError error) {
                                     tvResendOtp.setVisibility(View.VISIBLE);
                                     pbresend.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), "Please register first", Toast.LENGTH_SHORT).show();
+
                                 }
                             }));
                         }

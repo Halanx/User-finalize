@@ -11,6 +11,7 @@
         android:layout_marginTop="5dp"
         android:typeface="sans"
         android:textSize="20sp"
+        android:textColor="#313131"
         android:text="Sam"/>
 
 </LinearLayout>

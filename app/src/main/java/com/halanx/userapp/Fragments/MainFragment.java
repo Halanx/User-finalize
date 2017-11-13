@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -96,6 +97,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     List<String> categories = new ArrayList<>();
     TextView itemCount;
     String product_category;
+    JSONArray product_category1;
 
     public MainFragment() {
 
@@ -121,11 +123,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         searchtext = (TextView) view.findViewById(R.id.searchtext);
 
         categories_Recycler = (RecyclerView) view.findViewById(R.id.categories_recycler);
-        categoryAdapter = new CategoryAdapter(getActivity(),categories);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, false);
-        categories_Recycler.setLayoutManager(layoutManager);
-        categories_Recycler.setAdapter(categoryAdapter);
-        categories_Recycler.setHasFixedSize(true);
+//        categoryAdapter = new CategoryAdapter(getActivity(),categories);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL, false);
+//        categories_Recycler.setLayoutManager(layoutManager);
+//        categories_Recycler.setAdapter(categoryAdapter);
+//        categories_Recycler.setHasFixedSize(true);
 
         noresult = (TextView) view.findViewById(R.id.noresult);
 
@@ -160,21 +162,21 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         svProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(svProducts.getWindowToken(), 0);
                 searchtext.setVisibility(View.GONE);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
+                suggestions.clear();
                 Log.d("newtext",String.valueOf(newText.length()));
                 if (newText.length() != 0) {
-                    suggestions.clear();
                     searchtext.setVisibility(View.GONE);
                     list.setVisibility(View.VISIBLE);
                     list.setAdapter(null);
-                    suggestions.clear();
+                    //suggestions.clear();
 
                     String url = djangoBaseUrl + "products/search/" + newText + "/";
                     Log.i("Search", url);
@@ -229,6 +231,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                         svProducts.setQuery(suggestions.get(i), true);
                                         list.setVisibility(View.GONE);
 
+                                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        imm.hideSoftInputFromWindow(svProducts.getWindowToken(), 0);
+
                                         noresult.setVisibility(View.GONE);
                                         brandLogo.setVisibility(View.VISIBLE);
                                         brandName.setVisibility(View.VISIBLE);
@@ -259,7 +264,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                                                         Picasso.with(getActivity()).load(response.getString("StoreLogo")).into(brandLogo);
                                                         brandName.setText(response.getString("StoreName"));
 
-                                                        sadapter = new ProductSearchAdapter(jsonObject, getActivity(), HomeActivity.storeCat, mob, HomeActivity.itemCount);
+                                                        sadapter = new ProductSearchAdapter(jsonObject, getActivity(), response.getString("StoreCategory"), mob, HomeActivity.itemCount);
                                                         if (response.getString("StoreCategory").equals("Grocery")) {
                                                             GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
                                                             recyclerView.setLayoutManager(layoutManager);
@@ -329,6 +334,71 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                     brandName.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
                     categories_Recycler.setVisibility(View.VISIBLE);
+                    list.setVisibility(View.GONE);
+
+
+                    builder = new Retrofit.Builder().baseUrl(djangoBaseUrl).
+                            addConverterFactory(GsonConverterFactory.create());
+                    retrofit = builder.build();
+                    client = retrofit.create(DataInterface.class);
+ //                   storeSpinner.setOnItemSelectedListener(this);
+
+                    Call<List<StoreInfo>> callStores = client.getStoreInfo();
+                    callStores.enqueue(new Callback<List<StoreInfo>>() {
+                        @Override
+                        public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
+                            storesList = response.body();
+
+                            food = new ArrayList<StoreInfo>();
+                            grocery = new ArrayList<StoreInfo>();
+                            //Separate stores according to category
+
+                            if (storesList.size() != 0) {
+                                for (int i = 0; i < storesList.size(); i++) {
+                                    if (storesList.get(i).getStoreCategory().equals("Food")) {
+                                        food.add(storesList.get(i));
+                                    } else if (storesList.get(i).getStoreCategory().equals("Grocery")) {
+                                        grocery.add(storesList.get(i));
+                                    }
+                                }
+                            }
+
+
+                            pbProducts.setVisibility(View.VISIBLE);
+                            //Save names of a particular category in spinner
+                            if (HomeActivity.storeCat.equals("Food")) {
+
+                                List<String> names = new ArrayList<String>();
+                                for (int i = 0; i < food.size(); i++) {
+                                    if (food.get(i) != null) {
+                                        if (food.get(i).getStoreName() != null && !food.get(i).getStoreName().isEmpty()) {
+                                            names.add(food.get(i).getStoreName());
+                                        }
+                                    }
+                                }
+                                getProductsFromStore(HomeActivity.storeID, HomeActivity.storeCat);
+
+                            } else if (HomeActivity.storeCat.equals("Grocery")) {
+                                List<String> names = new ArrayList<String>();
+                                for (int i = 0; i < grocery.size(); i++) {
+                                    if (grocery.get(i) != null) {
+                                        if (grocery.get(i).getStoreName() != null && !grocery.get(i).getStoreName().isEmpty()) {
+                                            names.add(grocery.get(i).getStoreName());
+                                        }
+                                    }
+                                }
+
+                                getProductsFromStore(HomeActivity.storeID, HomeActivity.storeCat);
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<StoreInfo>> call, Throwable t) {
+                            Log.d("servererror", String.valueOf(true));
+                        }
+                    });
+
                 }
                 return false;
 
@@ -356,10 +426,39 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
             public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
                 storesList = response.body();
 
+
                 food = new ArrayList<StoreInfo>();
                 grocery = new ArrayList<StoreInfo>();
-                //Separate stores according to category
 
+                categories = new ArrayList<>();
+                for (int i=0;i<storesList.size();i++) {
+                    if (storesList.get(i).getStoreName().equals(HomeActivity.storeName)) {
+                        try {
+                            product_category1 = new JSONArray(String.valueOf(storesList.get(i).getAvailable_categories()));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                for (int i = 0; i < product_category1.length(); i++) {
+                    try {
+                        categories.add(String.valueOf(product_category1.get(i)));
+                        Log.d("data123", String.valueOf(product_category1.get(i)));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                categoryAdapter = new CategoryAdapter(getActivity(), categories);
+                RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                categories_Recycler.setLayoutManager(layoutManager1);
+                categories_Recycler.setAdapter(categoryAdapter);
+                categories_Recycler.setHasFixedSize(true);
+
+
+                //Separate stores according to category
                 if (storesList.size() != 0) {
                     for (int i = 0; i < storesList.size(); i++) {
                         if (storesList.get(i).getStoreCategory().equals("Food")) {
@@ -479,10 +578,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         try{
             JSONArray obj = new JSONArray(String.valueOf(this.product_category));
             //   Log.d("product_data", String.valueOf(product_category.get(2)));
-            categories= new ArrayList<>();
-            for(int i =0;i<obj.length();i++){
-                categories.add(String.valueOf(obj.get(i)));
-            }
+//            categories= new ArrayList<>();
+//            for(int i =0;i<obj.length();i++){
+//                categories.add(String.valueOf(obj.get(i)));
+//            }
 
         }catch (Throwable t){
             Log.d("productdata", String.valueOf(t));

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -53,7 +54,7 @@ import static com.halanx.userapp.GlobalAccess.djangoBaseUrl;
  */
 public class StoresFragment extends Fragment {
 
-    ProgressBar pbFood,pbGrocery;
+    ProgressBar pbFood,pbGrocery,pblayout;
     TextView itemCount,grocery_text;
     Context c;
     CardView food_layout,grocery_layout;
@@ -89,6 +90,7 @@ public class StoresFragment extends Fragment {
         rvList[1] = (RecyclerView) v.findViewById(R.id.rv_food);
         pbFood = (ProgressBar) v.findViewById(R.id.pb_food);
         pbGrocery = (ProgressBar) v.findViewById(R.id.pb_grocery);
+        pblayout = (ProgressBar) v.findViewById(R.id.pblayout);
         food_layout = (CardView) v.findViewById(R.id.food_layout);
         grocery_layout = (CardView) v.findViewById(R.id.grocery_layout);
 
@@ -111,11 +113,7 @@ public class StoresFragment extends Fragment {
             }
         });
         HomeActivity.position=1;
-//        final EditText searchPlate = (EditText) svstore.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-//        searchPlate.setHint("Search Products");
-//        View searchPlateView = svstore.findViewById(android.support.v7.appcompat.R.id.search_plate);
 
-//        searchPlateView.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
         svstore.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -138,17 +136,22 @@ public class StoresFragment extends Fragment {
         svstore.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-
+                InputMethodManager imm = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(svstore.getWindowToken(), 0);
+                searchtext.setVisibility(View.GONE);
 
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                suggestions.clear();
+                list.setVisibility(View.GONE);
 
+                Log.d("newtext", String.valueOf(newText.length()));
                 if(newText.length()!=0) {
+                    suggestions.clear();
+
+
                     String url = djangoBaseUrl + "stores/search/" + newText + "/";
                     Log.i("Search", url);
                     Volley.newRequestQueue(getActivity()).add(new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
@@ -157,6 +160,9 @@ public class StoresFragment extends Fragment {
                             list.setVisibility(View.VISIBLE);
                             Log.i("Search", s);
                             json = null;
+
+                            rvList[0].setVisibility(View.GONE);
+                            rvList[1].setVisibility(View.GONE);
                             try {
                                 json = new JSONObject(s);
                             } catch (JSONException e) {
@@ -174,13 +180,15 @@ public class StoresFragment extends Fragment {
                                 if (suggestions.size()>0){
                                     noresult.setVisibility(View.GONE);
 
+
                                 }
                                 else{
+                                    rvList[0].setVisibility(View.GONE);
+                                    rvList[1].setVisibility(View.GONE);
                                     noresult.setVisibility(View.VISIBLE);
 
                                 }
                                 Log.d("storenamedsta", String.valueOf(suggestions));
-                                grocery_layout.setVisibility(View.VISIBLE);
 
                                 grocery_text.setVisibility(View.GONE);
                                 food_layout.setVisibility(View.GONE);
@@ -195,13 +203,18 @@ public class StoresFragment extends Fragment {
                                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                         Log.d("selected_position", String.valueOf(i));
                                         svstore.setQuery(suggestions.get(i), true);
+                                        searchtext.setVisibility(View.GONE);
 
+                                        InputMethodManager imm = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        imm.hideSoftInputFromWindow(svstore.getWindowToken(), 0);
                                         list.setVisibility(View.GONE);
                                         try {
                                             array = json.getJSONObject("hits").getJSONArray("hits");
                                             JSONObject jsonObject = array.getJSONObject(i).getJSONObject("_source");
                                             sadapter = new StoreSearchAdapter(jsonObject, getActivity());
 
+                                            rvList[0].setVisibility(View.VISIBLE);
+                                            rvList[1].setVisibility(View.VISIBLE);
 
                                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                                             rvList[1].setLayoutManager(layoutManager);
@@ -263,8 +276,53 @@ public class StoresFragment extends Fragment {
                     list.setVisibility(View.GONE);
                     grocery_text.setVisibility(View.VISIBLE);
                     food_layout.setVisibility(View.VISIBLE);
+                    pblayout.setVisibility(View.GONE);
                     v_top.setVisibility(View.VISIBLE);
                     noresult.setVisibility(View.GONE);
+                    rvList[0].setVisibility(View.VISIBLE);
+                    rvList[1].setVisibility(View.VISIBLE);
+                    suggestions.clear();
+
+                    Retrofit.Builder builder = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl);
+                    DataInterface client = builder.build().create(DataInterface.class);
+                    Call<List<StoreInfo>> callStores = client.getStoreInfo();
+                    callStores.enqueue(new Callback<List<StoreInfo>>() {
+                        @Override
+                        public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
+
+
+                            List<StoreInfo> stores = response.body();
+                            Log.d("store_info", String.valueOf(stores.get(0).getAvailable_categories()));
+                            List<StoreInfo> grocery = new ArrayList<>();
+                            List<StoreInfo> food = new ArrayList<>();
+                            for (int i = 0; i < stores.size(); i++) {
+                                if (stores.get(i).getStoreCategory().equals("Food")) {
+                                    food_layout.setVisibility(View.VISIBLE);
+                                    food.add(stores.get(i));
+                                } else if (stores.get(i).getStoreCategory().equals("Grocery")) {
+                                    grocery_layout.setVisibility(View.VISIBLE);
+                                    grocery.add(stores.get(i));
+                                }
+                            }
+
+                            pbFood.setVisibility(View.GONE);
+                            pbGrocery.setVisibility(View.GONE);
+                            rvList[0].setAdapter(new StoresAdapter(food));
+                            rvList[1].setAdapter(new StoresAdapter(grocery));
+                            rvList[0].setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                            rvList[1].setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                            rvList[0].setHasFixedSize(true);
+                            rvList[1].setHasFixedSize(true);
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<StoreInfo>> call, Throwable t) {
+
+                            Log.d("done ", t.toString());
+
+                        }
+                    });
+
 
                 }
                 return false;
@@ -279,47 +337,48 @@ public class StoresFragment extends Fragment {
 
         pbFood.setVisibility(View.VISIBLE);
         pbGrocery.setVisibility(View.VISIBLE);
+        {
+            Retrofit.Builder builder = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl);
+            DataInterface client = builder.build().create(DataInterface.class);
+            Call<List<StoreInfo>> callStores = client.getStoreInfo();
+            callStores.enqueue(new Callback<List<StoreInfo>>() {
+                @Override
+                public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
 
-        Retrofit.Builder builder = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl);
-        DataInterface client = builder.build().create(DataInterface.class);
-        Call<List<StoreInfo>> callStores = client.getStoreInfo();
-        callStores.enqueue(new Callback<List<StoreInfo>>() {
-            @Override
-            public void onResponse(Call<List<StoreInfo>> call, Response<List<StoreInfo>> response) {
 
-
-                List<StoreInfo> stores = response.body();
-                Log.d("store_info", String.valueOf(stores.get(0).getAvailable_categories()));
-                List<StoreInfo> grocery = new ArrayList<>();
-                List<StoreInfo> food = new ArrayList<>();
-                for (int i = 0; i < stores.size(); i++) {
-                    if (stores.get(i).getStoreCategory().equals("Food")) {
-                        food_layout.setVisibility(View.VISIBLE);
-                        food.add(stores.get(i));
-                    } else if (stores.get(i).getStoreCategory().equals("Grocery")) {
-                        grocery_layout.setVisibility(View.VISIBLE);
-                        grocery.add(stores.get(i));
+                    List<StoreInfo> stores = response.body();
+                    Log.d("store_info", String.valueOf(stores.get(0).getAvailable_categories()));
+                    List<StoreInfo> grocery = new ArrayList<>();
+                    List<StoreInfo> food = new ArrayList<>();
+                    for (int i = 0; i < stores.size(); i++) {
+                        if (stores.get(i).getStoreCategory().equals("Food")) {
+                            food_layout.setVisibility(View.VISIBLE);
+                            food.add(stores.get(i));
+                        } else if (stores.get(i).getStoreCategory().equals("Grocery")) {
+                            grocery_layout.setVisibility(View.VISIBLE);
+                            grocery.add(stores.get(i));
+                        }
                     }
+
+                    pblayout.setVisibility(View.GONE);
+                    pbFood.setVisibility(View.GONE);
+                    pbGrocery.setVisibility(View.GONE);
+                    rvList[0].setAdapter(new StoresAdapter(food));
+                    rvList[1].setAdapter(new StoresAdapter(grocery));
+                    rvList[0].setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                    rvList[1].setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                    rvList[0].setHasFixedSize(true);
+                    rvList[1].setHasFixedSize(true);
                 }
 
-                pbFood.setVisibility(View.GONE);
-                pbGrocery.setVisibility(View.GONE);
-                rvList[0].setAdapter(new StoresAdapter(food));
-                rvList[1].setAdapter(new StoresAdapter(grocery));
-                rvList[0].setLayoutManager( new GridLayoutManager(getActivity(), 2));
-                rvList[1].setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                rvList[0].setHasFixedSize(true);
-                rvList[1].setHasFixedSize(true);
-            }
+                @Override
+                public void onFailure(Call<List<StoreInfo>> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<List<StoreInfo>> call, Throwable t) {
+                    Log.d("done ", t.toString());
 
-                Log.d("done ",t.toString());
-
-            }
-        });
-
+                }
+            });
+        }
         return v;
     }
 

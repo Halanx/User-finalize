@@ -74,7 +74,9 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+
+                    android:id="@+id/decrement">
 
                     <ImageView
                         android:layout_width="24dp"
@@ -83,7 +85,6 @@
                         android:src="@drawable/minuscopy" />
 
                     <TextView
-                        android:id="@+id/decrement"
                         android:textColor="#fafafa"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -109,7 +110,9 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/increment"
+                    >
 
                     <ImageView
                         android:layout_width="24dp"
@@ -119,7 +122,6 @@
 
 
                     <TextView
-                        android:id="@+id/increment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:typeface="sans"
@@ -202,11 +204,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/description"
-                android:textColor="#616161"
-                android:textSize="20dp"
+                android:textColor="#313131"
+                android:textSize="15dp"
                 android:fontFamily="sans"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 />
             </LinearLayout>
 

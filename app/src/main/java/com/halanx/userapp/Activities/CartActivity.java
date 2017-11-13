@@ -46,11 +46,15 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -113,6 +117,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     LinearLayout admin_empty;
     TextView member_empty;
+
+    private Socket mSocket;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -378,6 +385,34 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
                     else{
 
+                        JSONObject json = new JSONObject();
+                        try {
+                            json.put("room",response.getString("GroupCart").trim());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            mSocket = IO.socket("http://api.halanx.com:3700/");
+                            mSocket.on(Socket.EVENT_CONNECT,onConnect);
+                            //run
+                            mSocket.connect();
+                            mSocket.on("onMessage",onMessage);
+                            mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
+                            mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+                            mSocket.emit("join",json );
+
+//                            try {
+////                                json.put("text","hello");
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                            mSocket.emit("onMessage",json );
+
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                        //hogya
+
 
                         group_layout.setVisibility(View.VISIBLE);
                         group_id = getApplicationContext().getSharedPreferences("groupCode",Context.MODE_PRIVATE).getString("groupcode",null);
@@ -597,6 +632,77 @@ try {
         }
 
     }
+
+    private Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("error", "connected");
+               //     Toast.makeText(getApplicationContext(),
+
+//                            "connect", Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onDisconnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("data", "diconnected");
+            //        Toast.makeText(getApplicationContext(),
+  //                          "disconnect", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onConnectError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("error", "Error connecting");
+//                    Toast.makeText(getApplicationContext(),
+//                            "error_connect", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    finish();
+                    startActivity(getIntent());
+                    JSONObject json = null;
+                    try {
+                        json = new JSONObject(String.valueOf(args[0]));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    {
+
+                        Log.e("error", String.valueOf(json));
+//                        Toast.makeText(getApplicationContext(),
+//                                json.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            });
+        }
+    };
 
 
 

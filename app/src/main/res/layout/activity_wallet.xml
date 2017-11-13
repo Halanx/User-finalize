@@ -141,8 +141,8 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             android:id="@+id/enterCode"
-
-            android:layout_margin="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="15dp"
             android:layout_below="@id/x">
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -152,8 +152,9 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="10dp"
                     android:id="@+id/promotionCode"
+                    android:fontFamily="sans"
                     android:layout_marginRight="20dp"
                     android:hint="Enter Your Code"/>
             </android.support.design.widget.TextInputLayout>

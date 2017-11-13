@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ import static com.halanx.userapp.GlobalAccess.testUrl;
 
 public class ItemDisplayActivity extends AppCompatActivity {
     EditText etQuantity;
-    TextView plus, minus;
+    RelativeLayout plus, minus;
     Boolean already = false;
     Button cart;
     int i;
@@ -78,6 +79,8 @@ public class ItemDisplayActivity extends AppCompatActivity {
 
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +94,8 @@ public class ItemDisplayActivity extends AppCompatActivity {
         retrofit = builder.build();
 
         client = retrofit.create(DataInterface.class);
+
+        HomeActivity.position =2;
 
 
 
@@ -133,8 +138,8 @@ public class ItemDisplayActivity extends AppCompatActivity {
         add_cart = (ProgressBar) findViewById(R.id.pb_addtocart);
         etQuantity = (EditText) findViewById(R.id.quantity);
         etQuantity.setText("1");
-        plus = (TextView) findViewById(R.id.increment);
-        minus = (TextView) findViewById(R.id.decrement);
+        plus = (RelativeLayout) findViewById(R.id.increment);
+        minus = (RelativeLayout) findViewById(R.id.decrement);
         cart = (Button) findViewById(R.id.bt_add_to_cart);
         iv_fav = (ImageView) findViewById(R.id.imgFav);
 
@@ -154,7 +159,7 @@ public class ItemDisplayActivity extends AppCompatActivity {
         }
 
         Log.d("datafeature",String.valueOf(productFeatures));
-        if (!String.valueOf(productFeatures).isEmpty()){
+        if ((!String.valueOf(productFeatures).isEmpty())&&(!String.valueOf(productFeatures).equals("null"))){
             description.setText(productFeatures);
             desline.setVisibility(View.VISIBLE);
             desc_layout.setVisibility(View.VISIBLE);
@@ -177,7 +182,8 @@ public class ItemDisplayActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (i < 10) {
                     i++;
-                    val = Integer.toString(i);
+                    Log.d("valueofi", String.valueOf(i));
+                    val = String.valueOf(i);
                     etQuantity.setText(val);
                 }
             }
@@ -185,7 +191,9 @@ public class ItemDisplayActivity extends AppCompatActivity {
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (i != 0) {
+                if (i != 1) {
+
+                    Log.d("valueofi", String.valueOf(i));
                     i--;
                     val = Integer.toString(i);
                     etQuantity.setText(val);
@@ -272,7 +280,7 @@ public class ItemDisplayActivity extends AppCompatActivity {
         if (!group_member) {
             Log.d("enter","enter");
 
-            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "" + testUrl + "/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
+            Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, "" + djangoBaseUrl + "/carts/detail/", null, new com.android.volley.Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
@@ -284,7 +292,7 @@ public class ItemDisplayActivity extends AppCompatActivity {
                         CartItemPost item = new CartItemPost(cartId, Double.parseDouble(val), productID, null);
 
 
-                        Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(testUrl).build().create(DataInterface.class).putCartItemOnServer(item, token);
+                        Call<CartItemPost> call = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(djangoBaseUrl).build().create(DataInterface.class).putCartItemOnServer(item, token);
                         call.enqueue(new Callback<CartItemPost>() {
                             @Override
                             public void onResponse(Call<CartItemPost> call, Response<CartItemPost> response) {
@@ -301,6 +309,9 @@ public class ItemDisplayActivity extends AppCompatActivity {
                                     @Override
                                     public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
                                         List<CartItem> items = response.body();
+
+                                        startActivity(new Intent(ItemDisplayActivity.this, HomeActivity.class));
+                                        finish();
 
 
                                         Log.d("items", String.valueOf(items));
@@ -376,6 +387,8 @@ public class ItemDisplayActivity extends AppCompatActivity {
                         public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
                             List<CartItem> items = response.body();
 
+                            startActivity(new Intent(ItemDisplayActivity.this, HomeActivity.class));
+                            finish();
 
                             Log.d("items", String.valueOf(items));
 
@@ -409,6 +422,6 @@ public class ItemDisplayActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(ItemDisplayActivity.this, HomeActivity.class));
-        HomeActivity.position =2;
-    }
+        finish();
+     }
 }

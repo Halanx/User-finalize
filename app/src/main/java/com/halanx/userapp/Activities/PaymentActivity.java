@@ -159,6 +159,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.ll_Cash: {
 
+                Log.d("isorder", String.valueOf(isOrder));
                 //If it's an order for products
                 if (isOrder) {
                     SharedPreferences sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
@@ -172,18 +173,17 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                     if ((getIntent().getBooleanExtra("deliveryScheduled", false))) {
                         order = new OrderInfo(userMobile, addressDetails, date, starttime, endtime, false, null, latitude, longitude, trans_id,Double.parseDouble(total),true);
-                        Log.d("done", "done");
+                        Log.d("done", String.valueOf(order));
                     } else if (!(getIntent().getBooleanExtra("deliveryScheduled", true))) {
                         String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                         String current_time = new SimpleDateFormat("HH:mm:ss").format(new Date());
                         Log.d("time", current_time);
-
                         order = new OrderInfo(userMobile, addressDetails, date, current_time, null, true, null, latitude, longitude, trans_id,Double.parseDouble(total),true);
+                        Log.d("done", String.valueOf(order));
+
                     }
 
-
                     Log.i("ORDER", order.getDeliveryAddress() + order.getLatitude() + order.getLongitude());
-
 
                     pd = new ProgressDialog(PaymentActivity.this);
                     pd.setTitle("Please wait");
@@ -421,7 +421,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             try {
 
                 //TODO Below url is just for testing purpose, merchant needs to replace this with their server side hash generation url
-                URL url = new URL("http://ec2-35-154-159-227.ap-south-1.compute.amazonaws.com/payment/payment.php");       //replace this
+                URL url = new URL("http://ec2-13-126-55-96.ap-south-1.compute.amazonaws.com/Payu-Payment/payment.php");       //replace this
 
                 // get the payuConfig first
                 String postParam = postParams[0];
@@ -442,7 +442,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     responseStringBuffer.append(new String(byteContainer, 0, i));
                 }
 
-                JSONObject response = new JSONObject(responseStringBuffer.toString());
+                JSONObject response = new JSONObject(String.valueOf(responseStringBuffer));
 
                 Iterator<String> payuHashIterator = response.keys();
                 while (payuHashIterator.hasNext()) {
@@ -600,7 +600,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 } catch (JSONException e) {
                     Log.d("error ",e.toString());
                 }
+                String id = data.getStringExtra("payu_response");
 
+                JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
+                Log.d("json_data", String.valueOf(obj));
+
+                String trans_id = String.valueOf(obj.get("txnid"));
 
                 try {
                     Log.d("status ",jsonArray.getString("status").toString());
@@ -625,12 +630,6 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 //                            }
 //                        }).show();
 
-                        String id = data.getStringExtra("payu_response");
-
-                        JsonObject obj = new JsonParser().parse(id).getAsJsonObject();
-                        Log.d("json_data", String.valueOf(obj));
-
-                        String trans_id = String.valueOf(obj.get("txnid"));
 
                         //id -
                         //txnid -
@@ -734,6 +733,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         JSONObject jsonObject = new JSONObject();
                         try {
                             jsonObject.put("Value", Double.parseDouble(total));
+                            jsonObject.put("TransactionID", trans_id);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

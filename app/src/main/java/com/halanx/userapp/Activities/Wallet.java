@@ -87,9 +87,12 @@ public class Wallet extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
 
                             Log.d("patchingdone", String.valueOf(response));
-
-                        Toast.makeText(getApplicationContext(),"Code Applied!",Toast.LENGTH_SHORT).show();
-
+                            if(promotionCode.getText().toString()!="null") {
+                                Toast.makeText(getApplicationContext(), "Code Applied!", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Please enter a valid code!", Toast.LENGTH_SHORT).show();
+                            }
 
                         Volley.newRequestQueue(getApplicationContext()).add(new JsonObjectRequest(Request.Method.GET, uri, null, new com.android.volley.Response.Listener<JSONObject>() {
                             @Override
@@ -115,7 +118,8 @@ public class Wallet extends AppCompatActivity {
 
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("ammount added", String.valueOf(error));
+                                Toast.makeText(getApplicationContext(), "Invalid code!", Toast.LENGTH_SHORT).show();
+
                             }
                         }){
                             @Override
